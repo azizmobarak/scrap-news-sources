@@ -127,49 +127,44 @@ for(let i=0;i<Categories.length;i++){
                })
        }
 
-    // console.log(AllData);
-     await GetContent(AllData,browser)
-     await page.waitFor(20000);
-     await browser.close();
-    })();
-}
+  
+       
+var AllData_WithConetent=[];
 
+await AllData.map(async item=>{
 
-async function GetContent (data,browser){
-
-var AllData=[];
-
-var page = await browser.newPage();
-
-await data.map(async item=>{
-
-     // console.log(item.link);
-     await page.goto(item.link);
+    var url = item.link;
+    await page.goto(url);
 
     var Content = await page.evaluate(()=>{
         var text = document.querySelector('.Article__Wrapper>.Article__Content').textContent;
         return text;
     });
 
-console.log(Content);
-    //    if(item.images!=null){
-//     AllData.push({
-//         time : Date.now(),
-//         title : item.title,
-//         link : item.link,
-//         images : item.images,
-//         Category:item.Category,
-//         source :item.source,
-//         sourceLink:item.sourceLink,
-//         sourceLogo:item.logo,
-//         content:Content
-//          });
-//    }
+       if(item.images!=null){
+      AllData_WithConetent.push({
+            time : Date.now(),
+            title : item.title,
+            link : item.link,
+            images : item.images,
+            Category:item.Category,
+            source :item.source,
+            sourceLink:item.sourceLink,
+            sourceLogo:item.logo,
+            content:Content
+      });
+   }
+
 });
 
-console.log(AllData)
+console.log(AllData_WithConetent)
 
+
+     await page.waitFor(20000);
+     await browser.close();
+    })();
 }
+
 
 
 module.exports=ABC_NEWS;
