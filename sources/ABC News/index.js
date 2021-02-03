@@ -23,7 +23,7 @@ var Categories=['Politics','Entertainment','Technology','Health','Sports','Inter
 const ABC_NEWS = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         timeout:50000,
         args: [
             '--enable-features=NetworkService',
@@ -38,6 +38,21 @@ const ABC_NEWS = () =>{
        var page = await browser.newPage();
        var AllData=[];  
 
+//         // speed up website --------------------------------------------------------------
+//         await page.setRequestInterception(true);
+//         await page.on("request", (req) => {
+//           if (
+//            req.resourceType() === "stylesheet" ||
+//            req.resourceType() === "font"
+//           ) {
+//            req.abort();
+//           } else {
+//            req.continue();
+//           }
+//              });
+//    // ---------------------------------------------------------------
+ 
+
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -47,27 +62,11 @@ for(let i=0;i<Categories.length;i++){
 
         //navigate to category sub route
         await page.goto(['https://abcnews.go.com/','',Category].join(''));
-        await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+      //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
-
-
-         // speed up website --------------------------------------------------------------
-    await page.setRequestInterception(true);
-    await page.on("request", (req) => {
-        if (
-            req.resourceType() === "stylesheet" ||
-            req.resourceType() === "font"
-        ) {
-            req.abort();
-        } else {
-            req.continue();
-        }
-    });
-    // ---------------------------------------------------------------
     
          // get the data from the page
-         var PageData = await page.evaluate((Category)=>{
-
+    var PageData = await page.evaluate((Category)=>{
                
                // function to look for a word inside other words
                    const WordExist=(searchIn)=>{
