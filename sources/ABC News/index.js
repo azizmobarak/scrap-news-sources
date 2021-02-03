@@ -23,7 +23,7 @@ var Categories=['Politics','Entertainment','Technology','Health','Sports','Inter
 const ABC_NEWS = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         timeout:50000,
         args: [
             '--enable-features=NetworkService',
@@ -128,43 +128,51 @@ for(let i=0;i<Categories.length;i++){
        }
 
   
-       
-var AllData_WithConetent=[];
-
-await AllData.map(async item=>{
-
-    var url = item.link;
-    await page.goto(url);
-
-    var Content = await page.evaluate(()=>{
-        var text = document.querySelector('.Article__Wrapper>.Article__Content').textContent;
-        return text;
-    });
-
-       if(item.images!=null){
-      AllData_WithConetent.push({
-            time : Date.now(),
-            title : item.title,
-            link : item.link,
-            images : item.images,
-            Category:item.Category,
-            source :item.source,
-            sourceLink:item.sourceLink,
-            sourceLogo:item.logo,
-            content:Content
-      });
-   }
-
-});
-
-console.log(AllData_WithConetent)
-
-
+ 
+     await GetContent(browser,AllData);
      await page.waitFor(20000);
      await browser.close();
     })();
 }
 
+
+
+const GetContent = async(browser,data)=>{
+      
+    var AllData_WithConetent=[];
+    var page2 = await browser.newPage();
+    
+    
+    for(var i=0;i<data.length;i++){
+    
+        var item = data[i];
+        var url = item.link;
+        //console.log(url)
+        await page2.goto(url);
+    
+        var Content = await page2.evaluate(()=>{
+            var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+            return text;
+        });
+    
+           if(item.images!=null || Content!=null){
+          AllData_WithConetent.push({
+                time : Date.now(),
+                title : item.title,
+                link : item.link,
+                images : item.images,
+                Category:item.Category,
+                source :item.source,
+                sourceLink:item.sourceLink,
+                sourceLogo:item.sourceLogo,
+                content:Content
+          });
+       }
+    
+    }
+    
+    console.log(AllData_WithConetent)
+}
 
 
 module.exports=ABC_NEWS;
