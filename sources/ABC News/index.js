@@ -148,7 +148,7 @@ const GetContent = async(page,data)=>{
         await page.goto(url);
 
     
-        var Content = await page2.evaluate(()=>{
+        var Content = await page.evaluate(()=>{
             var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
             return text;
         });
