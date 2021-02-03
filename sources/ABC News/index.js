@@ -23,7 +23,7 @@ var Categories=['Politics','Entertainment','Technology','Health','Sports','Inter
 const ABC_NEWS = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         timeout:50000,
         args: [
             '--enable-features=NetworkService',
