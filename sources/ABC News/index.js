@@ -120,7 +120,7 @@ const ABC_NEWS = () =>{
        }
 
      console.log(AllData);
-
+     await page.waitFor(10000)
      await browser.close();
     })();
 }
