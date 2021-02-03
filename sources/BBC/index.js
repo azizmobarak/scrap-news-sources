@@ -20,10 +20,10 @@ puppeteer.use(puppeteer_agent());
 
 var Categories=['Politics','Entertainment','Technology','Health','Sports','International','Business'];
 
-const ABC_NEWS = () =>{
+const BBC = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -72,7 +72,7 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
                // function to look for a word inside other words
-                   const WordExist=(searchIn)=>{
+        const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;
                          }else{
@@ -131,8 +131,7 @@ for(let i=0;i<Categories.length;i++){
        }
 
   
- 
-     await GetContent(browser,AllData);
+     await GetContent(page,AllData);
      await page.waitFor(20000);
      await browser.close();
     })();
@@ -140,21 +139,20 @@ for(let i=0;i<Categories.length;i++){
 
 
 
-const GetContent = async(browser,data)=>{
+const GetContent = async(page,data)=>{
       
     var AllData_WithConetent=[];
-    var page2 = await browser.newPage();
-    
     
     for(var i=0;i<data.length;i++){
     
         var item = data[i];
         var url = item.link;
-        console.log(url)
+        console.log(url);
+
         try{
-            await page2.goto(url);
+            await page.goto(url);
         }catch{
-            await page2.goto(url);
+            await page.goto(url);
         }
     
         var Content = await page2.evaluate(()=>{
@@ -162,7 +160,7 @@ const GetContent = async(browser,data)=>{
             return text;
         });
     
-           if(item.images!=null || Content!=null){
+    if(item.images!=null || Content!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -182,4 +180,4 @@ const GetContent = async(browser,data)=>{
 }
 
 
-module.exports=ABC_NEWS;
+module.exports=BBC;

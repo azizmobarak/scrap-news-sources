@@ -24,7 +24,6 @@ const ABC_NEWS = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
-        timeout:50000,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -35,24 +34,24 @@ const ABC_NEWS = () =>{
        });
 
 
-       var page = await browser.newPage();
-       var AllData=[];  
+       var page = await browser.newPage(); 
 
-//         // speed up website --------------------------------------------------------------
-//         await page.setRequestInterception(true);
-//         await page.on("request", (req) => {
-//           if (
-//            req.resourceType() === "stylesheet" ||
-//            req.resourceType() === "font"
-//           ) {
-//            req.abort();
-//           } else {
-//            req.continue();
-//           }
-//              });
+        // speed up website --------------------------------------------------------------
+        await page.setRequestInterception(true);
+        await page.on("request", (req) => {
+          if (
+           req.resourceType() === "stylesheet" ||
+           req.resourceType() === "video" ||
+           req.resourceType() === "font"
+          ) {
+           req.abort();
+          } else {
+           req.continue();
+          }
+             });
 //    // ---------------------------------------------------------------
  
-
+var AllData=[]; 
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -61,7 +60,11 @@ for(let i=0;i<Categories.length;i++){
         console.log(Category)
 
         //navigate to category sub route
+       try{
         await page.goto(['https://abcnews.go.com/','',Category].join(''));
+       }catch{
+        await page.goto(['https://abcnews.go.com/','',Category].join(''));
+       }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
     
@@ -69,7 +72,7 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
                // function to look for a word inside other words
-                   const WordExist=(searchIn)=>{
+        const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;
                          }else{
@@ -128,8 +131,7 @@ for(let i=0;i<Categories.length;i++){
        }
 
   
- 
-     await GetContent(browser,AllData);
+     await GetContent(page,AllData);
      await page.waitFor(20000);
      await browser.close();
     })();
@@ -137,25 +139,28 @@ for(let i=0;i<Categories.length;i++){
 
 
 
-const GetContent = async(browser,data)=>{
+const GetContent = async(page,data)=>{
       
     var AllData_WithConetent=[];
-    var page2 = await browser.newPage();
-    
     
     for(var i=0;i<data.length;i++){
     
         var item = data[i];
         var url = item.link;
-        //console.log(url)
-        await page2.goto(url);
+        console.log(url);
+
+        try{
+            await page.goto(url);
+        }catch{
+            await page.goto(url);
+        }
     
         var Content = await page2.evaluate(()=>{
             var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
             return text;
         });
     
-           if(item.images!=null || Content!=null){
+    if(item.images!=null || Content!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
