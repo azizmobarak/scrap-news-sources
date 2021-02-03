@@ -143,7 +143,7 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-        console.log(url);
+       // console.log(url);
 
         await page.goto(url);
 
