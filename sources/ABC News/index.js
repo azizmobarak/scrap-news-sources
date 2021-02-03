@@ -5,9 +5,9 @@ const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 
 //block ads
-puppeteer.use(AdblockerPlugin())
+puppeteer.use(AdblockerPlugin());
 // stealth
-puppeteer.use(puppeteer_stealth())
+puppeteer.use(puppeteer_stealth());
 // captcha configuration
 puppeteer.use(
     Recaptcha({
@@ -16,7 +16,7 @@ puppeteer.use(
     })
 );
 
-//puppeteer.use(puppeteer_agent());
+puppeteer.use(puppeteer_agent());
 
 var Categories=['Politics','Entertainment','Technology','Health','Sports','International','Business'];
 
@@ -127,12 +127,45 @@ for(let i=0;i<Categories.length;i++){
                })
        }
 
-     console.log(AllData);
+    // console.log(AllData);
+     await GetContent(AllData,browser)
      await page.waitFor(20000);
      await browser.close();
     })();
 }
 
+
+const GetContent=async(data,browser)=>{
+    var AllData=[];
+var page = await browser.newPage();
+
+data.map(async item=>{
+
+     // console.log(item.link);
+     await page.goto(item.link);
+
+//     var Content = await page.evaluate(()=>{
+//         return document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+//     });
+
+//    if(item.images!=null){
+//     AllData.push({
+//         time : Date.now(),
+//         title : item.title,
+//         link : item.link,
+//         images : item.images,
+//         Category:item.Category,
+//         source :item.source,
+//         sourceLink:item.sourceLink,
+//         sourceLogo:item.logo,
+//         content:Content
+//          });
+//    }
+});
+
+console.log(AllData)
+
+}
 
 
 
