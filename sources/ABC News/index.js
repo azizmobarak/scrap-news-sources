@@ -23,7 +23,7 @@ var Categories=['Politics','Entertainment','Technology','Health','Sports','Inter
 const ABC_NEWS = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         timeout:50000,
         args: [
             '--enable-features=NetworkService',
@@ -38,8 +38,8 @@ const ABC_NEWS = () =>{
        var page = await browser.newPage();
        var AllData=[];  
 
-     // boucle on categories started 
-     for(let i=0;i<Categories.length;i++){
+// boucle on categories started 
+for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
@@ -120,7 +120,7 @@ const ABC_NEWS = () =>{
        }
 
      console.log(AllData);
-     await page.waitFor(10000)
+     await page.waitFor(10000);
      await browser.close();
     })();
 }
