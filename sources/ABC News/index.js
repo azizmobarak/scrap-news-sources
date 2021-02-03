@@ -36,19 +36,19 @@ const ABC_NEWS = () =>{
 
        var page = await browser.newPage(); 
 
-        // speed up website --------------------------------------------------------------
-        await page.setRequestInterception(true);
-        await page.on("request", (req) => {
-          if (
-           req.resourceType() === "stylesheet" ||
-           req.resourceType() === "video" ||
-           req.resourceType() === "font"
-          ) {
-           req.abort();
-          } else {
-           req.continue();
-          }
-             });
+        // // speed up website --------------------------------------------------------------
+        // await page.setRequestInterception(true);
+        // await page.on("request", (req) => {
+        //   if (
+        //    req.resourceType() === "stylesheet" ||
+        //    req.resourceType() === "video" ||
+        //    req.resourceType() === "font"
+        //   ) {
+        //    req.abort();
+        //   } else {
+        //    req.continue();
+        //   }
+        //      });
 //    // ---------------------------------------------------------------
  
 var AllData=[]; 
