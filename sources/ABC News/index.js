@@ -60,11 +60,7 @@ for(let i=0;i<Categories.length;i++){
         console.log(Category)
 
         //navigate to category sub route
-       try{
         await page.goto(['https://abcnews.go.com/','',Category].join(''));
-       }catch{
-        await page.goto(['https://abcnews.go.com/','',Category].join(''));
-       }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
     
@@ -149,11 +145,8 @@ const GetContent = async(page,data)=>{
         var url = item.link;
         console.log(url);
 
-        try{
-            await page.goto(url);
-        }catch{
-            await page.goto(url);
-        }
+        await page.goto(url);
+
     
         var Content = await page2.evaluate(()=>{
             var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
