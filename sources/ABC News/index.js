@@ -135,17 +135,20 @@ for(let i=0;i<Categories.length;i++){
 }
 
 
-const GetContent=async(data,browser)=>{
-    var AllData=[];
+async function GetContent (data,browser){
+
+var AllData=[];
+
 var page = await browser.newPage();
 
-data.map(async item=>{
+await data.map(async item=>{
 
      // console.log(item.link);
      await page.goto(item.link);
 
     var Content = await page.evaluate(()=>{
-        return document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+        var text = document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+        return text;
     });
 
 console.log(Content);
@@ -167,8 +170,6 @@ console.log(Content);
 console.log(AllData)
 
 }
-
-
 
 
 module.exports=ABC_NEWS;
