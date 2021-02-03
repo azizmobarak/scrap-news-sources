@@ -144,11 +144,12 @@ data.map(async item=>{
      // console.log(item.link);
      await page.goto(item.link);
 
-//     var Content = await page.evaluate(()=>{
-//         return document.querySelector('.Article__Wrapper>.Article__Content').textContent;
-//     });
+    var Content = await page.evaluate(()=>{
+        return document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+    });
 
-//    if(item.images!=null){
+console.log(Content);
+    //    if(item.images!=null){
 //     AllData.push({
 //         time : Date.now(),
 //         title : item.title,
