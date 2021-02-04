@@ -22,8 +22,8 @@ var Categories=['coronavirus','world','UK','business','technology','science_and_
 
 const BBC = () =>{
     (async()=>{
-       var browser =await puppeteer.launch({
-        headless: true,
+       var browser = await puppeteer.launch({
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -66,8 +66,8 @@ for(let i=0;i<Categories.length;i++){
                        if(searchIn.indexOf("minutes")!=-1){
                            return true;
                           }else{
-                        if(searchIn.indexOf("1 hour")!=-1 || searchIn.indexOf("2 hours")!=-1 || searchIn.indexOf("an hour")!=-1){
-                          return true;
+                    if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
+                                return true;
                          }else{
                             return false;
                         }
@@ -87,7 +87,7 @@ for(let i=0;i<Categories.length;i++){
          var data =[];
          for(let j=0;j<titles.length;j++){
            
-              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(link[j])!="undefined" && typeof(images[j])!="undefined")
+              if((WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true)  && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" && images[j].src.indexOf('http')==0  && typeof(link[j])!="undefined" && typeof(images[j])!="undefined")
                     {
                    data.push({
                        time : time[j].textContent,
@@ -131,7 +131,6 @@ const GetContent = async(page,data)=>{
 
         await page.goto(url);
 
-    
         var Content = await page.evaluate(()=>{
             var text =  document.querySelector('.ssrcss-5h7eao-ArticleWrapper')==null ? null : document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerText.replace('Related Topics','').replace('IMAGE COPYRIGHT','').replace('Share','');
             return text;

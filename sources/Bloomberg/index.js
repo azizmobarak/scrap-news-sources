@@ -18,12 +18,12 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['Politics','Entertainment','Technology','Health','Sports','International','Business'];
+var Categories=['markets','technology','opinion','businessweek','new-economy-forum'];
 
-const ABC_NEWS = () =>{
+const Bloomberg = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -36,20 +36,7 @@ const ABC_NEWS = () =>{
 
        var page = await browser.newPage(); 
 
-        // // speed up website --------------------------------------------------------------
-        // await page.setRequestInterception(true);
-        // await page.on("request", (req) => {
-        //   if (
-        //    req.resourceType() === "stylesheet" ||
-        //    req.resourceType() === "video" ||
-        //    req.resourceType() === "font"
-        //   ) {
-        //    req.abort();
-        //   } else {
-        //    req.continue();
-        //   }
-        //      });
-//    // ---------------------------------------------------------------
+      
  
 var AllData=[]; 
 // boucle on categories started 
@@ -58,17 +45,29 @@ for(let i=0;i<Categories.length;i++){
         //get the right category by number
         var Category = Categories[i]
         console.log(Category)
+      
 
-        //navigate to category sub route
-        await page.goto(['https://abcnews.go.com/','',Category].join(''));
-      //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+      try{
+         //navigate to category sub route
+        await page.goto(['https://www.bloomberg.com/','',Category].join(''));
+        //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+    }catch(e){
+         //navigate to category sub route
+         await page.goto(['https://www.bloomberg.com/','',Category].join(''));
+         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+         await page.solveRecaptchas();
+         await Promise.all([
+             page.waitForNavigation(),
+             page.click(".g-recaptcha"),
+             await page.$eval('input[type=submit]', el => el.click())
+         ]);
+    }
 
-    
-         // get the data from the page
-    var PageData = await page.evaluate((Category)=>{
+      // get the data from the page
+     var PageData = await page.evaluate((Category)=>{
                
                // function to look for a word inside other words
-        const WordExist=(searchIn)=>{
+     const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;
                          }else{
@@ -81,51 +80,49 @@ for(let i=0;i<Categories.length;i++){
                        if(searchIn.indexOf("minutes")!=-1){
                            return true;
                           }else{
-                        if(searchIn.indexOf("hour")!=-1){
+                        if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
                           return true;
                          }else{
-                     if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
-                                return true;
-                        }else{
                             return false;
                         }
-                    }
-                }
+                  }
             }
         }
     }
     }
     
-
-                     var titles = document.querySelectorAll('.ContentRoll__Headline>h2>a.AnchorLink');
-                     var images =document.querySelectorAll('.ContentRoll__Image img');
-                     var time = document.querySelectorAll('.ContentRoll__Date')
-            
-                     
-                var data =[];
-         for(let j=0;j<titles.length;j++){
+    // bloomberg serction one
+     // change the source logo to http 
+    var titles = document.querySelectorAll('.story-package-module__story__headline-link');
+    var images = document.querySelectorAll('.bb-lazy-img__image');
+    var time = document.querySelectorAll('time.hub-timestamp');
+    
+         var data =[];
+         for(let j=0;j<images.length;j++){
            
-              if(WordExist(time[j].textContent)==true){
+              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+                    {
                    data.push({
-                       time : Date.now(),
-                       title : titles[j].textContent,
+                       time : time[j].textContent,
+                       title : titles[j].textContent.trim(),
                        link : titles[j].href,
-                       images :  typeof(images[j])=="undefined" ? null : images[j].src,
+                       images : images[j].src,
                        Category:Category,
-                       source :"ABC NEWS",
-                       sourceLink:"https://abcnews.go.com",
-                       sourceLogo:"https://gray-wbay-prod.cdn.arcpublishing.com/resizer/fln06LgHS8awdDtCHhWoikKI7UE=/1200x675/smart/cloudfront-us-east-1.images.arcpublishing.com/gray/X3TAX5IMPBHY7EBGM6XW47YETE.jpg"
-                      });
+                       source :"Bloomberg",
+                       sourceLink:"https://www.bloomberg.com/",
+                       sourceLogo:"bloomberg logo"
+                    });
                    }
                }
                       return data;
                },Category);
 
+               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
-               })
+               });
        }
-
+      console.log(AllData);
   
      await GetContent(page,AllData);
      await page.waitFor(20000);
@@ -149,7 +146,7 @@ const GetContent = async(page,data)=>{
 
     
         var Content = await page.evaluate(()=>{
-            var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+            var text =  document.querySelector('.body-copy-v2')==null ? null : document.querySelector('.body-copy-v2').innerText;
             return text;
         });
     
@@ -163,14 +160,13 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content
+                content:Content!=null ? Content.substring(0,50) : null
           });
        }
-    
     }
     
     console.log(AllData_WithConetent)
 }
 
 
-module.exports=ABC_NEWS;
+module.exports=Bloomberg;

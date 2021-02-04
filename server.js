@@ -3,9 +3,9 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3232;
 //const ABC_NEWS = require('./sources/ABC News');
-const BBC = require('./sources/BBC');
+const Bloomberg = require('./sources/Bloomberg');
 
-BBC();
+Bloomberg();
 
 
 app.listen(PORT, ()=>{
