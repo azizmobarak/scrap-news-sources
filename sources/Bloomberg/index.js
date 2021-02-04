@@ -167,15 +167,16 @@ const GetContent = async(page,data)=>{
 
             var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
             var textArray=[];
-            
+
             for(let i=0;i<text.length;i++){
                 textArray.push(text[i].textContent);
-                textArray.push('\n');
+                textArray.push('   ');
             }
-            
             return textArray.join('\n');
         });
     
+        console.log(Content);
+
     if(item.images!=null || Content!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
@@ -186,7 +187,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content!=null ? Content.substring(0,50) : null
+                content:Content!=null ? Content : null
           });
        }
     }

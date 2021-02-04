@@ -7,7 +7,6 @@ const Bloomberg = require('./sources/Bloomberg');
 
 Bloomberg();
 
-
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
 });
