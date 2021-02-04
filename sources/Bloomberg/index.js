@@ -96,7 +96,24 @@ for(let i=0;i<Categories.length;i++){
     var titles = document.querySelectorAll('.story-package-module__story__headline-link');
     var images = document.querySelectorAll('.bb-lazy-img__image');
     var time = document.querySelectorAll('time.hub-timestamp');
+  
     
+    //change category name
+    var cateogryName = "";
+    
+    switch(Category){
+        case "businessweek":
+           cateogryName="Business"
+            break;
+        case "new-economy-forum" :
+            cateogryName="Economy"
+            break;
+        default :
+             cateogryName =Category
+             break;
+    }
+    //////////////////////////////
+
          var data =[];
          for(let j=0;j<images.length;j++){
            
@@ -146,8 +163,17 @@ const GetContent = async(page,data)=>{
 
     
         var Content = await page.evaluate(()=>{
-            var text =  document.querySelector('.body-copy-v2')==null ? null : document.querySelector('.body-copy-v2').innerText;
-            return text;
+
+
+            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var textArray=[];
+            
+            for(let i=0;i<text.length;i++){
+                textArray.push(text[i].textContent);
+                textArray.push('\n');
+            }
+            
+            return textArray.join('\n');
         });
     
     if(item.images!=null || Content!=null){
