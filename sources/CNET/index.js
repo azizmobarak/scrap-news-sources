@@ -23,7 +23,7 @@ var Categories=['topics/security','topics/tech-industry','topics/internet','topi
 const CNET = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -130,7 +130,6 @@ var PageData = await page.evaluate((Category)=>{
       console.log(AllData);
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
