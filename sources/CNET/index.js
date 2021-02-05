@@ -18,12 +18,12 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['markets','technology','opinion','businessweek','new-economy-forum'];
+var Categories=['topics/security','topics/tech-industry','topics/internet','topics/culture','topics/mobile','topics/sci-tech','topics/computers','personal-finance/investing','health/fitness','health/healthy-eating'];
 
-const Bloomberg = () =>{
+const CNET = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -36,7 +36,6 @@ const Bloomberg = () =>{
 
        var page = await browser.newPage(); 
 
-      
  
 var AllData=[]; 
 // boucle on categories started 
@@ -45,15 +44,15 @@ for(let i=0;i<Categories.length;i++){
         //get the right category by number
         var Category = Categories[i]
         console.log(Category)
-      
+
 
       try{
          //navigate to category sub route
-        await page.goto(['https://www.bloomberg.com/','',Category].join(''));
+        await page.goto(["https://www.cnet.com/",'',Category].join(''));
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }catch(e){
          //navigate to category sub route
-         await page.goto(['https://www.bloomberg.com/','',Category].join(''));
+         await page.goto(["https://www.cnet.com/",'',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
          await page.solveRecaptchas();
          await Promise.all([
@@ -64,70 +63,59 @@ for(let i=0;i<Categories.length;i++){
     }
 
       // get the data from the page
-     var PageData = await page.evaluate((Category)=>{
-               
-               // function to look for a word inside other words
-     const WordExist=(searchIn)=>{
-                    if(searchIn.indexOf("second")!=-1){
-                         return true;
-                         }else{
-                       if(searchIn.indexOf("seconds")!=-1){
-                      return true;
-                       }else{
-                         if(searchIn.indexOf("minute")!=-1){
-                       return true;
-                       }else{
-                       if(searchIn.indexOf("minutes")!=-1){
-                           return true;
-                          }else{
-                        if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
-                          return true;
-                         }else{
-                            return false;
-                        }
-                  }
-            }
-        }
-    }
-    }
+var PageData = await page.evaluate((Category)=>{
+
+           //change category name
+           var cateogryName = "";
     
-    // bloomberg serction one
-     // change the source logo to http 
-    var titles = document.querySelectorAll('.story-package-module__story__headline-link');
-    var images = document.querySelectorAll('.bb-lazy-img__image');
-    var time = document.querySelectorAll('time.hub-timestamp');
-  
-    
-    //change category name
-    var cateogryName = "";
-    
-    switch(Category){
-        case "businessweek":
-           cateogryName="Business"
-            break;
-        case "new-economy-forum" :
-            cateogryName="Economy"
-            break;
-        default :
-             cateogryName =Category
-             break;
-    }
+          if(i==9){
+              cateogryName="health"
+          }else{
+            if(Category.indexOf("tech")!=-1){
+            cateogryName = "technology";
+            }else{
+            cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+           }
+         }
     //////////////////////////////
+    
+
+    // CBC classes by categories 
+      var titleClassName=".assetBody h2";
+      var linkClassName=".assetBody a";
+      var imageClassName=".assetThumb>a>figure>img";
+
+      if(cateogryName==="culture"){
+           titleClassName=".assetText a";
+           linkClassName=".assetText a";
+           imageClassName=".assetBody>a>figure>img";
+      }else{
+          if(cateogryName==="investing" || cateogryName==="fitness" || cateogryName==="health"){
+            titleClassName=".latestScrollItems .c-universalLatest_text h3";
+            linkClassName=".latestScrollItems .c-universalLatest_text>a";
+            imageClassName=".c-universalLatest_image>a>span>img";
+          }
+      }
+    
+     // change the source logo to http 
+    var titles = document.querySelectorAll(titleClassName)
+    var images =  document.querySelectorAll(imageClassName);
+    var links = document.querySelectorAll(linkClassName);
+  
 
          var data =[];
-         for(let j=0;j<images.length;j++){
+         for(let j=0;j<5;j++){
            
-              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
                     {
                    data.push({
-                       time : time[j].textContent,
                        title : titles[j].textContent.trim(),
-                       link : titles[j].href,
+                       link : links[j].href,
                        images : images[j].src,
                        Category:cateogryName,
-                       source :"Bloomberg",
-                       sourceLink:"https://www.bloomberg.com/",
-                       sourceLogo:"bloomberg logo"
+                       source :"CNET",
+                       sourceLink:"https://www.cnet.com",
+                       sourceLogo:"cnet logo"
                     });
                    }
                }
@@ -165,7 +153,7 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
 
 
-            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var text = document.querySelectorAll('.article-main-body p');
             var textArray=[];
 
             for(let i=0;i<text.length;i++){
@@ -176,7 +164,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null || Content!=null){
+    if(item.images!=null && Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -190,9 +178,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    
     console.log(AllData_WithConetent)
 }
 
 
-module.exports=Bloomberg;
+module.exports=CNET;

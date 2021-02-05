@@ -18,9 +18,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['markets','technology','opinion','businessweek','new-economy-forum'];
+var Categories=['sports','news/canada','news/politics','news/opinion','news/business','news/health','news/entertainment','news/technology','news/investigates'];
 
-const Bloomberg = () =>{
+const CBC = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -36,7 +36,6 @@ const Bloomberg = () =>{
 
        var page = await browser.newPage(); 
 
-      
  
 var AllData=[]; 
 // boucle on categories started 
@@ -45,15 +44,15 @@ for(let i=0;i<Categories.length;i++){
         //get the right category by number
         var Category = Categories[i]
         console.log(Category)
-      
+
 
       try{
          //navigate to category sub route
-        await page.goto(['https://www.bloomberg.com/','',Category].join(''));
+        await page.goto(["https://www.cbc.ca/",'',Category].join(''));
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }catch(e){
          //navigate to category sub route
-         await page.goto(['https://www.bloomberg.com/','',Category].join(''));
+         await page.goto(["https://www.cbc.ca/",'',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
          await page.solveRecaptchas();
          await Promise.all([
@@ -90,44 +89,45 @@ for(let i=0;i<Categories.length;i++){
         }
     }
     }
-    
-    // bloomberg serction one
-     // change the source logo to http 
-    var titles = document.querySelectorAll('.story-package-module__story__headline-link');
-    var images = document.querySelectorAll('.bb-lazy-img__image');
-    var time = document.querySelectorAll('time.hub-timestamp');
-  
-    
+
     //change category name
     var cateogryName = "";
     
-    switch(Category){
-        case "businessweek":
-           cateogryName="Business"
-            break;
-        case "new-economy-forum" :
-            cateogryName="Economy"
-            break;
-        default :
-             cateogryName =Category
-             break;
-    }
+     if(Category.indexOf('/')!=-1){
+         cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+     }else{
+         cateogryName = Category;
+     }
     //////////////////////////////
+    
+
+    // CBC classes by categories 
+      var titleClassName=".card-content h3.headline";
+      var linkClassName=".featuredArea a";
+      var imageClassName=".cardImageWrap>figure.imageMedia>div>img";
+      var timeClassName="div.card-content-bottom>.metadata>div>time.timeStamp";
+    
+     // change the source logo to http 
+    var titles = document.querySelectorAll(titleClassName)
+    var images =  document.querySelectorAll(imageClassName);
+    var time = document.querySelectorAll(timeClassName);
+    var links = document.querySelectorAll(linkClassName);
+  
 
          var data =[];
-         for(let j=0;j<images.length;j++){
+         for(let j=0;j<titles.length;j++){
            
-              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+              if((j!=1 && j!=2 && j!=3) && WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
                     {
                    data.push({
                        time : time[j].textContent,
                        title : titles[j].textContent.trim(),
-                       link : titles[j].href,
+                       link : links[j].href,
                        images : images[j].src,
                        Category:cateogryName,
-                       source :"Bloomberg",
-                       sourceLink:"https://www.bloomberg.com/",
-                       sourceLogo:"bloomberg logo"
+                       source :"CBC NEWS",
+                       sourceLink:"https://www.cbc.ca",
+                       sourceLogo:"cbc logo"
                     });
                    }
                }
@@ -165,10 +165,10 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
 
 
-            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var text = document.querySelectorAll('div.story p');
             var textArray=[];
 
-            for(let i=0;i<text.length;i++){
+            for(let i=2;i<text.length;i++){
                 textArray.push(text[i].textContent);
                 textArray.push('   ');
             }
@@ -190,9 +190,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    
     console.log(AllData_WithConetent)
 }
 
 
-module.exports=Bloomberg;
+module.exports=CBC;
