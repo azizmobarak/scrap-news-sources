@@ -37,7 +37,12 @@ const HuffPost = () =>{
 
        var page = await browser.newPage(); 
 
-      
+       try{
+           await page.goto('https://www.huffpost.com/');
+           await page.click('button[type=submit]');
+       }catch{
+           console.log('continue')
+       }
  
 var AllData=[]; 
 // boucle on categories started 
@@ -67,6 +72,7 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          if(Category==="Australia" || Category==="UK" || Category==="Canada"){
             await page.goto(url);
+            await page.click('#search-button');
          }else{
             await page.goto([url,'',Category].join(''));
          }
@@ -88,21 +94,19 @@ for(let i=0;i<Categories.length;i++){
          ]);
     }
 
-     await page.screenshot({path: 'images/'+i+'.png'});
+    // await page.screenshot({path: 'images/'+i+'.png'});
      
     // var body = await page.$eval('body',b=>b);
-    var body = await page.content();
-     fs.writeFile("images/test.txt",body, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-        console.log("The file was saved!");
-    }); 
+    // var body = await page.content();
+    //  fs.writeFile("images/test.txt",body, function(err) {
+    //     if(err) {
+    //         return console.log(err);
+    //     }
+    //     console.log("The file was saved!");
+    // }); 
 
       // get the data from the page
 var PageData = await page.evaluate((Category,url)=>{
-               
-   
 
      // HuffPost Classes
      var titleClassName=".zone__content a.card__headline--long>h2";
