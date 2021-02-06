@@ -94,16 +94,16 @@ for(let i=0;i<Categories.length;i++){
          ]);
     }
 
-    // await page.screenshot({path: 'images/'+i+'.png'});
+    await page.screenshot({path: 'images/'+i+'.png'});
      
-    // var body = await page.$eval('body',b=>b);
-    // var body = await page.content();
-    //  fs.writeFile("images/test.txt",body, function(err) {
-    //     if(err) {
-    //         return console.log(err);
-    //     }
-    //     console.log("The file was saved!");
-    // }); 
+    var body = await page.$eval('body',b=>b);
+    var body = await page.content();
+     fs.writeFile("images/test.txt",body, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("The file was saved!");
+    }); 
 
       // get the data from the page
 var PageData = await page.evaluate((Category,url)=>{
