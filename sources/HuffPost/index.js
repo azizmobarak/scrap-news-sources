@@ -39,7 +39,7 @@ const HuffPost = () =>{
  
 var AllData=[]; 
 
-for(let k=0;i<10;i++){
+for(let k=0;k<10;k++){
     try{
         await page.goto('https://www.huffpost.com/');
         await page.click('button[type=submit]');
