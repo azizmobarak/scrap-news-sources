@@ -87,6 +87,8 @@ for(let i=0;i<Categories.length;i++){
          ]);
     }
 
+     await page.screenshot({path: 'images/'+i+'.png'});
+
       // get the data from the page
 var PageData = await page.evaluate((Category,url)=>{
                
