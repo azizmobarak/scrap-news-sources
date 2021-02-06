@@ -6,9 +6,15 @@ const PORT = process.env.PORT || 3232;
 //const Bloomberg = require('./sources/Bloomberg');
 //const CBC = require('./sources/CBS News');
 //const CNET = require('./sources/CNET');
-const CNN = require('./sources/CNN');
+//const CNN = require('./sources/CNN');
+//const FOXNEWS = require('./sources/Fox News Channel');
 
-CNN();
+// with low content and link to page contain videos about the movie/serie run it for 24h and more.
+// const HBO = require('./sources/HBO');
+
+const HuffPost = require('./sources/HuffPost');
+
+HuffPost();
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
