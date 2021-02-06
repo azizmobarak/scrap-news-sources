@@ -40,8 +40,8 @@ const HuffPost = () =>{
        try{
            await page.goto('https://www.huffpost.com/');
            await page.click('button[type=submit]');
-       }catch{
-           console.log('continue')
+       }catch(e){
+           console.log(e)
        }
  
 var AllData=[]; 
