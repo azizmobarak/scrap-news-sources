@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const fs = require('fs');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -88,10 +89,21 @@ for(let i=0;i<Categories.length;i++){
     }
 
      await page.screenshot({path: 'images/'+i+'.png'});
+     
+    // var body = await page.$eval('body',b=>b);
+    var body = await page.content();
+     fs.writeFile("images/test.txt",body, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("The file was saved!");
+    }); 
 
       // get the data from the page
 var PageData = await page.evaluate((Category,url)=>{
                
+   
+
      // HuffPost Classes
      var titleClassName=".zone__content a.card__headline--long>h2";
      var linkClassName=".zone__content a.card__headline--long";
@@ -144,7 +156,7 @@ var PageData = await page.evaluate((Category,url)=>{
                    }
                }
                       return data;
-               },Category,url);
+    },Category,url);
 
                console.log(PageData);
                PageData.map(item=>{
