@@ -36,17 +36,17 @@ const HuffPost = () =>{
 
 
        var page = await browser.newPage(); 
-
-       try{
-           await page.goto('https://www.huffpost.com/');
-           await page.click('button[type=submit]');
-       }catch(e){
-           console.log(e)
-       }
  
 var AllData=[]; 
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
+      
+       try{
+        await page.goto('https://www.huffpost.com/');
+        await page.click('button[type=submit]');
+       }catch(e){
+        console.log("cookie passed")
+       }
 
         //get the right category by number
         var Category = Categories[i]
