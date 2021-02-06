@@ -176,7 +176,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null || Content!=null){
+    if(item.images!=null && Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,

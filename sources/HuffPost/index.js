@@ -185,7 +185,7 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        console.log(url);
+        console.log(i);
 
         try{
             await page.goto(url,{waitUntil: 'load', timeout: 0});
@@ -211,7 +211,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null || Content!=null){
+    if(item.images!=null && Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -221,7 +221,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content!=null ? Content : null
+                content:Content
           });
        }
     }
