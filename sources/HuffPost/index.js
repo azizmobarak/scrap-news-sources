@@ -185,7 +185,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        await page.goto(url,{waitUntil: 'load', timeout: 0});
+        console.log(url);
+
+        try{
+            await page.goto(url,{waitUntil: 'load', timeout: 0});
+        }catch{
+            await page.goto(url,{waitUntil: 'load', timeout: 0});
+        }
 
 
     
