@@ -76,11 +76,18 @@ var PageData = await page.evaluate((Category)=>{
 
 
     // setconditions on categories 
-    if(Category==="news/environment" || Category==="business" || Category==="news/politics" || Category==="opinion"){
+    if(Category==="news/environment"){
         titleClassName="section.landing a.article-title";
         linkClassName="section.landing a.article-title";
         imageClassName="section.landing .image-wrapper>img";
         loop=1;
+    }else{
+        if(Category==="business" || Category==="news/politics" || Category==="opinion" ){
+            titleClassName=".feature-top article h2";
+            linkClassName=".feature-top article a";
+            imageClassName=".feature-top article img";
+            loop=1;
+        }
     }
 
     // change the source logo to http 
