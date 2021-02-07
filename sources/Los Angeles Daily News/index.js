@@ -23,7 +23,7 @@ var Categories=['news/crime-and-public-safety','news/environment','business','ne
 const LosAngelesNews = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -73,10 +73,18 @@ var PageData = await page.evaluate((Category)=>{
     var linkClassName=".feature-primary article .entry-title a";
     var imageClassName=".feature-primary article figure div.image-wrapper>img";
 
+
+    // setconditions on categories 
+    if(Category==="news/environment"){
+        titleClassName=".feature-primary article .entry-title";
+        linkClassName=".feature-primary article .entry-title a";
+        imageClassName=".feature-primary article figure div.image-wrapper>img";
+    }
+
     // change the source logo to http 
     var titles = document.querySelectorAll(titleClassName);
-    var images = document.querySelectorAll(linkClassName);
-    var links = document.querySelectorAll(imageClassName);
+    var images = document.querySelectorAll(imageClassName);
+    var links = document.querySelectorAll(linkClassName);
   
     
     //change category name
@@ -94,9 +102,9 @@ var PageData = await page.evaluate((Category)=>{
     //////////////////////////////
 
          var data =[];
-         for(let j=0;j<images.length;j++){
+         for(let j=0;j<3;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" && typeof(images[j])!="undefined" && images[j]!="")
                     {
                    data.push({
                        time : Date.now(),
@@ -104,9 +112,9 @@ var PageData = await page.evaluate((Category)=>{
                        link : links[j].href,
                        images : images[j].src,
                        Category:cateogryName,
-                       source :"Bloomberg",
-                       sourceLink:"https://www.bloomberg.com/",
-                       sourceLogo:"bloomberg logo"
+                       source :"Los Angeles Daily News",
+                       sourceLink:"https://www.dailynews.com/",
+                       sourceLogo:"dailynews logo"
                          });
                    }
                }
@@ -121,7 +129,6 @@ var PageData = await page.evaluate((Category)=>{
       console.log(AllData);
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
@@ -136,15 +143,20 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-       // console.log(url);
+        console.log(url);
 
-        await page.goto(url);
+        try{
+            await page.goto(url);
+            await page.click('span>span>a');
+        }catch{
+            await page.goto(url);
+        }
 
     
         var Content = await page.evaluate(()=>{
 
 
-            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var text = document.querySelectorAll('.article-body p');
             var textArray=[];
 
             for(let i=0;i<text.length;i++){
@@ -155,7 +167,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null && Content!=null && Content!=""){
+    if(item.images!=null && item.images!="" && Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
