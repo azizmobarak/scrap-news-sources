@@ -23,7 +23,7 @@ var Categories=['news/crime-and-public-safety','news/environment','business','ne
 const LosAngelesNews = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
