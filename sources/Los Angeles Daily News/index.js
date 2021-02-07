@@ -68,6 +68,7 @@ var PageData = await page.evaluate((Category)=>{
                
             
     // Los Angelece News classes
+    var loop=3;
 
     var titleClassName=".feature-primary article .entry-title";
     var linkClassName=".feature-primary article .entry-title a";
@@ -75,10 +76,11 @@ var PageData = await page.evaluate((Category)=>{
 
 
     // setconditions on categories 
-    if(Category==="news/environment"){
-        titleClassName=".feature-primary article .entry-title";
-        linkClassName=".feature-primary article .entry-title a";
-        imageClassName=".feature-primary article figure div.image-wrapper>img";
+    if(Category==="news/environment" || Category==="business" || Category==="news/politics" || Category==="opinion"){
+        titleClassName="section.landing a.article-title";
+        linkClassName="section.landing a.article-title";
+        imageClassName="section.landing .image-wrapper>img";
+        loop=1;
     }
 
     // change the source logo to http 
@@ -102,7 +104,7 @@ var PageData = await page.evaluate((Category)=>{
     //////////////////////////////
 
          var data =[];
-         for(let j=0;j<3;j++){
+         for(let j=0;j<loop;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" && typeof(images[j])!="undefined" && images[j]!="")
                     {
