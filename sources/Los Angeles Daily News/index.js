@@ -87,6 +87,11 @@ var PageData = await page.evaluate((Category)=>{
             linkClassName=".feature-top article a";
             imageClassName=".feature-top article img";
             loop=1;
+        }if(Category==="sports"){
+            titleClassName=".feature-wrapper .article-title .dfm-title";
+            linkClassName=".feature-wrapper article .entry-title a";
+            imageClassName=".feature-wrapper article img";
+            loop=1;
         }
     }
 
