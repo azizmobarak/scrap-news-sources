@@ -16,9 +16,9 @@ const PORT = process.env.PORT || 3232;
 
 //const LosAngelesNews = require('./sources/Los Angeles Daily News');
 
-const LosAngelesTimes = require('./sources/Los Angeles Times');
+const MSNBC = require('./sources/MSNBC');
 
-LosAngelesTimes();
+MSNBC();
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
