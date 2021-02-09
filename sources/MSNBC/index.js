@@ -35,8 +35,7 @@ const MSNBC = () =>{
 
 
        var page = await browser.newPage(); 
-
-      
+   
  
 var AllData=[]; 
 // boucle on categories started 
