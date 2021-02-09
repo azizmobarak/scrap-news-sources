@@ -23,7 +23,7 @@ var Categories=['business','business/technology','business/real-estate','enterta
 const LosAngelesTimes = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
