@@ -108,7 +108,11 @@ var PageData = await page.evaluate((Category)=>{
         cateogryName="Safety";
     }else{
         if(Category.indexOf('/')!=-1){
-            cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+            if(Category.indexOf('housing')!=-1){
+                cateogryName="business,house";
+            }else{
+                cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+            }
         }else{
             cateogryName=Category;
         }

@@ -73,7 +73,15 @@ for(let i=0;i<Categories.length;i++){
       var linkClassName=".zn__containers article a";
       var imageClassName=".zn__containers article img";
 
-      //change classes in some conditions
+      
+      if(Category.indexOf('/')!=-1){
+          if(Category.indexOf("food-and-drink")!=-1){
+                Category="food&drink";
+          }else{
+              Category=Category.substring(Category.indexOf("/")+1,Category.length);
+          }
+      }else{
+          //change classes in some conditions
       if(Category.indexOf('travel')!=-1){
 
         titleClassName=".CardBasic__details a";
@@ -92,8 +100,15 @@ for(let i=0;i<Categories.length;i++){
 
                // loop length
                 loop=4;
+          }else{
+              if(Category==="style"){
+                  Category==="life&style";
+              }
           }
       }
+
+      }
+
 
       // get lists
       var titles = document.querySelectorAll(titleClassName);

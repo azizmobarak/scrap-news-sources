@@ -74,7 +74,11 @@ var PageData = await page.evaluate((Category)=>{
             if(Category.indexOf("tech")!=-1){
             cateogryName = "technology";
             }else{
-            cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+                if(Category.indexOf('sci-tech')!=-1){
+                    cateogryName = "science,technology";
+                }else{
+                    cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+                }
            }
          }
     //////////////////////////////

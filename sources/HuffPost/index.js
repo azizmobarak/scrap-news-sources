@@ -129,17 +129,25 @@ var PageData = await page.evaluate((Category,url)=>{
     
     //change category name
     var cateogryName = Category;
-    
+
+    if(Category.indexOf('/')!=-1){
+     if(Category.indexOf('arts')!=-1 && Category.indexOf('entertainment')!=-1){
+        cateogryName = "art&design,entertainment";
+     }else{
+         if(Category.indexOf('life')!=-1){
+             if(Category.indexOf('travel')!=-1){
+                cateogryName="life&style,travel";
+             }else{
+                cateogryName="life&style";
+             }
+         }
+     }
+    }
+    if(Category==='world-news'){
+        cateogryName="International"
+    }
     if(Category==="news/us-news"){
         cateogryName="US";
-    }else{
-        if(Category==='world-news'){
-            cateogryName="International";
-        }else{
-        if(Category.indexOf('/')!=-1){
-                cateogryName=Category.substring(Category.indexOf('/')+1,Category.length);
-        }
-    }
     }
     //////////////////////////////
 

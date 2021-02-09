@@ -94,7 +94,11 @@ for(let i=0;i<Categories.length;i++){
     var cateogryName = "";
     
      if(Category.indexOf('/')!=-1){
-         cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+         if(Category.indexOf('investigates')!=-1){
+             cateogryName="investing"
+         }else{
+           cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+         }
      }else{
          cateogryName = Category;
      }

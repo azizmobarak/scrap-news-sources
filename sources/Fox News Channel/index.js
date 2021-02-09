@@ -119,6 +119,10 @@ for(let i=0;i<Categories.length;i++){
           linkClassName=".collection-river .article h3.title>a";
           imageClassName=".collection-river .article a>picture>img";
           timeClassName=".collection-river .article time.time";
+      }else{
+          if(Category==="lifestyle"){
+              Category="life&style"
+          }
       }
 
      // get lists

@@ -18,9 +18,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['business','business/technology','business/real-estate','entertainment-arts/business','topic/arts','food','lifestyle','topic/fashion','opinion','politics','science','travel','world-nation','environment','entertainment-arts','entertainment-arts/movies','entertainment-arts/books','homeless-housing'];
+var Categories=['uk/commentisfree','uk/sport','uk/culture','uk/lifeandstyle','world','uk-news','uk/environment','science','global-development','football','uk/technology','uk/business','sport/cricket','sport/rugby-union','sport/tennis','sport/cycling','sport/formulaone','sport/golf','sport/us-sport','books','artanddesign','fashion','food','lifeandstyle/love-and-sex','lifeandstyle/health-and-wellbeing','lifeandstyle/home-and-garden','lifeandstyle/women','lifeandstyle/men','lifeandstyle/family','uk/travel','uk/money'];
 
-const LosAngelesTimes = () =>{
+const Gardian = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,16 +49,16 @@ for(let i=0;i<Categories.length;i++){
 
       try{
          //navigate to category sub route
-        await page.goto(['https://www.latimes.com/','',Category].join(''));
+        await page.goto(['https://www.theguardian.com/','',Category].join(''));
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
         try{
           await page.click('.ncm-not-interested-button');
         }catch{
-          console.log('passed')
+          console.log('passed');
         }
     }catch(e){
          //navigate to category sub route
-         await page.goto(['https://www.latimes.com/','',Category].join(''));
+         await page.goto(['https://www.theguardian.com/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
          await page.solveRecaptchas();
          await Promise.all([
@@ -73,52 +73,76 @@ var PageData = await page.evaluate((Category)=>{
                
             
     // Los Angelece News classes
-    var loop=1;
+    var loop=2;
 
-    var titleClassName=".promo-content .promo-title";
-    var linkClassName=".promo-content .promo-title a";
-    var imageClassName="ps-promo a img";
-
+    var titleClassName=".fc-container--rolled-up-hide .fc-slice-wrapper .fc-item__container .fc-item__content h3";
+    var linkClassName=".fc-container--rolled-up-hide .fc-slice-wrapper .fc-item__container .fc-item__content a";
+    var imageClassName=".fc-container--rolled-up-hide .fc-slice-wrapper .fc-item__container .fc-item__media-wrapper img";
 
     // all elements
     var titles = document.querySelectorAll(titleClassName);
     var images = document.querySelectorAll(imageClassName);
     var links = document.querySelectorAll(linkClassName);
   
-    
     //change category name
     var cateogryName = "";
     
-    if(Category==="homeless-housing"){
-        cateogryName="house";
-    }else{
-        if(Category.indexOf('/')!=-1){
-            if(Category.indexOf('real-estate')!=-1){
-                cateogryName="business";
+        if(Category.indexOf('/')!=-1 && Category.indexOf('uk')!=-1){
+            if(Category.indexOf('commentisfree')!=-1){
+                cateogryName="opinion,uk"
             }else{
-                if(Category.indexOf('arts')!=-1){
-                    cateogryName="art&design";
+                if(Category.indexOf('lifeandstyle')!=-1){
+                    cateogryName="life&style,uk"
                 }else{
-                    if(Category.indexOf('entertainment-arts')!=-1){
-                        cateogryName="entertainment," + Category.substring(Category.indexOf('/')+1,Category.length);
-                    }else{
-                        cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
-                    }
-                }
+                   cateogryName = Category.substring(Category.indexOf('/')+1,Category.length)+","+"uk";
+                        }
             }
         }else{
-            if(Category==="world-nation")
-            {
-                cateogryName="International";
-            }else{
-                if(Category==="entertainment-arts"){
-                    cateogryName="entertainment";
-                }
-                else{
-                    if(Category==="lifestyle"){
-                        cateogryName="life&style";
+            if(Category.indexOf('/')!=-1 && Category.indexOf('sport')!=-1){
+                if(Category.indexOf('us')!=-1){
+                    cateogryName="sport,us";
+                }else{
+                    if(Category.indexOf('rugby')!=-1){
+                        cateogryName="sport,rugby";
                     }else{
-                        cateogryName=Category;
+                        cateogryName = Category.substring(Category.indexOf('/')+1,Category.length)+","+"sport";
+                    }
+                }
+        }else{
+            if(Category.indexOf('uk-news')!=-1){
+                cateogryName="uk";
+            }else{
+                if(Category.indexOf('global-development')!=-1){
+                    cateogryName="International";
+                }else{
+                    if(Category.indexOf('artanddesign')!=-1){
+                        cateogryName="art&design";
+                    }else{
+                        if(Category.indexOf('/')!=-1 && Category.indexOf('lifeandstyle/')!=-1){
+                            if(Category==='home-and-garden'){
+                                cateogryName="life&style,house";
+                            }else{
+                                if(Category==='health-and-wellbeing'){
+                                    cateogryName="health,life&style";
+                                }else{
+                                    if(cateogryName.indexOf('love-and-sex')!=-1){
+                                        cateogryName="love&next,life&style";
+                                    }else{
+                                        if(Category==="world"){
+                                            cateogryName="International"
+                                        }else{
+                                            cateogryName = Category.substring(Category.indexOf('/')+1,Category.length)+","+"life&style";
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            if(Category==="football"){
+                                cateogryName="sport,football";
+                            }else{
+                                cateogryName=Category;
+                            }
+                        }
                     }
                 }
             }
@@ -132,17 +156,17 @@ var PageData = await page.evaluate((Category)=>{
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" && typeof(images[j])!="undefined" && images[j]!="")
                     {
                    data.push({
-                       time : Date.now(),
+                      time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : images[j].src,
-                       Category:cateogryName,
-                       source :"Los Angeles Times",
-                       sourceLink:"https://www.latimes.com/",
-                       sourceLogo:"LaTimes logo"
+                       Category: cateogryName,
+                       source :"The Gardian",
+                       sourceLink:"https://www.theguardian.com/",
+                       sourceLogo:"The Gardian logo"
                          });
                    }
-               }
+              }
                       return data;
                },Category);
 
@@ -174,28 +198,17 @@ const GetContent = async(page,data)=>{
 
         try{
             await page.goto(url);
-            await page.waitForSelector('.story');
         }catch{
             await page.goto(url);
-            await page.waitForSelector('.story');
         }
 
     
         var Content = await page.evaluate(()=>{
-           
-            var text = document.querySelector('.rich-text-article-body-content');
-
-           if(text==null || typeof(text)==="undefined"){
-               text = document.querySelectorAll('p');
-               var allcontent ="";
-               for(let k=0;k<text.length/2;k++){
-                if(text[k].textContent!="" && text[k].textContent.length>150){
-                    allcontent =k!=0 ? allcontent + "\n" + text[k].textContent : text[k].textContent;
-                }
-               }
-               return allcontent.substring(0,1200).replaceAll("\n",' ')+" ...";
-           }else{
-               return text.textContent.replaceAll('Advertisement','').replaceAll("\n",' ').substring(0,1200)+" ...";
+           try{
+            var text = document.querySelector('.article-body-commercial-selector p').textContent+"\n"+ document.querySelector('.article-body-commercial-selector p+p').textContent;
+            return text;
+           }catch{
+            return null;
            }
         });
     
@@ -219,4 +232,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=LosAngelesTimes;
+module.exports=Gardian;
