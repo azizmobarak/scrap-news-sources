@@ -114,19 +114,21 @@ for(let i=0;i<Categories.length;i++){
     }
                      
          var data =[];
-         for(let j=0;j<titles.length;j++){
+         for(let j=0;j<4;j++){
            
-              if((WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true)  && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" && images[j].src.indexOf('http')==0  && typeof(link[j])!="undefined" && typeof(images[j])!="undefined")
+              if(/*(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true)  &&*/ typeof(titles[j])!="undefined" && images[j].src.indexOf('http')==0  && typeof(link[j])!="undefined")
                     {
                    data.push({
-                       time : time[j].textContent,
+                       time :new Date.now(),
                        title : titles[j].textContent,
                        link : link[j].href,
-                       images : images[j].src,
+                       images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:categoryName,
                        source :"BBC NEWS",
                        sourceLink:"https://bbc.com",
-                       sourceLogo:""
+                       sourceLogo:"logo",
+                       type:"article",
+                       author:null
                       });
                    }
                }
@@ -164,7 +166,7 @@ const GetContent = async(page,data)=>{
             return text;
         });
     
-    if(item.images!=null && Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -174,7 +176,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content!=null ? Content.substring(0,50) : null
+                content:Content
           });
        }
     
