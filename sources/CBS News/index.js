@@ -18,7 +18,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['sports','news/canada','news/politics','news/opinion','news/business','news/health','news/entertainment','news/technology','news/investigates'];
+var Categories=['Sports','news/Canada','news/Politics','news/Opinion','news/Business','news/Health','news/Entertainment','news/Technology','news/Investigates'];
 
 const CBC = () =>{
     (async()=>{
@@ -79,16 +79,15 @@ for(let i=0;i<Categories.length;i++){
                        if(searchIn.indexOf("minutes")!=-1){
                            return true;
                           }else{
-                        if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
-                          return true;
-                         }else{
                             return false;
-                        }
-                  }
+                       }
             }
         }
     }
     }
+
+    var start =0;
+    var end =1;
 
     //change category name
     var cateogryName = "";
@@ -113,6 +112,13 @@ for(let i=0;i<Categories.length;i++){
       var author =null;
       if(Category==="news/opinion"){
           author = document.querySelectorAll(".authorName");
+          end =3;
+      }else{
+          if(Category==="sports"){
+              end = 1;
+          }else{
+            end =3;
+          }
       }
     
      // change the source logo to http 
@@ -123,15 +129,16 @@ for(let i=0;i<Categories.length;i++){
   
 
          var data =[];
-         for(let j=0;j<titles.length;j++){
+         for(let j=start;j<end;j++){
            
-              if((j!=1 && j!=2 && j!=3) && WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
-                    {
+              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0)
+                {
+
                    data.push({
-                       time : time[j].textContent,
+                       time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : images[j].src,
+                       images : j==0 ? (typeof images[j]!="undefined" ? images[j].src : null) : null,
                        Category:cateogryName,
                        source :"CBC NEWS",
                        sourceLink:"https://www.cbc.ca",
@@ -148,7 +155,6 @@ for(let i=0;i<Categories.length;i++){
                    AllData.push(item)
                });
        }
-      console.log(AllData);
   
      await GetContent(page,AllData);
      await page.waitFor(20000);
@@ -166,7 +172,6 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-       // console.log(url);
 
         await page.goto(url);
 
@@ -185,7 +190,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null &&  Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,

@@ -24,7 +24,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['sports', 'news/canada', 'news/politics', 'news/opinion', 'news/business', 'news/health', 'news/entertainment', 'news/technology', 'news/investigates'];
+var Categories = ['Sports', 'news/Canada', 'news/Politics', 'news/Opinion', 'news/Business', 'news/Health', 'news/Entertainment', 'news/Technology', 'news/Investigates'];
 
 var CBC = function CBC() {
   (function _callee() {
@@ -111,17 +111,15 @@ var CBC = function CBC() {
                       if (searchIn.indexOf("minutes") != -1) {
                         return true;
                       } else {
-                        if (searchIn.startsWith("1 hour") != false || searchIn.startsWith("2 hours") != false || searchIn.startsWith("an hour") != false) {
-                          return true;
-                        } else {
-                          return false;
-                        }
+                        return false;
                       }
                     }
                   }
                 }
-              }; //change category name
+              };
 
+              var start = 0;
+              var end = 1; //change category name
 
               var cateogryName = "";
 
@@ -145,6 +143,13 @@ var CBC = function CBC() {
 
               if (Category === "news/opinion") {
                 author = document.querySelectorAll(".authorName");
+                end = 3;
+              } else {
+                if (Category === "sports") {
+                  end = 1;
+                } else {
+                  end = 3;
+                }
               } // change the source logo to http 
 
 
@@ -154,13 +159,13 @@ var CBC = function CBC() {
               var links = document.querySelectorAll(linkClassName);
               var data = [];
 
-              for (var j = 0; j < titles.length; j++) {
-                if (j != 1 && j != 2 && j != 3 && WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0 && typeof images[j] != "undefined") {
+              for (var j = start; j < end; j++) {
+                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
                   data.push({
-                    time: time[j].textContent,
+                    time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: images[j].src,
+                    images: j == 0 ? typeof images[j] != "undefined" ? images[j].src : null : null,
                     Category: cateogryName,
                     source: "CBC NEWS",
                     sourceLink: "https://www.cbc.ca",
@@ -186,19 +191,18 @@ var CBC = function CBC() {
             break;
 
           case 41:
-            console.log(AllData);
-            _context.next = 44;
+            _context.next = 43;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context.next = 46;
+          case 43:
+            _context.next = 45;
             return regeneratorRuntime.awrap(page.waitFor(20000));
 
-          case 46:
-            _context.next = 48;
+          case 45:
+            _context.next = 47;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
+          case 47:
           case "end":
             return _context.stop();
         }
@@ -223,8 +227,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; // console.log(url);
-
+          url = item.link;
           _context2.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
@@ -245,7 +248,7 @@ var GetContent = function GetContent(page, data) {
         case 9:
           Content = _context2.sent;
 
-          if (item.images != null && Content != null && Content != "") {
+          if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
