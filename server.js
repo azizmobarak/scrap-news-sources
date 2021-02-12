@@ -18,9 +18,17 @@ const PORT = process.env.PORT || 3232;
 
 //const MSNBC = require('./sources/MSNBC');
 
-const Gardian = require('./sources/The Guardian');
+//const Gardian = require('./sources/The Guardian');
 
-Gardian();
+//const NEWYORKTIMES = require("./sources/The New York Times");
+
+//const WALLSTREET = require('./sources/The Wall Street Journal');
+
+//const WASHINGTONPOST = require('./sources/The Washington Post');
+
+const VICENEWS = require('./sources/Vice News');
+
+VICENEWS();
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
