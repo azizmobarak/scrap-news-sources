@@ -124,9 +124,10 @@ var Bloomberg = function Bloomberg() {
               // change the source logo to http 
 
 
-              var titles = document.querySelectorAll('.story-package-module__story__headline-link');
-              var images = document.querySelectorAll('.bb-lazy-img__image');
-              var time = document.querySelectorAll('time.hub-timestamp'); //change category name
+              var titles = document.querySelector('.single-story-module__headline-link');
+              var images = document.querySelector('.single-story-module img');
+              var time = document.querySelector('.single-story-module time');
+              var link = document.querySelector('.single-story-module a'); //change category name
 
               var cateogryName = "";
 
@@ -146,14 +147,15 @@ var Bloomberg = function Bloomberg() {
 
 
               var data = [];
+              var keepNum = 0;
 
-              for (var j = 0; j < images.length; j++) {
-                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof titles[j] != "undefined") {
+              for (var j = 0; j < 1; j++) {
+                if (WordExist(typeof time == "undefined" ? "nothing" : time.textContent) == true && typeof titles != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
-                    link: titles[j].href,
-                    images: typeof images[j] != "undefined" ? images[j].src : null,
+                    title: titles.trim(),
+                    link: link.href,
+                    images: typeof images[j - KeepNum] != "undefined" ? images[j - KeepNum].src : null,
                     Category: cateogryName,
                     source: "Bloomberg",
                     sourceLink: "https://www.bloomberg.com/",
