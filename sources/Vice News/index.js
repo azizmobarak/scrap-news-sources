@@ -177,7 +177,7 @@ const GetContent = async(page,data)=>{
 
     var imageItem="";
      if(item.images===""){
-        imageItem=page.evaluate(()=>{
+        imageItem= await page.evaluate(()=>{
         try{
         return document.querySelector('.article__longform__lede-image source').srcset.substring(0,document.querySelector('.article__longform__lede-image source').srcset.indexOf('*')-1);
        }catch{
