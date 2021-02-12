@@ -116,7 +116,7 @@ for(let i=0;i<Categories.length;i++){
          var data =[];
          for(let j=0;j<4;j++){
            
-              if(/*(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true)  &&*/ typeof(titles[j])!="undefined" && images[j].src.indexOf('http')==0  && typeof(link[j])!="undefined")
+              if((WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true)  && typeof(titles[j])!="undefined" && images[j].src.indexOf('http')==0  && typeof(link[j])!="undefined")
                     {
                    data.push({
                        time :Date.now(),
@@ -162,7 +162,7 @@ const GetContent = async(page,data)=>{
         await page.goto(url);
 
         var Content = await page.evaluate(()=>{
-            var text =  document.querySelector('.ssrcss-5h7eao-ArticleWrapper')==null ? null : document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerText.replace('Related Topics','').replace('IMAGE COPYRIGHT','').replace('Share','');
+            var text =  document.querySelector('.ssrcss-5h7eao-ArticleWrapper')==null ? null : document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerText.replaceAll('Related Topics','').replaceAll('IMAGE COPYRIGHT','').replaceAll('Share','');
             return text;
         });
     
