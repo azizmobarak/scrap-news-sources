@@ -2,11 +2,17 @@ const dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3232;
-//const ABC_NEWS = require('./sources/ABC News');
+
+const ABC_NEWS = require('./sources/ABC News');
+ABC_NEWS();
 //const Bloomberg = require('./sources/Bloomberg');
+
 //const CBC = require('./sources/CBS News');
+
 //const CNET = require('./sources/CNET');
+
 //const CNN = require('./sources/CNN');
+
 //const FOXNEWS = require('./sources/Fox News Channel');
 
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
@@ -26,9 +32,9 @@ const PORT = process.env.PORT || 3232;
 
 //const WASHINGTONPOST = require('./sources/The Washington Post');
 
-const VICENEWS = require('./sources/Vice News');
+//const VICENEWS = require('./sources/Vice News');
 
-VICENEWS();
+
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

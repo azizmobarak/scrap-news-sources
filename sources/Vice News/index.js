@@ -188,7 +188,7 @@ const GetContent = async(page,data)=>{
      }
     
 
-    if(((Content!=null && Content!="") && item.type==="article") || item.type==="video"){
+    if(((Content!=null && Content!="") && item.type==="article")){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
