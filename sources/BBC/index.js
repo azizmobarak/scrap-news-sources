@@ -23,7 +23,7 @@ var Categories=['coronavirus','world','UK','business','technology','science_and_
 const BBC = () =>{
     (async()=>{
        var browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
