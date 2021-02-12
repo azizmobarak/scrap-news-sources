@@ -133,7 +133,7 @@ var BBC = function BBC() {
                 /*(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true)  &&*/
                 typeof titles[j] != "undefined" && images[j].src.indexOf('http') == 0 && typeof link[j] != "undefined") {
                   data.push({
-                    time: new Date.now(),
+                    time: Date.now(),
                     title: titles[j].textContent,
                     link: link[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
