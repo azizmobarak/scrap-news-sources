@@ -214,7 +214,11 @@ var GetContent = function GetContent(page, data) {
 
               return allcontent;
             } catch (_unused) {
-              return null;
+              try {
+                return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').textContent.substring(100, 1100);
+              } catch (_unused2) {
+                return null;
+              }
             }
           }));
 

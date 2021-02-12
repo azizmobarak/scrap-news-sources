@@ -174,7 +174,11 @@ const GetContent = async(page,data)=>{
                }
                return allcontent;
             }catch{
+               try{
+                return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').textContent.substring(100,1100);
+               }catch{
                 return null;
+               }
             }
         });
     
