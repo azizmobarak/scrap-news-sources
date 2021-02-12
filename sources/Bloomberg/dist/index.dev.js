@@ -129,7 +129,7 @@ var Bloomberg = function Bloomberg() {
               var time = document.querySelector('.single-story-module time');
               var link = document.querySelector('.single-story-module a');
 
-              if (iCategory === "opinion" || Category === "businessweek" || Category === "new-economy-forum") {
+              if (Category === "opinion" || Category === "businessweek" || Category === "new-economy-forum") {
                 time.textContent = "minute";
               } //change category name
 

@@ -99,7 +99,7 @@ for(let i=0;i<Categories.length;i++){
     var link = document.querySelector('.single-story-module a')
     
 
-    if(iCategory==="opinion" || Category==="businessweek" || Category==="new-economy-forum"){
+    if(Category==="opinion" || Category==="businessweek" || Category==="new-economy-forum"){
         time.textContent="minute";
     }
 
