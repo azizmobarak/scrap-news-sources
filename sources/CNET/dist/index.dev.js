@@ -24,7 +24,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['topics/security', 'topics/tech-industry', 'topics/internet', 'topics/culture', 'topics/mobile', 'topics/sci-tech', 'topics/computers', 'personal-finance/investing', 'health/fitness', 'health/healthy-eating'];
+var Categories = ['topics/Security', 'topics/tech-industry', 'topics/Internet', 'topics/Culture', 'topics/Mobile', 'topics/sci-tech', 'topics/Computers', 'personal-finance/Investing', 'health/Fitness', 'health/healthy-eating'];
 
 var CNET = function CNET() {
   (function _callee() {
@@ -99,13 +99,13 @@ var CNET = function CNET() {
                         var cateogryName = "";
 
                         if (i == 9) {
-                          cateogryName = "health";
+                          cateogryName = "Health";
                         } else {
                           if (Category.indexOf("tech") != -1) {
-                            cateogryName = "technology";
+                            cateogryName = "Technology";
                           } else {
                             if (Category.indexOf('sci-tech') != -1) {
-                              cateogryName = "science,technology";
+                              cateogryName = "Science,Technology";
                             } else {
                               cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
                             }
@@ -118,12 +118,12 @@ var CNET = function CNET() {
                         var linkClassName = ".assetBody a";
                         var imageClassName = ".assetThumb>a>figure>img";
 
-                        if (cateogryName === "culture") {
+                        if (cateogryName === "Culture") {
                           titleClassName = ".assetText a";
                           linkClassName = ".assetText a";
                           imageClassName = ".assetBody>a>figure>img";
                         } else {
-                          if (cateogryName === "investing" || cateogryName === "fitness" || cateogryName === "health") {
+                          if (cateogryName === "Investing" || cateogryName === "Fitness" || cateogryName === "Health") {
                             titleClassName = ".latestScrollItems .c-universalLatest_text h3";
                             linkClassName = ".latestScrollItems .c-universalLatest_text>a";
                             imageClassName = ".c-universalLatest_image>a>span>img";
@@ -137,11 +137,11 @@ var CNET = function CNET() {
                         var data = [];
 
                         for (var j = 0; j < 5; j++) {
-                          if (typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0 && typeof images[j] != "undefined") {
+                          if (typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
                             data.push({
                               title: titles[j].textContent.trim(),
                               link: links[j].href,
-                              images: images[j].src,
+                              images: typeof images[j] != "undefined" ? images[j].src : null,
                               Category: cateogryName,
                               source: "CNET",
                               sourceLink: "https://www.cnet.com",
@@ -185,15 +185,14 @@ var CNET = function CNET() {
             break;
 
           case 15:
-            console.log(AllData);
-            _context2.next = 18;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 18:
-            _context2.next = 20;
+          case 17:
+            _context2.next = 19;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 20:
+          case 19:
           case "end":
             return _context2.stop();
         }
@@ -240,7 +239,7 @@ var GetContent = function GetContent(page, data) {
         case 9:
           Content = _context3.sent;
 
-          if (item.images != null && Content != null && Content != "") {
+          if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
