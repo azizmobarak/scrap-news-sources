@@ -100,7 +100,9 @@ for(let i=0;i<Categories.length;i++){
     
 
     if(Category==="opinion" || Category==="businessweek" || Category==="new-economy-forum"){
-        time.textContent="minute";
+        var elem = document.createTextNode('p')
+        elem.textContent="minute";
+        time=elem;
     }
 
     //change category name
