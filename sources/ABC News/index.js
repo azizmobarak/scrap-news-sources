@@ -160,7 +160,7 @@ const GetContent = async(page,data)=>{
            }catch{
                return null;
            }
-        })
+        });
     
     if(item.images!=null && Content!=null && Content!=""){
           AllData_WithConetent.push({
