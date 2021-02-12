@@ -173,6 +173,18 @@ const GetContent = async(page,data)=>{
             return null;
            }
         });
+
+
+    var imageItem="";
+     if(item.images===""){
+        imageItem=page.evaluate(()=>{
+        try{
+        return document.querySelector('.article__longform__lede-image source').srcset.substring(0,document.querySelector('.article__longform__lede-image source').srcset.indexOf('*')-1);
+       }catch{
+          return null;
+        }
+      });
+     }
     
 
     if(Content!=null && Content!=""){
@@ -180,7 +192,7 @@ const GetContent = async(page,data)=>{
                 time : Date.now(),
                 title : item.title,
                 link : item.link,
-                images : item.images,
+                images : imageItem,
                 Category:item.Category,
                 source :item.source,
                 sourceLink:item.sourceLink,
