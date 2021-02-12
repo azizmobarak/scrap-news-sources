@@ -150,7 +150,7 @@ var Bloomberg = function Bloomberg() {
               var keepNum = 0;
 
               for (var j = 0; j < 1; j++) {
-                if (WordExist(typeof time == "undefined" ? "nothing" : time.textContent) == true && typeof titles != "undefined") {
+                if (WordExist(typeof time == "undefined" ? "nothing" : time.textContent) == true && typeof titles != "undefined" && titles != null) {
                   data.push({
                     time: Date.now(),
                     title: titles.textContent.trim(),
