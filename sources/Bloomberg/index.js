@@ -115,10 +115,10 @@ for(let i=0;i<Categories.length;i++){
     //////////////////////////////
 
          var data =[];
-         var keepNum=0;
+
          for(let j=0;j<1;j++){
            
-              if(WordExist(typeof(time)=="undefined" ? "nothing" : time.textContent)==true && typeof(titles)!="undefined" && titles!=null)
+              if(WordExist(time==null ? "nothing" : time.textContent)==true && titles!=null)
                     {
                    data.push({
                        time : Date.now(),
