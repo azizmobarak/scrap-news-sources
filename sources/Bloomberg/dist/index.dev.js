@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var puppeteer = require('puppeteer-extra');
 
@@ -24,9 +24,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['Politics', 'Entertainment', 'Technology', 'Health', 'Sports', 'International', 'Business'];
+var Categories = ['markets', 'technology', 'opinion', 'businessweek', 'new-economy-forum'];
 
-var ABC_NEWS = function ABC_NEWS() {
+var Bloomberg = function Bloomberg() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -52,31 +52,52 @@ var ABC_NEWS = function ABC_NEWS() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 26;
+              _context.next = 41;
               break;
             }
 
             //get the right category by number
-            Category = Categories[i]; //navigate to category sub route
+            Category = Categories[i];
+            console.log(Category);
+            _context.prev = 11;
+            _context.next = 14;
+            return regeneratorRuntime.awrap(page["goto"](['https://www.bloomberg.com/', '', Category].join('')));
 
-            _context.prev = 10;
-            _context.next = 13;
-            return regeneratorRuntime.awrap(page["goto"](['https://abcnews.go.com/', '', Category].join('')));
-
-          case 13:
-            _context.next = 19;
+          case 14:
+            _context.next = 33;
             break;
 
-          case 15:
-            _context.prev = 15;
-            _context.t0 = _context["catch"](10);
-            _context.next = 19;
-            return regeneratorRuntime.awrap(page["goto"](['https://abcnews.go.com/', '', Category].join('')));
+          case 16:
+            _context.prev = 16;
+            _context.t0 = _context["catch"](11);
+            _context.next = 20;
+            return regeneratorRuntime.awrap(page["goto"](['https://www.bloomberg.com/', '', Category].join('')));
 
-          case 19:
-            _context.next = 21;
+          case 20:
+            _context.next = 22;
+            return regeneratorRuntime.awrap(page.solveRecaptchas());
+
+          case 22:
+            _context.t1 = regeneratorRuntime;
+            _context.t2 = Promise;
+            _context.t3 = page.waitForNavigation();
+            _context.t4 = page.click(".g-recaptcha");
+            _context.next = 28;
+            return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
+              return el.click();
+            }));
+
+          case 28:
+            _context.t5 = _context.sent;
+            _context.t6 = [_context.t3, _context.t4, _context.t5];
+            _context.t7 = _context.t2.all.call(_context.t2, _context.t6);
+            _context.next = 33;
+            return _context.t1.awrap.call(_context.t1, _context.t7);
+
+          case 33:
+            _context.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              // function to look for a word inside other words for time
+              // function to look for a word inside other words
               var WordExist = function WordExist(searchIn) {
                 if (searchIn.indexOf("second") != -1) {
                   return true;
@@ -90,37 +111,53 @@ var ABC_NEWS = function ABC_NEWS() {
                       if (searchIn.indexOf("minutes") != -1) {
                         return true;
                       } else {
-                        if (searchIn.indexOf("hour") != -1) {
+                        if (searchIn.startsWith("1 hour") != false || searchIn.startsWith("2 hours") != false || searchIn.startsWith("an hour") != false) {
                           return true;
                         } else {
-                          if (searchIn.startsWith("1 hour") != false || searchIn.startsWith("2 hours") != false || searchIn.startsWith("an hour") != false) {
-                            return true;
-                          } else {
-                            return false;
-                          }
+                          return false;
                         }
                       }
                     }
                   }
                 }
-              };
+              }; // bloomberg serction one
+              // change the source logo to http 
 
-              var titles = document.querySelectorAll('.ContentRoll__Headline>h2>a.AnchorLink');
-              var images = document.querySelectorAll('.ContentRoll__Image img');
-              var time = document.querySelectorAll('.ContentRoll__Date');
+
+              var titles = document.querySelectorAll('.story-package-module__story__headline-link');
+              var images = document.querySelectorAll('.bb-lazy-img__image');
+              var time = document.querySelectorAll('time.hub-timestamp'); //change category name
+
+              var cateogryName = "";
+
+              switch (Category) {
+                case "businessweek":
+                  cateogryName = "Business";
+                  break;
+
+                case "new-economy-forum":
+                  cateogryName = "Economy";
+                  break;
+
+                default:
+                  cateogryName = Category;
+                  break;
+              } //////////////////////////////
+
+
               var data = [];
 
-              for (var j = 0; j < titles.length; j++) {
-                if (WordExist(time[j].textContent) == true) {
+              for (var j = 0; j < images.length; j++) {
+                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof titles[j] != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent,
+                    title: titles[j].textContent.trim(),
                     link: titles[j].href,
-                    images: typeof images[j] == "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "ABC NEWS",
-                    sourceLink: "https://abcnews.go.com",
-                    sourceLogo: "https://gray-wbay-prod.cdn.arcpublishing.com/resizer/fln06LgHS8awdDtCHhWoikKI7UE=/1200x675/smart/cloudfront-us-east-1.images.arcpublishing.com/gray/X3TAX5IMPBHY7EBGM6XW47YETE.jpg"
+                    images: typeof images[j] != "undefined" ? images[j].src : null,
+                    Category: cateogryName,
+                    source: "Bloomberg",
+                    sourceLink: "https://www.bloomberg.com/",
+                    sourceLogo: "bloomberg logo"
                   });
                 }
               }
@@ -128,31 +165,37 @@ var ABC_NEWS = function ABC_NEWS() {
               return data;
             }, Category));
 
-          case 21:
+          case 35:
             PageData = _context.sent;
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 23:
+          case 38:
             i++;
             _context.next = 8;
             break;
 
-          case 26:
-            _context.next = 28;
+          case 41:
+            console.log(AllData);
+            _context.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 28:
-            _context.next = 30;
+          case 44:
+            _context.next = 46;
+            return regeneratorRuntime.awrap(page.waitFor(20000));
+
+          case 46:
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 30:
+          case 48:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 15]]);
+    }, null, null, [[11, 16]]);
   })();
 };
 
@@ -172,15 +215,23 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link;
+          url = item.link; // console.log(url);
+
           _context2.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelector('.Article__Wrapper>.Article__Content') == null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
-            return text;
+            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var textArray = [];
+
+            for (var _i = 0; _i < text.length; _i++) {
+              textArray.push(text[_i].textContent);
+              textArray.push('   ');
+            }
+
+            return textArray.join('\n');
           }));
 
         case 9:
@@ -188,10 +239,8 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var auth = document.querySelector('.Byline__Author').textContent;
-              var upperCaseWords = auth.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g);
-              return upperCaseWords[0] + " " + upperCaseWords[1];
-            } catch (_unused2) {
+              return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
+            } catch (_unused) {
               return null;
             }
           }));
@@ -209,9 +258,8 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              type: 'article',
               author: author,
-              content: Content
+              content: Content != null ? Content : null
             });
           }
 
@@ -221,6 +269,9 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 17:
+          console.log(AllData_WithConetent);
+
+        case 18:
         case "end":
           return _context2.stop();
       }
@@ -228,4 +279,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = ABC_NEWS;
+module.exports = Bloomberg;

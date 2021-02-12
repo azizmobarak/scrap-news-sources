@@ -117,13 +117,13 @@ for(let i=0;i<Categories.length;i++){
          var data =[];
          for(let j=0;j<images.length;j++){
            
-              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(titles[j])!="undefined")
                     {
                    data.push({
-                       time : time[j].textContent,
+                       time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : titles[j].href,
-                       images : images[j].src,
+                       images : typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:cateogryName,
                        source :"Bloomberg",
                        sourceLink:"https://www.bloomberg.com/",
@@ -175,6 +175,13 @@ const GetContent = async(page,data)=>{
             return textArray.join('\n');
         });
     
+        var author = await page.evaluate(()=>{
+               try{
+                return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
+               }catch{
+                   return null;
+               }
+        });
 
     if(item.images!=null && Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -186,6 +193,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author:author,
                 content:Content!=null ? Content : null
           });
        }

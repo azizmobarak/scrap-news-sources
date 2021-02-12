@@ -57,7 +57,7 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-               // function to look for a word inside other words for time 
+               // function to look for a word inside other words for time
         const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;

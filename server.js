@@ -8,13 +8,14 @@ const PORT = process.env.PORT || 3232;
 //ABC_NEWS();
 
 
-const BBC = require('./sources/BBC');
+// const BBC = require('./sources/BBC');
 
-BBC();
+// BBC();
 
 
-//const Bloomberg = require('./sources/Bloomberg');
-//Bloomberg();
+const Bloomberg = require('./sources/Bloomberg');
+
+Bloomberg();
 
 
 //const CBC = require('./sources/CBS News');

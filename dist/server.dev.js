@@ -8,12 +8,12 @@ var app = express();
 var PORT = process.env.PORT || 3232; // 1 hour
 //const ABC_NEWS = require('./sources/ABC News');
 //ABC_NEWS();
+// const BBC = require('./sources/BBC');
+// BBC();
 
-var BBC = require('./sources/BBC');
+var Bloomberg = require('./sources/Bloomberg');
 
-BBC(); //const Bloomberg = require('./sources/Bloomberg');
-//Bloomberg();
-//const CBC = require('./sources/CBS News');
+Bloomberg(); //const CBC = require('./sources/CBS News');
 //const CNET = require('./sources/CNET');
 //const CNN = require('./sources/CNN');
 //const FOXNEWS = require('./sources/Fox News Channel');
