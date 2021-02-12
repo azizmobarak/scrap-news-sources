@@ -24,9 +24,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['markets', 'technology', 'opinion', 'businessweek', 'new-economy-forum'];
+var Categories = ['sports', 'news/canada', 'news/politics', 'news/opinion', 'news/business', 'news/health', 'news/entertainment', 'news/technology', 'news/investigates'];
 
-var Bloomberg = function Bloomberg() {
+var CBC = function CBC() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -61,7 +61,7 @@ var Bloomberg = function Bloomberg() {
             console.log(Category);
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.bloomberg.com/', '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](["https://www.cbc.ca/", '', Category].join('')));
 
           case 14:
             _context.next = 33;
@@ -71,7 +71,7 @@ var Bloomberg = function Bloomberg() {
             _context.prev = 16;
             _context.t0 = _context["catch"](11);
             _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.bloomberg.com/', '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](["https://www.cbc.ca/", '', Category].join('')));
 
           case 20:
             _context.next = 22;
@@ -111,7 +111,7 @@ var Bloomberg = function Bloomberg() {
                       if (searchIn.indexOf("minutes") != -1) {
                         return true;
                       } else {
-                        if (searchIn.startsWith("1 hour") != false || searchIn.startsWith("an hour") != false) {
+                        if (searchIn.startsWith("1 hour") != false || searchIn.startsWith("2 hours") != false || searchIn.startsWith("an hour") != false) {
                           return true;
                         } else {
                           return false;
@@ -120,52 +120,52 @@ var Bloomberg = function Bloomberg() {
                     }
                   }
                 }
-              }; // bloomberg serction one
-              // change the source logo to http 
-
-
-              var titles = document.querySelector('.single-story-module__headline-link');
-              var images = document.querySelector('.single-story-module img');
-              var time = document.querySelector('.single-story-module time');
-              var link = document.querySelector('.single-story-module a');
-
-              if (Category === "opinion" || Category === "businessweek" || Category === "new-economy-forum") {
-                var elem = document.createTextNode('p');
-                elem.textContent = "minute";
-                time = elem;
-              } //change category name
+              }; //change category name
 
 
               var cateogryName = "";
 
-              switch (Category) {
-                case "businessweek":
-                  cateogryName = "Business";
-                  break;
-
-                case "new-economy-forum":
-                  cateogryName = "Economy";
-                  break;
-
-                default:
-                  cateogryName = Category;
-                  break;
+              if (Category.indexOf('/') != -1) {
+                if (Category.indexOf('investigates') != -1) {
+                  cateogryName = "investing";
+                } else {
+                  cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
+                }
+              } else {
+                cateogryName = Category;
               } //////////////////////////////
+              // CBC classes by categories 
 
 
+              var titleClassName = ".card-content h3.headline";
+              var linkClassName = ".featuredArea a";
+              var imageClassName = ".cardImageWrap>figure.imageMedia>div>img";
+              var timeClassName = "div.card-content-bottom>.metadata>div>time.timeStamp";
+              var author = null;
+
+              if (Category === "news/opinion") {
+                author = document.querySelectorAll(".authorName");
+              } // change the source logo to http 
+
+
+              var titles = document.querySelectorAll(titleClassName);
+              var images = document.querySelectorAll(imageClassName);
+              var time = document.querySelectorAll(timeClassName);
+              var links = document.querySelectorAll(linkClassName);
               var data = [];
 
-              for (var j = 0; j < 1; j++) {
-                if (WordExist(time == null ? "nothing" : time.textContent) == true && titles != null) {
+              for (var j = 0; j < titles.length; j++) {
+                if (j != 1 && j != 2 && j != 3 && WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0 && typeof images[j] != "undefined") {
                   data.push({
-                    time: Date.now(),
-                    title: titles.textContent.trim(),
-                    link: link.href,
-                    images: typeof images != "undefined" ? images.src : null,
+                    time: time[j].textContent,
+                    title: titles[j].textContent.trim(),
+                    link: links[j].href,
+                    images: images[j].src,
                     Category: cateogryName,
-                    source: "Bloomberg",
-                    sourceLink: "https://www.bloomberg.com/",
-                    sourceLogo: "bloomberg logo"
+                    source: "CBC NEWS",
+                    sourceLink: "https://www.cbc.ca",
+                    sourceLogo: "cbc logo",
+                    author: author[j].textContent
                   });
                 }
               }
@@ -208,7 +208,7 @@ var Bloomberg = function Bloomberg() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -218,7 +218,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 14;
             break;
           }
 
@@ -231,10 +231,10 @@ var GetContent = function GetContent(page, data) {
         case 7:
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var text = document.querySelectorAll('div.story p');
             var textArray = [];
 
-            for (var _i = 0; _i < text.length; _i++) {
+            for (var _i = 2; _i < text.length; _i++) {
               textArray.push(text[_i].textContent);
               textArray.push('   ');
             }
@@ -244,17 +244,6 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context2.sent;
-          _context2.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
-            } catch (_unused) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context2.sent;
 
           if (item.images != null && Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -266,20 +255,19 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: author,
               content: Content != null ? Content : null
             });
           }
 
-        case 14:
+        case 11:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
+        case 14:
           console.log(AllData_WithConetent);
 
-        case 18:
+        case 15:
         case "end":
           return _context2.stop();
       }
@@ -287,4 +275,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = Bloomberg;
+module.exports = CBC;

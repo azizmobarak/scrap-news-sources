@@ -80,7 +80,7 @@ for(let i=0;i<Categories.length;i++){
                        if(searchIn.indexOf("minutes")!=-1){
                            return true;
                           }else{
-                        if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
+                        if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("an hour")!=false){
                           return true;
                          }else{
                             return false;

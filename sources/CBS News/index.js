@@ -110,6 +110,10 @@ for(let i=0;i<Categories.length;i++){
       var linkClassName=".featuredArea a";
       var imageClassName=".cardImageWrap>figure.imageMedia>div>img";
       var timeClassName="div.card-content-bottom>.metadata>div>time.timeStamp";
+      var author =null;
+      if(Category==="news/opinion"){
+          author = document.querySelectorAll(".authorName");
+      }
     
      // change the source logo to http 
     var titles = document.querySelectorAll(titleClassName)
@@ -131,7 +135,8 @@ for(let i=0;i<Categories.length;i++){
                        Category:cateogryName,
                        source :"CBC NEWS",
                        sourceLink:"https://www.cbc.ca",
-                       sourceLogo:"cbc logo"
+                       sourceLogo:"cbc logo",
+                       author:author[j].textContent
                     });
                    }
                }

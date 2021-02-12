@@ -10,11 +10,13 @@ var PORT = process.env.PORT || 3232; // 1 hour
 //ABC_NEWS();
 // const BBC = require('./sources/BBC');
 // BBC();
+// 15 min
+// const Bloomberg = require('./sources/Bloomberg');
+// Bloomberg();
 
-var Bloomberg = require('./sources/Bloomberg');
+var CBC = require('./sources/CBS News');
 
-Bloomberg(); //const CBC = require('./sources/CBS News');
-//const CNET = require('./sources/CNET');
+CBC(); //const CNET = require('./sources/CNET');
 //const CNN = require('./sources/CNN');
 //const FOXNEWS = require('./sources/Fox News Channel');
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
