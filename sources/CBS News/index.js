@@ -136,7 +136,7 @@ for(let i=0;i<Categories.length;i++){
                        source :"CBC NEWS",
                        sourceLink:"https://www.cbc.ca",
                        sourceLogo:"cbc logo",
-                       author:author[j].textContent
+                       author:author==null ? null : author[j].textContent
                     });
                    }
                }
