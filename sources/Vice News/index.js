@@ -176,12 +176,13 @@ const GetContent = async(page,data)=>{
 
 
     var imageItem="";
-     if(item.images===""){
+     if(item.images==="" || item.images.length==0){
         imageItem= await page.evaluate(()=>{
         try{
-        return document.querySelector('.article__longform__lede-image source').srcset.substring(0,document.querySelector('.article__longform__lede-image source').srcset.indexOf('*')-1);
-       }catch{
-          return null;
+            var img = document.querySelector('picture source').srcset;
+            return img.substring(0,img.indexOf('*')-1);
+         }catch{
+            return null;
         }
       });
      }
