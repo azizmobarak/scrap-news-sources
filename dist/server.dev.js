@@ -1,51 +1,33 @@
-const dotenv = require('dotenv').config();
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3232;
+"use strict";
 
-// 1 hour
+var dotenv = require('dotenv').config();
+
+var express = require('express');
+
+var app = express();
+var PORT = process.env.PORT || 3232; // 1 hour
 //const ABC_NEWS = require('./sources/ABC News');
 //ABC_NEWS();
 
+var BBC = require('./sources/BBC');
 
-const BBC = require('./sources/BBC');
-
-BBC();
-
-
-//const Bloomberg = require('./sources/Bloomberg');
+BBC(); //const Bloomberg = require('./sources/Bloomberg');
 //Bloomberg();
-
-
 //const CBC = require('./sources/CBS News');
-
 //const CNET = require('./sources/CNET');
-
 //const CNN = require('./sources/CNN');
-
 //const FOXNEWS = require('./sources/Fox News Channel');
-
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // const HBO = require('./sources/HBO');
-
 //const HuffPost = require('./sources/HuffPost');
-
 //const LosAngelesNews = require('./sources/Los Angeles Daily News');
-
 //const MSNBC = require('./sources/MSNBC');
-
 //const Gardian = require('./sources/The Guardian');
-
 //const NEWYORKTIMES = require("./sources/The New York Times");
-
 //const WALLSTREET = require('./sources/The Wall Street Journal');
-
 //const WASHINGTONPOST = require('./sources/The Washington Post');
-
 //const VICENEWS = require('./sources/Vice News');
 
-
-
-app.listen(PORT, ()=>{
-    console.log('connected at '+ PORT);
+app.listen(PORT, function () {
+  console.log('connected at ' + PORT);
 });

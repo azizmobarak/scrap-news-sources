@@ -86,16 +86,16 @@ for(let i=0;i<Categories.length;i++){
 
     var categoryName=Category;
     if(categoryName==="coronavirus"){
-        categoryName="health";
+        categoryName="Health";
     }else{
         if(categoryName==="world"){
             categoryName="International";
         }else{
             if(categoryName==="science_and_environment"){
-                categoryName="science,environment";
+                categoryName="Science,Environment";
             }else{
                 if(categoryName==="entertainment_and_arts"){
-                    categoryName="entertainment,arts";
+                    categoryName="Entertainment,Art&Design";
                 }
             }
         }
@@ -129,7 +129,6 @@ for(let i=0;i<Categories.length;i++){
       console.log(AllData);
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }

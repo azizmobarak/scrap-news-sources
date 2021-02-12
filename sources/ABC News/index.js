@@ -1,3 +1,5 @@
+'use strict';
+
 const puppeteer  = require('puppeteer-extra');
 const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
@@ -36,20 +38,6 @@ const ABC_NEWS = () =>{
 
        var page = await browser.newPage(); 
 
-        // // speed up website --------------------------------------------------------------
-        // await page.setRequestInterception(true);
-        // await page.on("request", (req) => {
-        //   if (
-        //    req.resourceType() === "stylesheet" ||
-        //    req.resourceType() === "video" ||
-        //    req.resourceType() === "font"
-        //   ) {
-        //    req.abort();
-        //   } else {
-        //    req.continue();
-        //   }
-        //      });
-//    // ---------------------------------------------------------------
  
 var AllData=[]; 
 // boucle on categories started 
@@ -57,8 +45,6 @@ for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
-        console.log(Category)
-
         //navigate to category sub route
        try{
         await page.goto(['https://abcnews.go.com/','',Category].join(''));
@@ -71,7 +57,7 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-               // function to look for a word inside other words
+               // function to look for a word inside other words for time 
         const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;
@@ -182,7 +168,7 @@ const GetContent = async(page,data)=>{
        }
     
     }
-    console.log(AllData_WithConetent);
+    //AllData_WithConetent
 }
 
 

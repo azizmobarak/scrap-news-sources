@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var puppeteer = require('puppeteer-extra');
 
@@ -46,52 +46,37 @@ var ABC_NEWS = function ABC_NEWS() {
 
           case 5:
             page = _context.sent;
-            // // speed up website --------------------------------------------------------------
-            // await page.setRequestInterception(true);
-            // await page.on("request", (req) => {
-            //   if (
-            //    req.resourceType() === "stylesheet" ||
-            //    req.resourceType() === "video" ||
-            //    req.resourceType() === "font"
-            //   ) {
-            //    req.abort();
-            //   } else {
-            //    req.continue();
-            //   }
-            //      });
-            //    // ---------------------------------------------------------------
             AllData = []; // boucle on categories started 
 
             i = 0;
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 27;
+              _context.next = 26;
               break;
             }
 
             //get the right category by number
-            Category = Categories[i];
-            console.log(Category); //navigate to category sub route
+            Category = Categories[i]; //navigate to category sub route
 
-            _context.prev = 11;
-            _context.next = 14;
+            _context.prev = 10;
+            _context.next = 13;
             return regeneratorRuntime.awrap(page["goto"](['https://abcnews.go.com/', '', Category].join('')));
 
-          case 14:
-            _context.next = 20;
+          case 13:
+            _context.next = 19;
             break;
 
-          case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](11);
-            _context.next = 20;
+          case 15:
+            _context.prev = 15;
+            _context.t0 = _context["catch"](10);
+            _context.next = 19;
             return regeneratorRuntime.awrap(page["goto"](['https://abcnews.go.com/', '', Category].join('')));
 
-          case 20:
-            _context.next = 22;
+          case 19:
+            _context.next = 21;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              // function to look for a word inside other words
+              // function to look for a word inside other words for time 
               var WordExist = function WordExist(searchIn) {
                 if (searchIn.indexOf("second") != -1) {
                   return true;
@@ -143,31 +128,31 @@ var ABC_NEWS = function ABC_NEWS() {
               return data;
             }, Category));
 
-          case 22:
+          case 21:
             PageData = _context.sent;
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 24:
+          case 23:
             i++;
             _context.next = 8;
             break;
 
-          case 27:
-            _context.next = 29;
+          case 26:
+            _context.next = 28;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 29:
-            _context.next = 31;
+          case 28:
+            _context.next = 30;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 31:
+          case 30:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[11, 16]]);
+    }, null, null, [[10, 15]]);
   })();
 };
 
@@ -236,9 +221,6 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 17:
-          console.log(AllData_WithConetent);
-
-        case 18:
         case "end":
           return _context2.stop();
       }
