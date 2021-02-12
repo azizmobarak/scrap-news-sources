@@ -153,9 +153,9 @@ var Bloomberg = function Bloomberg() {
                 if (WordExist(typeof time == "undefined" ? "nothing" : time.textContent) == true && typeof titles != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles.trim(),
+                    title: titles.textContent.trim(),
                     link: link.href,
-                    images: typeof images[j - KeepNum] != "undefined" ? images[j - KeepNum].src : null,
+                    images: typeof images != "undefined" ? images.src : null,
                     Category: cateogryName,
                     source: "Bloomberg",
                     sourceLink: "https://www.bloomberg.com/",
