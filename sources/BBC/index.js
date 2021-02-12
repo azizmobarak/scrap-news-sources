@@ -176,7 +176,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content
+                content:Content.substring(0,1000)
           });
        }
     
