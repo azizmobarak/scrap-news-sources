@@ -199,6 +199,7 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : item.author,
+                type : item.type,
                 content:Content!=null ? Content : null
           });
        }
