@@ -182,26 +182,26 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 18;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url);
-
-          _context2.next = 7;
+          url = item.link;
+          console.log(url);
+          _context2.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context2.next = 9;
+        case 8:
+          _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var text = document.querySelector('.Article__Wrapper>.Article__Content') == null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
             return text;
           }));
 
-        case 9:
+        case 10:
           Content = _context2.sent;
-          _context2.next = 12;
+          _context2.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var auth = document.querySelector('.Byline__Author').textContent;
@@ -212,7 +212,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 12:
+        case 13:
           author = _context2.sent;
 
           if (item.images != null && Content != null && Content != "") {
@@ -231,12 +231,12 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 15:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
+        case 18:
         case "end":
           return _context2.stop();
       }
