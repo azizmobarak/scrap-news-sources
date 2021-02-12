@@ -149,7 +149,7 @@ var PageData = await page.evaluate((Category)=>{
        }
      // console.log(AllData);
   
-    // await GetContent(page,AllData);
+     await GetContent(page,AllData);
      await browser.close();
     })();
 }
@@ -177,7 +177,7 @@ const GetContent = async(page,data)=>{
     
         var Content = await page.evaluate(()=>{
            try{
-            var text = document.querySelector('.article-body').textContent
+            var text = document.querySelector('.article__body-components').textContent
             return text;
            }catch{
             return null;
