@@ -3,8 +3,6 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
-const blockResources = require('puppeteer-extra-plugin-block-resources');
-
 //
 
 
@@ -67,7 +65,8 @@ for(let i=0;i<Categories.length;i++){
          ]);
     }
 
-      // get the data from the page
+    try {
+     // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
             
@@ -80,23 +79,7 @@ var PageData = await page.evaluate((Category)=>{
     var imageClassName=".vice-card .vice-card-image__placeholder-image picture>source+source+source";
     var authorClassName=".vice-card .vice-card-details__byline";
 
-    // if(Category==="opinions" || Category==="world" || Category==="sports")
-    // {
-    //     titleClassName="#main-content .top-table h2>a";
-    //     linkClassName="#main-content .top-table h2>a";
-    //     imageClassName="#main-content .top-table .photo-wrapper img";
-    //     authorClassName="#main-content .top-table .author";
-    // }else{
-    //     if( Category.indexOf("books")!=-1 || Category.indexOf("movies")!=-1 || Category.indexOf("food")!=-1)
-    //     {
-    //     titleClassName="#main-content .moat-trackable h2.headline";
-    //     linkClassName="#main-content .moat-trackable h2.headline>a";
-    //     imageClassName="#main-content .moat-trackable .photo-wrapper img";
-    //     authorClassName="#main-content .moat-trackable span.author";
-    //     start=1;
-    //     }
-    // }
-
+    
     // all elements
     var titles = document.querySelectorAll(titleClassName);
     var images = document.querySelectorAll(imageClassName);
@@ -146,6 +129,13 @@ var PageData = await page.evaluate((Category)=>{
                PageData.map(item=>{
                    AllData.push(item)
                });
+
+            }catch{
+             i=i-1;
+             console.log('try again')
+            }
+
+              
        }
      // console.log(AllData);
   
