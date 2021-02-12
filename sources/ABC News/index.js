@@ -60,7 +60,11 @@ for(let i=0;i<Categories.length;i++){
         console.log(Category)
 
         //navigate to category sub route
+       try{
         await page.goto(['https://abcnews.go.com/','',Category].join(''));
+       }catch{
+        await page.goto(['https://abcnews.go.com/','',Category].join(''));
+       }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
     
