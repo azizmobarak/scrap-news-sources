@@ -98,6 +98,11 @@ for(let i=0;i<Categories.length;i++){
     var time = document.querySelector('.single-story-module time');
     var link = document.querySelector('.single-story-module a')
     
+
+    if(i==2 || i==3 || i==4){
+        time.textContent="minute";
+    }
+
     //change category name
     var cateogryName = "";
     
