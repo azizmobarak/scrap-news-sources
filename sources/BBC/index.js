@@ -76,12 +76,24 @@ for(let i=0;i<Categories.length;i++){
         }
     }
     }
+    var titleClassName="h3.gs-c-promo-heading__title";
+    var linkClassName=".gs-c-promo-body>div>a.gs-c-promo-heading";
+    var imageClassName="div.gs-c-promo-image>div>div>img";
+    var timeClassName="time.gs-o-bullet__text>span";
+   // var authorClassName=".vice-card .vice-card-details__byline";
+
+   if(Category==="coronavirus" || Category==="stories" || Category==="UK"){
+    titleClassName="h3.gs-c-promo-heading__title";
+    linkClassName="a.gs-c-promo-heading";
+    imageClassName=".gs-o-media-island img";
+    timeClassName=".gs-c-timestamp";
+   }
     
-     // change the source logo to http 
-    var titles = document.querySelectorAll('h3.gs-c-promo-heading__title');
-    var images = document.querySelectorAll('div.gs-c-promo-image>div>div>img'); //.gs-o-media-island>div>img
-    var time = document.querySelectorAll('time.gs-o-bullet__text>span');
-    var link = document.querySelectorAll('.gs-c-promo-body>div>a.gs-c-promo-heading');
+     
+    var titles = document.querySelectorAll(titleClassName);
+    var images = document.querySelectorAll(imageClassName); //.gs-o-media-island>div>img
+    var time = document.querySelectorAll(timeClassName);
+    var link = document.querySelectorAll(linkClassName);
 
 
     var categoryName=Category;
@@ -114,7 +126,7 @@ for(let i=0;i<Categories.length;i++){
                        Category:categoryName,
                        source :"BBC NEWS",
                        sourceLink:"https://bbc.com",
-                       sourceLogo:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATcAAACiCAMAAAATIHpEAAAAflBMVEX///8AAADV1dWcnJwhISH6+vrz8/MYGBg7OztaWlp0dHTPz8/s7Oz39/eXl5f8/PysrKxpaWlNTU2hoaEcHBzi4uJGRkaQkJAMDAy5ublAQEAkJCSJiYnp6elubm6vr6/b29u/v781NTV+fn5YWFgsLCzGxsYRERFjY2ODg4P3WRULAAADz0lEQVR4nO2b2VbqMBRAQ7E4QCkzogwiCvr/P3ihaZEm6SIclkK4e78RciTZq0lPBpUCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/6dRnteBvclgZvY1NpcP/SyjKea0Ia22BpbG0bG0tjny+tLONO2vyLebu7tLIMvMnAmwy8ycCbDLzJwJsMvMnAmwy8yTC8PZR5r9bq8PZiBA9k3j5XnXU0HEaT8Uso3gbW9+lw8uXp7dUV/HGqt+nw4A/M2mF4u3fWaXW9vLk7NHs8xdt3YoTH3+F6U6oj96ZU3d9b5AiPNuF6c/Td35uaenobNJzhyShcb+r9DG/KekEopzdzjBbMA/GWzJ8K2sXIWfp6a3SL2FW9CF54edu/ENar193nXn+WfTQmyOv11jgs+kizstTXW+uw6EvZZVXe2nmLmq8/ZavtI9gz6gXirei7Oda8vNWedLCPt7xB43JpZGoLxlutlRWa7ffzls9ZZgKrbG8d3R5Dm4NgvOlZykxgPb3pSav8RnR6i7OKzaPawvGmJzjZOM1Hn9l3ZXnr6oqft+NtkpVZU7uft3VWNjzubZFVXB/XdsXekt5jQbee56Irb28Hwf08I5ubwcryNnRXDMqbA/tBOCHvnVjByvKmDd/fmLe+3Xx/b449DWV6c06swXuz8v1TvDmc294+s6rWPBi4N5Xae3D+z1tipa7/jTdrkXjaut4Sp25ynP40fzOazvKKvt5+8pD73lgvNWwfquK9sDErBuptx1RXNKcpv/wtX6ybqydVkYe4NpZD9ZaLMxNfz/VCPSs0Jy5ledPZ9fKWvOVjyDja8vTmXmgpy1u+cVJ9BBagt7es1Jjcfb3p+dHYEFH2ul43x2OhFY43/bw9yLy5fsblTQ9UZR5f2fdog/GWX0Q2mu/pbeIMVra34vS1fIhzN3sL1NtIb2momae3Ur1efsJgdl459nvzjUvVPNhL2r1VomC8pc09b/ujOd885DB4f0B1PA+pFTPhlmjc2+yuOyz1zp+xl3m93pyYvTxlveCR924ZpBXh5ScuLG+/vM7KeK84QC0/rUF5O2ddH9t3a1TFPYemIzwxwsPxli4c/1Xj6y123C2pvlfz1DLjrW2oa/Q2iOOkzKy5cG9eu7wlVnDHveJU1fe45uuDaW4YyD2uE/jF+5aj73pnOemMu87G4U0G3mTgTQbeZOBNBt5k4E0G3mTgTQbeZFyHN3HXL+atdqxLf0IkJT0n+KxfvrAxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgED4BzguQleqi30iAAAAAElFTkSuQmCC"
+                       sourceLogo:""
                       });
                    }
                }
