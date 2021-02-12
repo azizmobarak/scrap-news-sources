@@ -128,7 +128,6 @@ for(let i=0;i<Categories.length;i++){
 
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
@@ -152,6 +151,16 @@ const GetContent = async(page,data)=>{
             var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
             return text;
         });
+
+        var author = await page.evaluate(()=>{
+           try{
+            const auth =document.querySelector('.Byline__Author').textContent;
+            const upperCaseWords = auth.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g);
+            return upperCaseWords[0]+" "+upperCaseWords[1]
+           }catch{
+               return null;
+           }
+        })
     
     if(item.images!=null && Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -163,13 +172,14 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                type:'article',
+                author : author,
                 content:Content
           });
        }
     
     }
     
-    console.log(AllData_WithConetent)
 }
 
 
