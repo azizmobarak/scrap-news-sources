@@ -202,8 +202,20 @@ var GetContent = function GetContent(page, data) {
         case 7:
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelector('.ssrcss-5h7eao-ArticleWrapper') == null ? null : document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerText.replaceAll('Related Topics', '').replaceAll('IMAGE COPYRIGHT', '').replaceAll('Share', '');
-            return text;
+            try {
+              var text = document.querySelectorAll('.ssrcss-5h7eao-ArticleWrapper p');
+              var allcontent = "";
+
+              for (var k = 1; k < text.length; k++) {
+                if (text[k].textContent != "") {
+                  allcontent = allcontent + "\n" + text[k].textContent;
+                }
+              }
+
+              return allcontent;
+            } catch (_unused) {
+              return null;
+            }
           }));
 
         case 9:

@@ -97,6 +97,7 @@ for(let i=0;i<Categories.length;i++){
 
 
     var categoryName=Category;
+
     if(categoryName==="coronavirus"){
         categoryName="Health";
     }else{
@@ -162,8 +163,19 @@ const GetContent = async(page,data)=>{
         await page.goto(url);
 
         var Content = await page.evaluate(()=>{
-            var text =  document.querySelector('.ssrcss-5h7eao-ArticleWrapper')==null ? null : document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerText.replaceAll('Related Topics','').replaceAll('IMAGE COPYRIGHT','').replaceAll('Share','');
-            return text;
+            try{
+                var text = document.querySelectorAll('.ssrcss-5h7eao-ArticleWrapper p');
+
+                var allcontent ="";
+                for(let k=1;k<text.length;k++){
+                 if(text[k].textContent!=""){
+                     allcontent = allcontent + "\n" + text[k].textContent
+                 }
+               }
+               return allcontent;
+            }catch{
+                return null;
+            }
         });
     
     if(Content!=null && Content!=""){
