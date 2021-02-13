@@ -128,7 +128,11 @@ var CNN = function CNN() {
                     loop = 4;
                   } else {
                     if (Category === "style") {
-                      Category === "Life&Style";
+                      Category = "Life&Style";
+                    } else {
+                      if (Category === "Americas" || Category === "Asia" || Category === "Africa" || Category === "Middle-east" || Category === "Europ") {
+                        Category = "International";
+                      }
                     }
                   }
                 }
