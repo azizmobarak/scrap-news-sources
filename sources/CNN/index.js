@@ -163,6 +163,7 @@ const GetContent = async(page,data)=>{
         await page.goto(url);
 
         Category = item.Category;
+
         var Content = await page.evaluate((Category)=>{
 
            switch(Category){
@@ -170,14 +171,22 @@ const GetContent = async(page,data)=>{
                     return document.querySelector('.Article__primary').innerText;
                 default :
 
-                    var text = document.querySelectorAll('.zn-body-text div');
+                    var classname ='.zn-body-text div';
+
+                    if(Category==="Life&Style"){
+                        classname="BasicArticle__main";
+                    }
+
+                    var text = document.querySelectorAll(classname);
                     var textArray=[];
        
                     if(typeof text !="undefined" || text != null){
-                        for(let i=0;i<text.length;i++){
+
+                        for(let i=1;i<text.length;i++){
                             textArray.push(text[i].textContent);
                             textArray.push(' ');
                               }
+
                             return textArray.join('\n');
                     }else{
                         return null;
@@ -186,15 +195,21 @@ const GetContent = async(page,data)=>{
         },Category);
 
         
-    var author = await page.evaluate(()=>{
+    var author = await page.evaluate((Category)=>{
+
+        var classname = '.metadata__byline__author>a';
+
+        if(Category==="Life&Style"){
+            classname=".Authors__writer";
+        }
             
-            var auth = document.querySelector('.metadata__byline__author>a');
+            var auth = document.querySelector(classname);
             return auth!=null ? auth.textContent : null;
 
-        });
+        },Category);
     
 
-    if(Content!=null && item.title!="Election fact check" && item.title!="Latest election news"){
+    if(Content!=null && Content!="" && item.title!="Election fact check" && item.title!="Latest election news"){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -205,7 +220,7 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content!=null ? Content : null
+                content:Content
           });
        }
     }

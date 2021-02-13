@@ -216,11 +216,17 @@ var GetContent = function GetContent(page, data) {
                 return document.querySelector('.Article__primary').innerText;
 
               default:
-                var text = document.querySelectorAll('.zn-body-text div');
+                var classname = '.zn-body-text div';
+
+                if (Category === "Life&Style") {
+                  classname = "BasicArticle__main";
+                }
+
+                var text = document.querySelectorAll(classname);
                 var textArray = [];
 
                 if (typeof text != "undefined" || text != null) {
-                  for (var _i = 0; _i < text.length; _i++) {
+                  for (var _i = 1; _i < text.length; _i++) {
                     textArray.push(text[_i].textContent);
                     textArray.push(' ');
                   }
@@ -236,15 +242,21 @@ var GetContent = function GetContent(page, data) {
         case 10:
           Content = _context2.sent;
           _context2.next = 13;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            var auth = document.querySelector('.metadata__byline__author>a');
+          return regeneratorRuntime.awrap(page.evaluate(function (Category) {
+            var classname = '.metadata__byline__author>a';
+
+            if (Category === "Life&Style") {
+              classname = ".Authors__writer";
+            }
+
+            var auth = document.querySelector(classname);
             return auth != null ? auth.textContent : null;
-          }));
+          }, Category));
 
         case 13:
           author = _context2.sent;
 
-          if (Content != null && item.title != "Election fact check" && item.title != "Latest election news") {
+          if (Content != null && Content != "" && item.title != "Election fact check" && item.title != "Latest election news") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -255,7 +267,7 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content != null ? Content : null
+              content: Content
             });
           }
 
