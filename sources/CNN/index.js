@@ -189,7 +189,7 @@ const GetContent = async(page,data)=>{
     var author = await page.evaluate(()=>{
             
             var auth = document.querySelector('.metadata__byline__author>a');
-            return typeof(auth)!=null ? auth.textContent : null;
+            return auth!=null ? auth.textContent : null;
 
         });
     

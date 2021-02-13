@@ -238,7 +238,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var auth = document.querySelector('.metadata__byline__author>a');
-            return typeof auth != null ? auth.textContent : null;
+            return auth != null ? auth.textContent : null;
           }));
 
         case 13:
