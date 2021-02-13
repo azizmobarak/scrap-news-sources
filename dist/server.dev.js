@@ -13,12 +13,16 @@ var PORT = process.env.PORT || 3232; // 1 hour
 // 15 min
 // const Bloomberg = require('./sources/Bloomberg');
 // Bloomberg();
+// 15 min
+//const CBC = require('./sources/CBS News');
+//CBC();
+//15 min
+//const CNET = require('./sources/CNET');
+//CNET();
 
-var CBC = require('./sources/CBS News');
+var CNN = require('./sources/CNN');
 
-CBC(); //const CNET = require('./sources/CNET');
-//const CNN = require('./sources/CNN');
-//const FOXNEWS = require('./sources/Fox News Channel');
+CNN(); //const FOXNEWS = require('./sources/Fox News Channel');
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // const HBO = require('./sources/HBO');
 //const HuffPost = require('./sources/HuffPost');

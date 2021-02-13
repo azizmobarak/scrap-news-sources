@@ -18,12 +18,12 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['africa','americas','asia','australia','europe','india','middle-east','uk','politics','business','health','travel/news','travel/food-and-drink','style','entertainment','sport'];
+var Categories=['Africa','Americas','Asia','Australia','Europe','India','Middle-east','Uk','Politics','Business','Health','travel/news','travel/food-and-drink','style','Entertainment','Sport'];
 
 const CNN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -76,7 +76,7 @@ for(let i=0;i<Categories.length;i++){
       
       if(Category.indexOf('/')!=-1){
           if(Category.indexOf("food-and-drink")!=-1){
-                Category="food&drink";
+                Category="Food&Drink";
           }else{
               Category=Category.substring(Category.indexOf("/")+1,Category.length);
           }
@@ -102,7 +102,7 @@ for(let i=0;i<Categories.length;i++){
                 loop=4;
           }else{
               if(Category==="style"){
-                  Category==="life&style";
+                  Category==="Life&Style";
               }
           }
       }
@@ -121,12 +121,12 @@ for(let i=0;i<Categories.length;i++){
 
          for(let j=0;j<loop;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(images[j])!="undefined" && images[j].src.indexOf('http')==0 && typeof(links[j])!="undefined")
+              if(typeof(titles[j])!="undefined" && images[j].src.indexOf('http')==0 && typeof(links[j])!="undefined")
                     {
                    data.push({
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       image:images[j].src,
+                       image:typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:Category,
                        source :"CNN",
                        sourceLink:"https://edition.cnn.com/",
@@ -144,7 +144,6 @@ for(let i=0;i<Categories.length;i++){
        }
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
@@ -181,9 +180,16 @@ const GetContent = async(page,data)=>{
                     return textArray.join('\n');
            }
         },Category);
+
+        var author = await page.evaluate(()=>{
+            
+            var auth = document.querySelector('.metadata__byline__author>a');
+            return typeof(auth)!=null ? auth.textContent : null;
+
+        });
     
 
-    if(item.image!=null && Content!=null && item.title!="Election fact check" && item.title!="Latest election news"){
+    if(Content!=null && item.title!="Election fact check" && item.title!="Latest election news"){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -193,6 +199,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author : author,
                 content:Content!=null ? Content : null
           });
        }

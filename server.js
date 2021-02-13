@@ -16,13 +16,16 @@ const PORT = process.env.PORT || 3232;
 // const Bloomberg = require('./sources/Bloomberg');
 // Bloomberg();
 
+// 15 min
+//const CBC = require('./sources/CBS News');
+//CBC();
 
-const CBC = require('./sources/CBS News');
-CBC();
-
+//15 min
 //const CNET = require('./sources/CNET');
+//CNET();
 
-//const CNN = require('./sources/CNN');
+const CNN = require('./sources/CNN');
+CNN();
 
 //const FOXNEWS = require('./sources/Fox News Channel');
 

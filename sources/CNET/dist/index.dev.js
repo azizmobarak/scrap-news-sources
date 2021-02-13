@@ -24,7 +24,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['topics/Security', 'topics/tech-industry', 'topics/Internet', 'topics/Culture', 'topics/Mobile', 'topics/sci-tech', 'topics/Computers', 'personal-finance/Investing', 'health/Fitness', 'health/healthy-eating'];
+var Categories = ['topics/Security', 'topics/tech-industry', 'topics/Internet', 'topics/Culture', 'topics/Mobile', 'topics/sci-tech', 'topics/Computers', 'personal-finance/Investing', 'health/Fitness', 'health/healthy-eating', 'health/sleep', 'health/personal-care'];
 
 var CNET = function CNET() {
   (function _callee() {
@@ -36,7 +36,7 @@ var CNET = function CNET() {
           case 0:
             _context2.next = 2;
             return regeneratorRuntime.awrap(puppeteer.launch({
-              headless: true,
+              headless: false,
               args: ['--enable-features=NetworkService', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--shm-size=3gb']
             }));
 
@@ -99,7 +99,7 @@ var CNET = function CNET() {
                         var cateogryName = "";
 
                         if (i == 9) {
-                          cateogryName = "Health";
+                          cateogryName = "Health,Food";
                         } else {
                           if (Category.indexOf("tech") != -1) {
                             cateogryName = "Technology";
@@ -107,7 +107,23 @@ var CNET = function CNET() {
                             if (Category.indexOf('sci-tech') != -1) {
                               cateogryName = "Science,Technology";
                             } else {
-                              cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
+                              if (Category.indexOf('sleep') != -1 || cateogryName.indexOf('care') != -1 || Category.indexOf('fitness')) {
+                                cateogryName = "Health";
+                              } else {
+                                if (Category.indexOf('Computers') != -1) {
+                                  cateogryName = "Technology," + Category.substring(Category.indexOf('/') + 1, Category.length);
+                                } else {
+                                  if (Category.indexOf('Mobile') != -1) {
+                                    cateogryName = "Technology," + Category.substring(Category.indexOf('/') + 1, Category.length);
+                                  } else {
+                                    if (Category.indexOf('Internet') != -1) {
+                                      cateogryName = "Technology," + Category.substring(Category.indexOf('/') + 1, Category.length);
+                                    } else {
+                                      cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
+                                    }
+                                  }
+                                }
+                              }
                             }
                           }
                         } //////////////////////////////
@@ -117,13 +133,18 @@ var CNET = function CNET() {
                         var titleClassName = ".assetBody h2";
                         var linkClassName = ".assetBody a";
                         var imageClassName = ".assetThumb>a>figure>img";
+                        var authorClassName = ".assetAuthor";
+
+                        if (Category.indexOf('health') != -1 || Category.indexOf('Investing') != -1) {
+                          authorClassName = ".c-metaText_link";
+                        }
 
                         if (cateogryName === "Culture") {
                           titleClassName = ".assetText a";
                           linkClassName = ".assetText a";
                           imageClassName = ".assetBody>a>figure>img";
                         } else {
-                          if (cateogryName === "Investing" || cateogryName === "Fitness" || cateogryName === "Health") {
+                          if (cateogryName === "Investing" || cateogryName === "Health") {
                             titleClassName = ".latestScrollItems .c-universalLatest_text h3";
                             linkClassName = ".latestScrollItems .c-universalLatest_text>a";
                             imageClassName = ".c-universalLatest_image>a>span>img";
@@ -134,10 +155,11 @@ var CNET = function CNET() {
                         var titles = document.querySelectorAll(titleClassName);
                         var images = document.querySelectorAll(imageClassName);
                         var links = document.querySelectorAll(linkClassName);
+                        var authors = document.querySelectorAll(authorClassName);
                         var data = [];
 
-                        for (var j = 0; j < 5; j++) {
-                          if (typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
+                        for (var j = 0; j < 3; j++) {
+                          if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                             data.push({
                               title: titles[j].textContent.trim(),
                               link: links[j].href,
@@ -145,7 +167,8 @@ var CNET = function CNET() {
                               Category: cateogryName,
                               source: "CNET",
                               sourceLink: "https://www.cnet.com",
-                              sourceLogo: "cnet logo"
+                              sourceLogo: "cnet logo",
+                              author: typeof authors[j] != 'undefined' ? authors[j].textContent.trim() : null
                             });
                           }
                         }
@@ -186,13 +209,9 @@ var CNET = function CNET() {
 
           case 15:
             _context2.next = 17;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
-
-          case 17:
-            _context2.next = 19;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 19:
+          case 17:
           case "end":
             return _context2.stop();
         }
@@ -249,6 +268,7 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
+              author: item.author,
               content: Content != null ? Content : null
             });
           }

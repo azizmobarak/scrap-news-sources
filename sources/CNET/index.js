@@ -18,12 +18,12 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['topics/Security','topics/tech-industry','topics/Internet','topics/Culture','topics/Mobile','topics/sci-tech','topics/Computers','personal-finance/Investing','health/Fitness','health/healthy-eating'];
+var Categories=['topics/Security','topics/tech-industry','topics/Internet','topics/Culture','topics/Mobile','topics/sci-tech','topics/Computers','personal-finance/Investing','health/Fitness','health/healthy-eating','health/sleep','health/personal-care'];
 
 const CNET = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -69,7 +69,7 @@ var PageData = await page.evaluate((Category)=>{
            var cateogryName = "";
     
           if(i==9){
-              cateogryName="Health"
+              cateogryName="Health,Food"
           }else{
             if(Category.indexOf("tech")!=-1){
             cateogryName = "Technology";
@@ -77,7 +77,23 @@ var PageData = await page.evaluate((Category)=>{
                 if(Category.indexOf('sci-tech')!=-1){
                     cateogryName = "Science,Technology";
                 }else{
-                    cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
+                   if(Category.indexOf('sleep')!=-1 || cateogryName.indexOf('care')!=-1 || Category.indexOf('fitness')){
+                       cateogryName="Health";
+                   }else{
+                    if(Category.indexOf('Computers')!=-1){
+                        cateogryName="Technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
+                    }else{
+                        if(Category.indexOf('Mobile')!=-1){
+                            cateogryName="Technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
+                        }else{
+                            if(Category.indexOf('Internet')!=-1){
+                                cateogryName="Technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
+                            }else{
+                                cateogryName=Category.substring(Category.indexOf('/')+1,Category.length);
+                            }
+                        }
+                    }
+                   }
                 }
            }
          }
@@ -88,13 +104,19 @@ var PageData = await page.evaluate((Category)=>{
       var titleClassName=".assetBody h2";
       var linkClassName=".assetBody a";
       var imageClassName=".assetThumb>a>figure>img";
+      var authorClassName=".assetAuthor";
+
+      if(Category.indexOf('health')!=-1 || Category.indexOf('Investing')!=-1){
+          authorClassName=".c-metaText_link"
+      }
+
 
       if(cateogryName==="Culture"){
            titleClassName=".assetText a";
            linkClassName=".assetText a";
            imageClassName=".assetBody>a>figure>img";
       }else{
-          if(cateogryName==="Investing" || cateogryName==="Fitness" || cateogryName==="Health"){
+          if(cateogryName==="Investing" || cateogryName==="Health"){
             titleClassName=".latestScrollItems .c-universalLatest_text h3";
             linkClassName=".latestScrollItems .c-universalLatest_text>a";
             imageClassName=".c-universalLatest_image>a>span>img";
@@ -105,12 +127,13 @@ var PageData = await page.evaluate((Category)=>{
     var titles = document.querySelectorAll(titleClassName)
     var images =  document.querySelectorAll(imageClassName);
     var links = document.querySelectorAll(linkClassName);
+    var authors = document.querySelectorAll(authorClassName);
   
 
          var data =[];
-         for(let j=0;j<5;j++){
+         for(let j=0;j<3;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0)
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
                     {
                    data.push({
                        title : titles[j].textContent.trim(),
@@ -119,7 +142,8 @@ var PageData = await page.evaluate((Category)=>{
                        Category:cateogryName,
                        source :"CNET",
                        sourceLink:"https://www.cnet.com",
-                       sourceLogo:"cnet logo"
+                       sourceLogo:"cnet logo",
+                       author:typeof authors[j]!='undefined' ? authors[j].textContent.trim() : null
                     });
                    }
                }
@@ -132,7 +156,7 @@ var PageData = await page.evaluate((Category)=>{
                });
        }
   
-     await GetContent(page,AllData);
+    // await GetContent(page,AllData);
      await browser.close();
     })();
 }
@@ -176,6 +200,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author : item.author,
                 content:Content!=null ? Content : null
           });
        }
