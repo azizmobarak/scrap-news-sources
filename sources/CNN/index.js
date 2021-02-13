@@ -173,15 +173,20 @@ const GetContent = async(page,data)=>{
                     var text = document.querySelectorAll('.zn-body-text div');
                     var textArray=[];
        
-                    for(let i=0;i<text.length;i++){
-                    textArray.push(text[i].textContent);
-                    textArray.push(' ');
-                      }
-                    return textArray.join('\n');
+                    if(typeof text !="undefined" || text != null){
+                        for(let i=0;i<text.length;i++){
+                            textArray.push(text[i].textContent);
+                            textArray.push(' ');
+                              }
+                            return textArray.join('\n');
+                    }else{
+                        return null;
+                    }
            }
         },Category);
 
-        var author = await page.evaluate(()=>{
+        
+    var author = await page.evaluate(()=>{
             
             var auth = document.querySelector('.metadata__byline__author>a');
             return typeof(auth)!=null ? auth.textContent : null;

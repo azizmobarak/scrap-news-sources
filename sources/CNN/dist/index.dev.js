@@ -219,12 +219,17 @@ var GetContent = function GetContent(page, data) {
                 var text = document.querySelectorAll('.zn-body-text div');
                 var textArray = [];
 
-                for (var _i = 0; _i < text.length; _i++) {
-                  textArray.push(text[_i].textContent);
-                  textArray.push(' ');
+                if (typeof text != "undefined" || text != null) {
+                  for (var _i = 0; _i < text.length; _i++) {
+                    textArray.push(text[_i].textContent);
+                    textArray.push(' ');
+                  }
+
+                  return textArray.join('\n');
+                } else {
+                  return null;
                 }
 
-                return textArray.join('\n');
             }
           }, Category));
 
