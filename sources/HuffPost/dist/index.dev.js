@@ -224,7 +224,7 @@ var HuffPost = function HuffPost() {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
                   data.push({
                     time: Date.now(),
-                    title: typeof titles[j] != "undefined" ? titles[j].textContent.trim() : null,
+                    title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
                     Category: cateogryName,
