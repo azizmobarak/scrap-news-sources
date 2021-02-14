@@ -19,7 +19,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['news/us-news','impact/business','section/health','entertainment/celebrity','entertainment/arts','life/style','life/taste','news/media','news/world-news','entertainment/tv','life/travel','voices/women','life/relationships','news-australia','news-canada','news-uk'];
+var Categories=['news/us-news','impact/Business','section/Health','entertainment/Celebrity','entertainment/arts','life/style','life/taste','news/media','news/world-news','entertainment/tv','life/Travel','voices/women','life/relationships','news-australia','news-canada','news-uk'];
 
 const HuffPost = () =>{
     (async()=>{
@@ -95,24 +95,14 @@ for(let i=0;i<Categories.length;i++){
          ]);
     }
 
-    // await page.screenshot({path: 'images/'+i+'.png'});
-     
-    // var body = await page.$eval('body',b=>b);
-    // var body = await page.content();
-    //  fs.writeFile("images/test.txt",body, function(err) {
-    //     if(err) {
-    //         return console.log(err);
-    //     }
-    //     console.log("The file was saved!");
-    // }); 
-
-      // get the data from the page
+   
 var PageData = await page.evaluate((Category,url)=>{
 
      // HuffPost Classes
      var titleClassName=".zone__content a.card__headline--long>h2";
      var linkClassName=".zone__content a.card__headline--long";
      var imageClassName=".zone__content .card__image__src picture img.landscape";
+     var authorClassName=".card__byline__author__name-title";
 
      if(Category.indexOf("life")!=-1){
        titleClassName=".zone--latest .zone__content h3.card__headline__text";
@@ -125,6 +115,7 @@ var PageData = await page.evaluate((Category,url)=>{
       var titles = document.querySelectorAll(titleClassName);
       var links = document.querySelectorAll(linkClassName);
       var images = document.querySelectorAll(imageClassName);
+      var author = document.querySelectorAll(authorClassName);
   
     
     //change category name
@@ -154,17 +145,18 @@ var PageData = await page.evaluate((Category,url)=>{
          var data =[];
          for(let j=0;j<3;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0)
                     {
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : images[j].src,
+                       images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:cateogryName,
                        source :"HuffPost",
                        sourceLink:url,
-                       sourceLogo:"HuffPost logo"
+                       sourceLogo:"HuffPost logo",
+                       author:typeof(author)!="undefined" ? author[j].textContent : null
                     });
                    }
                }
@@ -177,7 +169,6 @@ var PageData = await page.evaluate((Category,url)=>{
                });
        }
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
@@ -219,7 +210,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null && Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,

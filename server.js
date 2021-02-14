@@ -34,10 +34,11 @@ const PORT = process.env.PORT || 3232;
 
 
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
-const HBO = require('./sources/HBO');
-HBO();
+//const HBO = require('./sources/HBO');
+//HBO();
 
-//const HuffPost = require('./sources/HuffPost');
+const HuffPost = require('./sources/HuffPost');
+HuffPost();
 
 //const LosAngelesNews = require('./sources/Los Angeles Daily News');
 

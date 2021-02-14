@@ -141,16 +141,10 @@ var HBO = function HBO() {
             break;
 
           case 41:
-            // result final with small content description
-            console.log(AllData);
-            _context.next = 44;
-            return regeneratorRuntime.awrap(page.waitFor(20000));
-
-          case 44:
-            _context.next = 46;
+            _context.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
+          case 43:
           case "end":
             return _context.stop();
         }

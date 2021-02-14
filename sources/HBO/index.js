@@ -110,9 +110,8 @@ for(let i=0;i<Categories.length;i++){
        }
 
        // result final with small content description
-      console.log(AllData);
+     // ==> console.log(AllData);
   
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
