@@ -29,7 +29,11 @@ const PORT = process.env.PORT || 3232;
 //CNN();
 
 const FOXNEWS = require('./sources/Fox News Channel');
-console.log(FOXNEWS());
+
+(async()=>{
+    var result = await FOXNEWS();
+    console.log(result);
+});
 
 
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
