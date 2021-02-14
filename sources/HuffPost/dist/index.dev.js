@@ -230,8 +230,8 @@ var HuffPost = function HuffPost() {
                     Category: cateogryName,
                     source: "HuffPost",
                     sourceLink: url,
-                    sourceLogo: "HuffPost logo",
-                    author: typeof author != "undefined" ? author != null ? author[j].textContent : null : null
+                    sourceLogo: "HuffPost logo" // author:typeof(author)!="undefined" ? (author!=null ? author[j].textContent : null) : null
+
                   });
                 }
               }
