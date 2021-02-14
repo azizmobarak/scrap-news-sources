@@ -160,22 +160,20 @@ var FOXNEWS = function FOXNEWS() {
               var titles = document.querySelectorAll(titleClassName);
               var links = document.querySelectorAll(linkClassName);
               var images = document.querySelectorAll(imageClassName);
-              var time = document.querySelectorAll(timeClassName);
+              var time = document.querySelectorAll(timeClassName); // collect data in data table
+
               var data = [];
 
               for (var j = 0; j < images.length; j++) {
-                if (
-                /*WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true &&*/
-                typeof time[j] != "undefined" && typeof titles[j] != "undefined" && images[j].src.indexOf('http') == 0) {
+                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && images[j].src.indexOf('http') == 0) {
                   data.push({
-                    time: time[j].textContent,
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
                     Category: Category,
-                    source: "Bloomberg",
-                    sourceLink: "https://www.bloomberg.com/",
-                    sourceLogo: "bloomberg logo"
+                    source: "Fox News",
+                    sourceLink: "https://www.foxnews.com",
+                    sourceLogo: "FoxNews logo"
                   });
                 }
               }
@@ -223,18 +221,18 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 14;
+            _context2.next = 15;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url);
-
+          url = item.link;
           _context2.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          _context2.next = 9;
+          console.log(url);
+          _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var text = document.querySelectorAll('.article-content p');
             var textArray = [];
@@ -247,10 +245,10 @@ var GetContent = function GetContent(page, data) {
             return textArray.join('\n');
           }));
 
-        case 9:
+        case 10:
           Content = _context2.sent;
 
-          if (item.images != null && Content != null) {
+          if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -260,19 +258,19 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              content: Content != null ? Content : null
+              content: Content.substring(0, 3000)
             });
           }
 
-        case 11:
+        case 12:
           i++;
           _context2.next = 2;
           break;
 
-        case 14:
+        case 15:
           console.log(AllData_WithConetent);
 
-        case 15:
+        case 16:
         case "end":
           return _context2.stop();
       }

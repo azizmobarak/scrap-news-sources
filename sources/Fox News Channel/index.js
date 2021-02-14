@@ -81,10 +81,10 @@ for(let i=0;i<Categories.length;i++){
     }
 
       // get the data from the page
-     var PageData = await page.evaluate((Category)=>{
+ var PageData = await page.evaluate((Category)=>{
                
-               // function to look for a word inside other words
-     const WordExist=(searchIn)=>{
+            // function to look for a word inside other words
+          const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;
                          }else{
@@ -131,21 +131,21 @@ for(let i=0;i<Categories.length;i++){
       var images = document.querySelectorAll(imageClassName);
       var time = document.querySelectorAll(timeClassName);
 
+      // collect data in data table
 
          var data =[];
          for(let j=0;j<images.length;j++){
            
-              if(/*WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true &&*/ typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0)
+              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0)
                     {
                    data.push({
-                       time : time[j].textContent,
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:Category,
-                       source :"Bloomberg",
-                       sourceLink:"https://www.bloomberg.com/",
-                       sourceLogo:"bloomberg logo"
+                       source :"Fox News",
+                       sourceLink:"https://www.foxnews.com",
+                       sourceLogo:"FoxNews logo"
                     });
                    }
                }
@@ -172,9 +172,10 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-       // console.log(url);
+
 
         await page.goto(url);
+        console.log(url)
 
     
         var Content = await page.evaluate(()=>{
@@ -191,7 +192,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null && Content!=null){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -201,7 +202,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content!=null ? Content : null
+                content:Content.substring(0,3000)
           });
        }
     }
