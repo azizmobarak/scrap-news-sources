@@ -26,7 +26,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['news/us-news', 'impact/Business', 'section/Health', 'entertainment/Celebrity', 'entertainment/arts', 'life/style', 'life/taste', 'news/media', 'news/world-news', 'entertainment/tv', 'life/Travel', 'voices/women', 'life/relationships', 'news-australia', 'news-canada', 'news-uk'];
+var Categories = ['news/us-news', 'impact/business', 'section/health', 'entertainment/celebrity', 'entertainment/arts', 'life/style', 'life/taste', 'news/media', 'news/world-news', 'entertainment/tv', 'life/Travel', 'voices/women', 'life/relationships', 'news-australia', 'news-canada', 'news-uk'];
 
 var HuffPost = function HuffPost() {
   (function _callee() {
@@ -224,7 +224,7 @@ var HuffPost = function HuffPost() {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
+                    title: typeof titles[j] != "undefined" ? titles[j].textContent.trim() : null,
                     link: links[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
                     Category: cateogryName,
