@@ -192,9 +192,9 @@ const GetContent = async(page,data)=>{
         });
 
         var Author = await page.evaluate(()=>{
-            var auth = document.querySelector('.author-byline span>span>a').textContent;
+            var auth = document.querySelector('.author-byline span>span>a');
             if(typeof auth !="undefined" && auth!=null){
-                return auth;
+                return auth.textContent;
             }else{
                 return null;
             }
