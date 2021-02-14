@@ -157,7 +157,7 @@ var PageData = await page.evaluate((Category,url)=>{
                        source :"HuffPost",
                        sourceLink:url,
                        sourceLogo:"HuffPost logo",
-                       author:author!=null ? author[j].textContent : null
+                       author:typeof(author)!="undefined" ? (author!=null ? author[j].textContent : null) : null
                     });
                    }
                }
