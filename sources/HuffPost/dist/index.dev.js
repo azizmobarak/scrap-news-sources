@@ -184,6 +184,7 @@ var HuffPost = function HuffPost() {
                 titleClassName = ".zone--latest .zone__content h3.card__headline__text";
                 linkClassName = ".zone--latest .zone__content a.card__headline";
                 imageClassName = ".zone--latest .zone__content .card__image__src picture>img";
+                authorClassName = null;
               } // get lists
 
 
@@ -230,7 +231,7 @@ var HuffPost = function HuffPost() {
                     source: "HuffPost",
                     sourceLink: url,
                     sourceLogo: "HuffPost logo",
-                    author: typeof author != "undefined" ? author[j].textContent : null
+                    author: author != null ? author[j].textContent : null
                   });
                 }
               }

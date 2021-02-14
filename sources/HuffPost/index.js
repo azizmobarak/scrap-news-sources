@@ -108,6 +108,7 @@ var PageData = await page.evaluate((Category,url)=>{
        titleClassName=".zone--latest .zone__content h3.card__headline__text";
        linkClassName=".zone--latest .zone__content a.card__headline";
        imageClassName=".zone--latest .zone__content .card__image__src picture>img";
+       authorClassName=null;
      }
 
  
@@ -156,7 +157,7 @@ var PageData = await page.evaluate((Category,url)=>{
                        source :"HuffPost",
                        sourceLink:url,
                        sourceLogo:"HuffPost logo",
-                       author:typeof(author)!="undefined" ? author[j].textContent : null
+                       author:author!=null ? author[j].textContent : null
                     });
                    }
                }
