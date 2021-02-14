@@ -190,6 +190,15 @@ const GetContent = async(page,data)=>{
             }
             return textArray.join('\n');
         });
+
+        var Author = await page.evaluate(()=>{
+            var auth = document.querySelector('.author-byline span>span>a').textContent;
+            if(typeof auth !="undefined" && auth!=null){
+                return auth;
+            }else{
+                return null;
+            }
+        });
     
 
     if(Content!=null && Content!=""){
@@ -202,6 +211,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author : Author,
                 content:Content.substring(0,3000)
           });
        }

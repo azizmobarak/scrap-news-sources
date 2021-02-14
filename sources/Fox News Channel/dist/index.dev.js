@@ -211,7 +211,7 @@ var FOXNEWS = function FOXNEWS() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, Author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -221,7 +221,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 15;
+            _context2.next = 18;
             break;
           }
 
@@ -247,6 +247,19 @@ var GetContent = function GetContent(page, data) {
 
         case 10:
           Content = _context2.sent;
+          _context2.next = 13;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            var auth = document.querySelector('.author-byline span>span>a').textContent;
+
+            if (typeof auth != "undefined" && auth != null) {
+              return auth;
+            } else {
+              return null;
+            }
+          }));
+
+        case 13:
+          Author = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -258,19 +271,20 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
+              author: Author,
               content: Content.substring(0, 3000)
             });
           }
 
-        case 12:
+        case 15:
           i++;
           _context2.next = 2;
           break;
 
-        case 15:
+        case 18:
           console.log(AllData_WithConetent);
 
-        case 16:
+        case 19:
         case "end":
           return _context2.stop();
       }
