@@ -242,7 +242,7 @@ var GetContent = function GetContent(page, data) {
               textArray.push(' ');
             }
 
-            return textArray.join('\n');
+            return textArray.join(' ').replaceAll('\n', '  ');
           }));
 
         case 10:
@@ -272,7 +272,7 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: Author,
-              content: Content.substring(0, 3000).replaceAll('\n', '  ')
+              content: Content.substring(0, 3000)
             });
           }
 

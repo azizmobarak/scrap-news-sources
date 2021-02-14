@@ -188,7 +188,7 @@ const GetContent = async(page,data)=>{
                 textArray.push(text[i].textContent);
                 textArray.push(' ');
             }
-            return textArray.join('\n');
+            return textArray.join(' ').replaceAll('\n','  ');
         });
 
         var Author = await page.evaluate(()=>{
@@ -212,7 +212,7 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : Author,
-                content:Content.substring(0,3000).replaceAll('\n','  ')
+                content:Content.substring(0,3000)
           });
        }
     }
