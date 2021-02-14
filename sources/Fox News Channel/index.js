@@ -135,13 +135,13 @@ for(let i=0;i<Categories.length;i++){
          var data =[];
          for(let j=0;j<images.length;j++){
            
-              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0 && typeof(images[j])!="undefined")
+              if(/*WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true &&*/ typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" &&  images[j].src.indexOf('http')==0)
                     {
                    data.push({
                        time : time[j].textContent,
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : images[j].src,
+                       images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:Category,
                        source :"Bloomberg",
                        sourceLink:"https://www.bloomberg.com/",
