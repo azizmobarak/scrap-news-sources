@@ -130,7 +130,7 @@ var CNN = function CNN() {
                     if (Category === "style") {
                       Category = "Life&Style";
                     } else {
-                      if (Category === "Americas" || Category === "Asia" || Category === "Africa" || Category === "Middle-east" || Category === "Europ") {
+                      if (Category === "Americas" || Category === "Asia" || Category === "Africa" || Category === "Middle-east" || Category === "Europe") {
                         Category = "International";
                       }
                     }
@@ -188,7 +188,8 @@ var CNN = function CNN() {
       }
     }, null, null, [[11, 16]]);
   })();
-};
+}; // the final result 
+
 
 var GetContent = function GetContent(page, data) {
   var AllData_WithConetent, i, item, url, Content, author;
@@ -212,7 +213,8 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          Category = item.Category;
+          Category = item.Category; // get the article content
+
           _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function (Category) {
             switch (Category) {
@@ -260,6 +262,7 @@ var GetContent = function GetContent(page, data) {
         case 13:
           author = _context2.sent;
 
+          // collect the result into a table
           if (Content != null && Content != "" && item.title != "Election fact check" && item.title != "Latest election news") {
             AllData_WithConetent.push({
               time: Date.now(),
@@ -271,7 +274,7 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content.substring(0, 2000)
+              content: Content.substring(0, 3000).replaceAll('\n', '   ')
             });
           }
 

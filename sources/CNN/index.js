@@ -104,7 +104,7 @@ for(let i=0;i<Categories.length;i++){
               if(Category==="style"){
                   Category="Life&Style";
               }else{
-                  if(Category==="Americas" || Category==="Asia" || Category==="Africa" || Category==="Middle-east" || Category==="Europ"){
+                  if(Category==="Americas" || Category==="Asia" || Category==="Africa" || Category==="Middle-east" || Category==="Europe"){
                    Category="International";
                   }
               }
@@ -153,6 +153,7 @@ for(let i=0;i<Categories.length;i++){
 }
 
 
+// the final result 
 
 const GetContent = async(page,data)=>{
       
@@ -168,6 +169,7 @@ const GetContent = async(page,data)=>{
 
         Category = item.Category;
 
+        // get the article content
         var Content = await page.evaluate((Category)=>{
 
            switch(Category){
@@ -199,6 +201,7 @@ const GetContent = async(page,data)=>{
         },Category);
 
         
+// check the author
     var author = await page.evaluate((Category)=>{
 
         var classname = '.metadata__byline__author>a';
@@ -212,7 +215,7 @@ const GetContent = async(page,data)=>{
 
         },Category);
     
-
+// collect the result into a table
     if(Content!=null && Content!="" && item.title!="Election fact check" && item.title!="Latest election news"){
           AllData_WithConetent.push({
                 time : Date.now(),
@@ -224,7 +227,7 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content.substring(0,2000)
+                content:Content.substring(0,3000).replaceAll('\n','   ')
           });
        }
     }
