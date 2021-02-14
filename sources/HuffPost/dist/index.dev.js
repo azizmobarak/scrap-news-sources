@@ -269,7 +269,7 @@ var HuffPost = function HuffPost() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, author, applyAuthor;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -279,7 +279,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 22;
+            _context2.next = 29;
             break;
           }
 
@@ -324,6 +324,37 @@ var GetContent = function GetContent(page, data) {
 
         case 17:
           Content = _context2.sent;
+          // get the author with content
+          author = "";
+
+          if (!(item.Category === "life&style")) {
+            _context2.next = 23;
+            break;
+          }
+
+          _context2.next = 22;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            var auth = document.querySelector('.entry__byline__author>a>div');
+
+            if (auth != null && typeof auth != "undefined") {
+              return auth.textContent;
+            } else {
+              return null;
+            }
+          }));
+
+        case 22:
+          author = _context2.sent;
+
+        case 23:
+          // change null author
+          applyAuthor = '';
+
+          if (item.author == null && item.Category === "life&style") {
+            applyAuthor = author;
+          } else {
+            applyAuthor = item.author;
+          }
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -335,19 +366,20 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
+              author: applyAuthor,
               content: Content
             });
           }
 
-        case 19:
+        case 26:
           i++;
           _context2.next = 2;
           break;
 
-        case 22:
+        case 29:
           console.log(AllData_WithConetent);
 
-        case 23:
+        case 30:
         case "end":
           return _context2.stop();
       }

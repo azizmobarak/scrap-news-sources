@@ -197,7 +197,6 @@ const GetContent = async(page,data)=>{
     
         var Content = await page.evaluate(()=>{
 
-
             var text = document.querySelector('.entry__text');
            if(typeof(text)!="undefined"){
                if(text!=null){
@@ -209,7 +208,28 @@ const GetContent = async(page,data)=>{
             return document.querySelector('.entry__content-list')!=null ? document.querySelector('.entry__content-list').textContent.replace('Content loading...','') : null;
            }
         });
+
+        // get the author with content
+        var author="";
+        if(item.Category==="life&style"){
+         author = await page.evaluate(()=>{
+             var auth = document.querySelector('.entry__byline__author>a>div');
+             if(auth!=null && typeof(auth)!="undefined"){
+                 return auth.textContent;
+             }else{
+                 return null;
+             }
+         })
+        }
     
+        // change null author
+        var applyAuthor='';
+
+        if(item.author==null && item.Category==="life&style"){
+          applyAuthor=author;
+        }else{
+            applyAuthor=item.author;
+        }
 
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -221,6 +241,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author:applyAuthor,
                 content:Content
           });
        }
