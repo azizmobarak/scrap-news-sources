@@ -25,26 +25,7 @@ var PORT = process.env.PORT || 3232; // 1 hour
 
 var FOXNEWS = require('./sources/Fox News Channel');
 
-(function _callee() {
-  var result;
-  return regeneratorRuntime.async(function _callee$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.next = 2;
-          return regeneratorRuntime.awrap(FOXNEWS());
-
-        case 2:
-          result = _context.sent;
-          console.log(result);
-
-        case 4:
-        case "end":
-          return _context.stop();
-      }
-    }
-  });
-}); // with low content and link to page contain videos about the movie/serie run it for 24h and more.
+FOXNEWS(); // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // const HBO = require('./sources/HBO');
 //const HuffPost = require('./sources/HuffPost');
 //const LosAngelesNews = require('./sources/Los Angeles Daily News');
@@ -54,7 +35,6 @@ var FOXNEWS = require('./sources/Fox News Channel');
 //const WALLSTREET = require('./sources/The Wall Street Journal');
 //const WASHINGTONPOST = require('./sources/The Washington Post');
 //const VICENEWS = require('./sources/Vice News');
-
 
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);

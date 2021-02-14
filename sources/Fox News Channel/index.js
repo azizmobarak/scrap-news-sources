@@ -206,7 +206,7 @@ const GetContent = async(page,data)=>{
        }
     }
     
-    return AllData_WithConetent;
+   console.log(AllData_WithConetent);
 }
 
 
