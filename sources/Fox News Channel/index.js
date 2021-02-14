@@ -212,7 +212,7 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : Author,
-                content:Content.substring(0,3000)
+                content:Content.substring(0,3000).replaceAll('\n','  ')
           });
        }
     }
