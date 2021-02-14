@@ -24,11 +24,11 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['markets', 'technology', 'opinion', 'businessweek', 'new-economy-forum'];
+var Categories = ['politics', 'media', 'opinion', 'economy', 'markets', 'technology', 'entertainment', 'sports', 'lifestyle', 'health', 'security', 'computers', 'video-games', 'science', 'us', 'movies'];
 
-var Bloomberg = function Bloomberg() {
+var FOXNEWS = function FOXNEWS() {
   (function _callee() {
-    var browser, page, AllData, i, Category, PageData;
+    var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -52,50 +52,67 @@ var Bloomberg = function Bloomberg() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 41;
+              _context.next = 43;
               break;
             }
 
             //get the right category by number
             Category = Categories[i];
             console.log(Category);
-            _context.prev = 11;
-            _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.bloomberg.com/', '', Category].join('')));
+            url = ""; // switch url depending on categories
 
-          case 14:
-            _context.next = 33;
-            break;
+            if (Category === "economy" || Category === "markets" || Category === "technology") {
+              url = "https://www.foxbusiness.com/";
+            } else {
+              if (Category === "security" || Category === "computers" || Category === "video-games") {
+                url = "https://www.foxnews.com/category/tech/topics/";
+              } else {
+                if (Category === "movies") {
+                  url = "https://www.foxnews.com/category/entertainment/";
+                } else {
+                  url = "https://www.foxnews.com/";
+                }
+              }
+            } // ------------------------------------------------------------
+
+
+            _context.prev = 13;
+            _context.next = 16;
+            return regeneratorRuntime.awrap(page["goto"]([url, '', Category].join('')));
 
           case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](11);
-            _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.bloomberg.com/', '', Category].join('')));
+            _context.next = 35;
+            break;
 
-          case 20:
+          case 18:
+            _context.prev = 18;
+            _context.t0 = _context["catch"](13);
             _context.next = 22;
-            return regeneratorRuntime.awrap(page.solveRecaptchas());
+            return regeneratorRuntime.awrap(page["goto"]([url, '', Category].join('')));
 
           case 22:
+            _context.next = 24;
+            return regeneratorRuntime.awrap(page.solveRecaptchas());
+
+          case 24:
             _context.t1 = regeneratorRuntime;
             _context.t2 = Promise;
             _context.t3 = page.waitForNavigation();
             _context.t4 = page.click(".g-recaptcha");
-            _context.next = 28;
+            _context.next = 30;
             return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
               return el.click();
             }));
 
-          case 28:
+          case 30:
             _context.t5 = _context.sent;
             _context.t6 = [_context.t3, _context.t4, _context.t5];
             _context.t7 = _context.t2.all.call(_context.t2, _context.t6);
-            _context.next = 33;
+            _context.next = 35;
             return _context.t1.awrap.call(_context.t1, _context.t7);
 
-          case 33:
-            _context.next = 35;
+          case 35:
+            _context.next = 37;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // function to look for a word inside other words
               var WordExist = function WordExist(searchIn) {
@@ -120,49 +137,40 @@ var Bloomberg = function Bloomberg() {
                     }
                   }
                 }
-              }; // bloomberg serction one
-              // change the source logo to http 
+              }; // Fox classes
 
 
-              var titles = document.querySelector('.single-story-module__headline-link');
-              var images = document.querySelector('.single-story-module img');
-              var time = document.querySelector('.single-story-module time');
-              var link = document.querySelector('.single-story-module a');
+              var titleClassName = ".article h4.title";
+              var linkClassName = ".article h4.title a";
+              var imageClassName = ".article-list .article a>img";
+              var timeClassName = ".article-list .article span.time";
 
-              if (Category === "opinion" || Category === "businessweek" || Category === "new-economy-forum") {
-                var elem = document.createTextNode('p');
-                elem.textContent = "minute";
-                time = elem;
-              } //change category name
-
-
-              var cateogryName = "";
-
-              switch (Category) {
-                case "businessweek":
-                  cateogryName = "Business";
-                  break;
-
-                case "new-economy-forum":
-                  cateogryName = "Economy";
-                  break;
-
-                default:
-                  cateogryName = Category;
-                  break;
-              } //////////////////////////////
+              if (Category === "economy" || Category === "markets" || Category === "technology") {
+                titleClassName = ".collection-river .article h3.title";
+                linkClassName = ".collection-river .article h3.title>a";
+                imageClassName = ".collection-river .article a>picture>img";
+                timeClassName = ".collection-river .article time.time";
+              } else {
+                if (Category === "lifestyle") {
+                  Category = "life&style";
+                }
+              } // get lists
 
 
+              var titles = document.querySelectorAll(titleClassName);
+              var links = document.querySelectorAll(linkClassName);
+              var images = document.querySelectorAll(imageClassName);
+              var time = document.querySelectorAll(timeClassName);
               var data = [];
 
-              for (var j = 0; j < 1; j++) {
-                if (WordExist(time == null ? "nothing" : time.textContent) == true && titles != null) {
+              for (var j = 0; j < images.length; j++) {
+                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && images[j].src.indexOf('http') == 0 && typeof images[j] != "undefined") {
                   data.push({
-                    time: Date.now(),
-                    title: titles.textContent.trim(),
-                    link: link.href,
-                    images: typeof images != "undefined" ? images.src : null,
-                    Category: cateogryName,
+                    time: time[j].textContent,
+                    title: titles[j].textContent.trim(),
+                    link: links[j].href,
+                    images: images[j].src,
+                    Category: Category,
                     source: "Bloomberg",
                     sourceLink: "https://www.bloomberg.com/",
                     sourceLogo: "bloomberg logo"
@@ -173,42 +181,37 @@ var Bloomberg = function Bloomberg() {
               return data;
             }, Category));
 
-          case 35:
+          case 37:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 38:
+          case 40:
             i++;
             _context.next = 8;
             break;
 
-          case 41:
-            console.log(AllData);
-            _context.next = 44;
+          case 43:
+            _context.next = 45;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context.next = 46;
-            return regeneratorRuntime.awrap(page.waitFor(20000));
-
-          case 46:
-            _context.next = 48;
+          case 45:
+            _context.next = 47;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
+          case 47:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[11, 16]]);
+    }, null, null, [[13, 18]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -218,7 +221,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 14;
             break;
           }
 
@@ -231,12 +234,12 @@ var GetContent = function GetContent(page, data) {
         case 7:
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+            var text = document.querySelectorAll('.article-content p');
             var textArray = [];
 
-            for (var _i = 0; _i < text.length; _i++) {
+            for (var _i = 1; _i < text.length; _i++) {
               textArray.push(text[_i].textContent);
-              textArray.push('   ');
+              textArray.push(' ');
             }
 
             return textArray.join('\n');
@@ -244,19 +247,8 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context2.sent;
-          _context2.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
-            } catch (_unused) {
-              return null;
-            }
-          }));
 
-        case 12:
-          author = _context2.sent;
-
-          if (item.images != null && Content != null && Content != "") {
+          if (item.images != null && Content != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -266,20 +258,19 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: author,
               content: Content != null ? Content : null
             });
           }
 
-        case 14:
+        case 11:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
+        case 14:
           return _context2.abrupt("return", AllData_WithConetent);
 
-        case 18:
+        case 15:
         case "end":
           return _context2.stop();
       }
@@ -287,4 +278,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = Bloomberg;
+module.exports = FOXNEWS;

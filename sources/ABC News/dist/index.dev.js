@@ -221,6 +221,9 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 17:
+          return _context2.abrupt("return", AllData_WithConetent);
+
+        case 18:
         case "end":
           return _context2.stop();
       }

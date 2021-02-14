@@ -209,9 +209,13 @@ var CNET = function CNET() {
 
           case 15:
             _context2.next = 17;
-            return regeneratorRuntime.awrap(browser.close());
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
 
           case 17:
+            _context2.next = 19;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 19:
           case "end":
             return _context2.stop();
         }
@@ -279,7 +283,7 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 14:
-          console.log(AllData_WithConetent);
+          return _context3.abrupt("return", AllData_WithConetent);
 
         case 15:
         case "end":

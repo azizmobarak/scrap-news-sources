@@ -232,7 +232,7 @@ const GetContent = async(page,data)=>{
        }
     }
     
-    console.log(AllData_WithConetent)
+    return AllData_WithConetent;
 }
 
 

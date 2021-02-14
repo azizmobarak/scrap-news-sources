@@ -168,7 +168,7 @@ const GetContent = async(page,data)=>{
        }
     
     }
-    //AllData_WithConetent
+    return AllData_WithConetent;
 }
 
 

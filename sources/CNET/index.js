@@ -156,7 +156,7 @@ var PageData = await page.evaluate((Category)=>{
                });
        }
   
-    // await GetContent(page,AllData);
+     await GetContent(page,AllData);
      await browser.close();
     })();
 }
@@ -205,7 +205,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    console.log(AllData_WithConetent)
+    return AllData_WithConetent;
 }
 
 

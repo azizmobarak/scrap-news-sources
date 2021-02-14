@@ -24,10 +24,13 @@ const PORT = process.env.PORT || 3232;
 //const CNET = require('./sources/CNET');
 //CNET();
 
-const CNN = require('./sources/CNN');
-CNN();
+//30
+//const CNN = require('./sources/CNN');
+//CNN();
 
-//const FOXNEWS = require('./sources/Fox News Channel');
+const FOXNEWS = require('./sources/Fox News Channel');
+console.log(FOXNEWS());
+
 
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // const HBO = require('./sources/HBO');
