@@ -178,20 +178,17 @@ var HuffPost = function HuffPost() {
               var titleClassName = ".zone__content a.card__headline--long>h2";
               var linkClassName = ".zone__content a.card__headline--long";
               var imageClassName = ".zone__content .card__image__src picture img.landscape";
-              var authorClassName = ".card__byline__author__name-title";
 
               if (Category.indexOf("life") != -1) {
                 titleClassName = ".zone--latest .zone__content h3.card__headline__text";
                 linkClassName = ".zone--latest .zone__content a.card__headline";
                 imageClassName = ".zone--latest .zone__content .card__image__src picture>img";
-                authorClassName = null;
               } // get lists
 
 
               var titles = document.querySelectorAll(titleClassName);
               var links = document.querySelectorAll(linkClassName);
-              var images = document.querySelectorAll(imageClassName);
-              var author = document.querySelectorAll(authorClassName); //change category name
+              var images = document.querySelectorAll(imageClassName); //change category name
 
               var cateogryName = Category;
 
@@ -230,8 +227,7 @@ var HuffPost = function HuffPost() {
                     Category: cateogryName,
                     source: "HuffPost",
                     sourceLink: url,
-                    sourceLogo: "HuffPost logo" // author:typeof(author)!="undefined" ? (author!=null ? author[j].textContent : null) : null
-
+                    sourceLogo: "HuffPost logo"
                   });
                 }
               }
@@ -269,7 +265,7 @@ var HuffPost = function HuffPost() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author, applyAuthor;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -279,7 +275,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 29;
+            _context2.next = 32;
             break;
           }
 
@@ -327,8 +323,8 @@ var GetContent = function GetContent(page, data) {
           // get the author with content
           author = "";
 
-          if (!(item.Category === "life&style")) {
-            _context2.next = 23;
+          if (!(item.Category.indexOf("life&style") != -1)) {
+            _context2.next = 25;
             break;
           }
 
@@ -345,17 +341,25 @@ var GetContent = function GetContent(page, data) {
 
         case 22:
           author = _context2.sent;
+          _context2.next = 28;
+          break;
 
-        case 23:
-          // change null author
-          applyAuthor = '';
+        case 25:
+          _context2.next = 27;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            var auth = document.querySelector('a.author-card__link>span');
 
-          if (item.author == null && item.Category === "life&style") {
-            applyAuthor = author;
-          } else {
-            applyAuthor = item.author;
-          }
+            if (auth != null && typeof auth != "undefined") {
+              return auth.textContent;
+            } else {
+              return null;
+            }
+          }));
 
+        case 27:
+          author = _context2.sent;
+
+        case 28:
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
@@ -366,20 +370,20 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: applyAuthor,
+              author: author,
               content: Content
             });
           }
 
-        case 26:
+        case 29:
           i++;
           _context2.next = 2;
           break;
 
-        case 29:
+        case 32:
           console.log(AllData_WithConetent);
 
-        case 30:
+        case 33:
         case "end":
           return _context2.stop();
       }

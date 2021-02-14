@@ -102,13 +102,11 @@ var PageData = await page.evaluate((Category,url)=>{
      var titleClassName=".zone__content a.card__headline--long>h2";
      var linkClassName=".zone__content a.card__headline--long";
      var imageClassName=".zone__content .card__image__src picture img.landscape";
-     var authorClassName=".card__byline__author__name-title";
 
      if(Category.indexOf("life")!=-1){
        titleClassName=".zone--latest .zone__content h3.card__headline__text";
        linkClassName=".zone--latest .zone__content a.card__headline";
        imageClassName=".zone--latest .zone__content .card__image__src picture>img";
-       authorClassName=null;
      }
 
  
@@ -116,7 +114,6 @@ var PageData = await page.evaluate((Category,url)=>{
       var titles = document.querySelectorAll(titleClassName);
       var links = document.querySelectorAll(linkClassName);
       var images = document.querySelectorAll(imageClassName);
-      var author = document.querySelectorAll(authorClassName);
   
     
     //change category name
@@ -157,7 +154,6 @@ var PageData = await page.evaluate((Category,url)=>{
                        source :"HuffPost",
                        sourceLink:url,
                        sourceLogo:"HuffPost logo",
-                      // author:typeof(author)!="undefined" ? (author!=null ? author[j].textContent : null) : null
                     });
                    }
                }
@@ -211,7 +207,7 @@ const GetContent = async(page,data)=>{
 
         // get the author with content
         var author="";
-        if(item.Category==="life&style"){
+    if(item.Category.indexOf("life&style")!=-1){
          author = await page.evaluate(()=>{
              var auth = document.querySelector('.entry__byline__author>a>div');
              if(auth!=null && typeof(auth)!="undefined"){
@@ -220,17 +216,18 @@ const GetContent = async(page,data)=>{
                  return null;
              }
          })
+        }else{
+            author = await page.evaluate(()=>{
+                var auth = document.querySelector('a.author-card__link>span');
+                if(auth!=null && typeof(auth)!="undefined"){
+                    return auth.textContent;
+                }else{
+                    return null;
+                }
+            })
         }
     
-        // change null author
-        var applyAuthor='';
-
-        if(item.author==null && item.Category==="life&style"){
-          applyAuthor=author;
-        }else{
-            applyAuthor=item.author;
-        }
-
+       
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
@@ -241,7 +238,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author:applyAuthor,
+                author:author,
                 content:Content
           });
        }
