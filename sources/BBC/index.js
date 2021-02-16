@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
+const {InsertData} = require('../../function/insertData')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -99,16 +100,16 @@ for(let i=0;i<Categories.length;i++){
     var categoryName=Category;
 
     if(categoryName==="coronavirus"){
-        categoryName="Health";
+        categoryName="health";
     }else{
         if(categoryName==="world"){
-            categoryName="International";
+            categoryName="international";
         }else{
             if(categoryName==="science_and_environment"){
-                categoryName="Science,Environment";
+                categoryName="science,environment";
             }else{
                 if(categoryName==="entertainment_and_arts"){
-                    categoryName="Entertainment,Art&Design";
+                    categoryName="entertainment,art&Design";
                 }
             }
         }
@@ -198,7 +199,7 @@ const GetContent = async(page,data)=>{
     
     }
     
-    return AllData_WithConetent;
+    await InsertData(AllData_WithConetent);
 }
 
 

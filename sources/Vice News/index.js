@@ -3,7 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
-//
+const {InsertData} = require('../../function/insertData');
 
 
 //block ads
@@ -205,7 +205,7 @@ const GetContent = async(page,data)=>{
        }
     }
     
-    console.log(AllData_WithConetent)
+    await InsertData(AllData_WithConetent);
 }
 
 

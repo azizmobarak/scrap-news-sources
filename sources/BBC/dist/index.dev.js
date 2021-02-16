@@ -8,7 +8,10 @@ var puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 
 var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 
-var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker'); //block ads
+var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+
+var _require = require('../../function/insertData'),
+    InsertData = _require.InsertData; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -111,16 +114,16 @@ var BBC = function BBC() {
               var categoryName = Category;
 
               if (categoryName === "coronavirus") {
-                categoryName = "Health";
+                categoryName = "health";
               } else {
                 if (categoryName === "world") {
-                  categoryName = "International";
+                  categoryName = "international";
                 } else {
                   if (categoryName === "science_and_environment") {
-                    categoryName = "Science,Environment";
+                    categoryName = "science,environment";
                   } else {
                     if (categoryName === "entertainment_and_arts") {
-                      categoryName = "Entertainment,Art&Design";
+                      categoryName = "entertainment,art&Design";
                     }
                   }
                 }
@@ -245,9 +248,10 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 14:
-          return _context2.abrupt("return", AllData_WithConetent);
+          _context2.next = 16;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 15:
+        case 16:
         case "end":
           return _context2.stop();
       }

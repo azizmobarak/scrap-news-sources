@@ -5,6 +5,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
+const {InsertData} = require('../../function/insertData');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -20,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['Politics','Entertainment','Technology','Health','Sports','International','Business'];
+var Categories=['politics','pntertainment','pechnology','health','sports','international','business'];
 
 const ABC_NEWS = () =>{
     (async()=>{
@@ -134,7 +135,7 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
             var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
@@ -161,14 +162,13 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                type:'article',
                 author : author,
                 content:Content
           });
        }
     
     }
-    return AllData_WithConetent;
+    await InsertData(AllData_WithConetent);
 }
 
 

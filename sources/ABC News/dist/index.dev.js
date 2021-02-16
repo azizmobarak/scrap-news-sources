@@ -8,7 +8,10 @@ var puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 
 var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 
-var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker'); //block ads
+var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+
+var _require = require('../../function/insertData'),
+    InsertData = _require.InsertData; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -24,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['Politics', 'Entertainment', 'Technology', 'Health', 'Sports', 'International', 'Business'];
+var Categories = ['politics', 'pntertainment', 'pechnology', 'health', 'sports', 'international', 'business'];
 
 var ABC_NEWS = function ABC_NEWS() {
   (function _callee() {
@@ -167,7 +170,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 18;
             break;
           }
 
@@ -177,15 +180,16 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          _context2.next = 9;
+          console.log(url);
+          _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var text = document.querySelector('.Article__Wrapper>.Article__Content') == null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
             return text;
           }));
 
-        case 9:
+        case 10:
           Content = _context2.sent;
-          _context2.next = 12;
+          _context2.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var auth = document.querySelector('.Byline__Author').textContent;
@@ -196,7 +200,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 12:
+        case 13:
           author = _context2.sent;
 
           if (item.images != null && Content != null && Content != "") {
@@ -209,21 +213,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              type: 'article',
               author: author,
               content: Content
             });
           }
 
-        case 14:
+        case 15:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
-          return _context2.abrupt("return", AllData_WithConetent);
-
         case 18:
+          _context2.next = 20;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+
+        case 20:
         case "end":
           return _context2.stop();
       }

@@ -8,7 +8,10 @@ var puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 
 var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 
-var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker'); //block ads
+var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+
+var _require = require('../../function/insertData'),
+    InsertData = _require.InsertData; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -142,9 +145,13 @@ var HBO = function HBO() {
 
           case 41:
             _context.next = 43;
-            return regeneratorRuntime.awrap(browser.close());
+            return regeneratorRuntime.awrap(InsertData(AllData));
 
           case 43:
+            _context.next = 45;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 45:
           case "end":
             return _context.stop();
         }

@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const {InsertData} = require('../../function/insertData');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -86,7 +87,7 @@ var PageData = await page.evaluate((Category)=>{
 
     switch(Category){
         case 'world' : 
-           cateogryName="International"
+           cateogryName="international"
            break;
 
         case 'life-arts' :
@@ -98,22 +99,22 @@ var PageData = await page.evaluate((Category)=>{
            break;
 
         default :
-           if(Category.indexOf('asia')!=0){
-               cateogryName="International";
+           if(Category.indexOf('asia')!=-1){
+               cateogryName="international";
            }else{
-              if(cateogryName.indexOf('africa')){
-                  categoryName="International";
+              if(cateogryName.indexOf('africa')!=-1){
+                  categoryName="international";
               }else{
                   if(categoryName.indexOf('china')!=-1){
-                      categoryName='International';
+                      categoryName='international';
                   }else{
                       if(categoryName.indexOf('america')){
-                          categoryName="International";
+                          categoryName="us";
                       }else{
                           if(categoryName.indexOf('middle-east')!=-1){
-                              categoryName="International";
+                              categoryName="international";
                           }else{
-                              if(categoryName.indexOf('canada')=-1){
+                              if(categoryName.indexOf('canada')!=-1){
                                  categoryName="canada";
                               } else{
                                 cateogryName=Category;
@@ -162,13 +163,13 @@ var PageData = await page.evaluate((Category)=>{
          var data =[];
          for(let j=0;j<loop;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" && typeof(images[j])!="undefined" && images[j]!="")
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
                     {
                    data.push({
                       time : Date.now(),
                        title : condition==true ? titles[j].querySelector('h3').textContent.trim() :  titles[j].textContent.trim(),
                        link : condition==true ? links[j].querySelector('a').href : links[j].href,
-                       images :  condition==true ? images[j].querySelector('img').src :  images[j].src,
+                       images :  condition==true ?(typeof(images[j])!="undefined" ? images[j].querySelector('img').src : null) : (typeof(images[j])!="undefined" ? images[j].src : null),
                        Category: cateogryName,
                        source :"The WALL STREET JOURNAL",
                        sourceLink:"https://www.wsj.com",
@@ -227,7 +228,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(item.images!=null && item.images!="" && Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -242,7 +243,7 @@ const GetContent = async(page,data)=>{
        }
     }
     
-    console.log(AllData_WithConetent)
+    await InsertData(AllData_WithConetent);
 }
 
 

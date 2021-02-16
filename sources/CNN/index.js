@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const {InsertData} = require('../../function/insertData')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -18,7 +19,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['Africa','Americas','Asia','Australia','Europe','India','Middle-east','Uk','Politics','Business','Health','travel/news','travel/food-and-drink','style','Entertainment','Sport'];
+var Categories=['africa','americas','asia','australia','europe','india','middle-east','uk','politics','business','health','travel/news','travel/food-and-drink','style','entertainment','sport'];
 
 const CNN = () =>{
     (async()=>{
@@ -102,10 +103,10 @@ for(let i=0;i<Categories.length;i++){
                 loop=4;
           }else{
               if(Category==="style"){
-                  Category="Life&Style";
+                  Category="life&style";
               }else{
-                  if(Category==="Americas" || Category==="Asia" || Category==="Africa" || Category==="Middle-east" || Category==="Europe"){
-                   Category="International";
+                  if(Category==="americas" || Category==="asia" || Category==="africa" || Category==="middle-east" || Category==="europe"){
+                   Category="international";
                   }
               }
           }
@@ -232,7 +233,7 @@ const GetContent = async(page,data)=>{
        }
     }
     
-    return AllData_WithConetent;
+    await InsertData(AllData_WithConetent);
 }
 
 

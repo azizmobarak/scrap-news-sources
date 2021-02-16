@@ -8,7 +8,10 @@ var puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 
 var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 
-var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker'); //block ads
+var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+
+var _require = require('../../function/insertData'),
+    InsertData = _require.InsertData; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -24,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['Africa', 'Americas', 'Asia', 'Australia', 'Europe', 'India', 'Middle-east', 'Uk', 'Politics', 'Business', 'Health', 'travel/news', 'travel/food-and-drink', 'style', 'Entertainment', 'Sport'];
+var Categories = ['africa', 'americas', 'asia', 'australia', 'europe', 'india', 'middle-east', 'uk', 'politics', 'business', 'health', 'travel/news', 'travel/food-and-drink', 'style', 'entertainment', 'sport'];
 
 var CNN = function CNN() {
   (function _callee() {
@@ -128,10 +131,10 @@ var CNN = function CNN() {
                     loop = 4;
                   } else {
                     if (Category === "style") {
-                      Category = "Life&Style";
+                      Category = "life&style";
                     } else {
-                      if (Category === "Americas" || Category === "Asia" || Category === "Africa" || Category === "Middle-east" || Category === "Europe") {
-                        Category = "International";
+                      if (Category === "americas" || Category === "asia" || Category === "africa" || Category === "middle-east" || Category === "europe") {
+                        Category = "international";
                       }
                     }
                   }
@@ -284,9 +287,10 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 18:
-          return _context2.abrupt("return", AllData_WithConetent);
+          _context2.next = 20;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 20:
         case "end":
           return _context2.stop();
       }

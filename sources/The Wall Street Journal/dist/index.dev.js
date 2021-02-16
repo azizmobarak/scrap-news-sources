@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['world', 'health', 'entertainment', 'travel', 'sex', 'tech', 'food', 'money', 'environment'];
+var Categories = ['us', 'economy', 'technology', 'opinion', 'realestate', 'world', 'politics', 'business', 'markets', 'life-arts', 'types/asia-news', 'types/china-news', 'types/latin-america-news', 'economy', 'types/africa-news', 'types/canada-news', 'types/middle-east-news'];
 
-var VICENEWS = function VICENEWS() {
+var WALLSTREET = function WALLSTREET() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -38,7 +38,7 @@ var VICENEWS = function VICENEWS() {
           case 0:
             _context.next = 2;
             return regeneratorRuntime.awrap(puppeteer.launch({
-              headless: true,
+              headless: false,
               args: ['--enable-features=NetworkService', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--shm-size=3gb']
             }));
 
@@ -55,7 +55,7 @@ var VICENEWS = function VICENEWS() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 48;
+              _context.next = 41;
               break;
             }
 
@@ -64,7 +64,7 @@ var VICENEWS = function VICENEWS() {
             console.log(Category);
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.vice.com/en/section/', '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](['https://www.wsj.com/news/', '', Category].join('')));
 
           case 14:
             _context.next = 33;
@@ -74,7 +74,7 @@ var VICENEWS = function VICENEWS() {
             _context.prev = 16;
             _context.t0 = _context["catch"](11);
             _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.vice.com/en/section/', '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](['https://www.wsj.com/news/', '', Category].join('')));
 
           case 20:
             _context.next = 22;
@@ -98,54 +98,103 @@ var VICENEWS = function VICENEWS() {
             return _context.t1.awrap.call(_context.t1, _context.t7);
 
           case 33:
-            _context.prev = 33;
-            _context.next = 36;
+            _context.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              // Los Angelece News classes
-              var loop = 3;
-              var start = 0;
-              var titleClassName = ".vice-card h3.vice-card-hed";
-              var linkClassName = ".vice-card h3.vice-card-hed a";
-              var imageClassName = ".vice-card .vice-card-image__placeholder-image picture>source+source+source";
-              var authorClassName = ".vice-card .vice-card-details__byline"; // all elements
+              var loop = 1;
+              var condition = false; // Los Angelece News classes
+
+              var titleClassName = "#main #top-news article>div>h2";
+              var imageClassName = "#main #top-news article>div>a>img";
+              var linkClassName = "#main #top-news article>div>a"; // all elements
 
               var titles = document.querySelectorAll(titleClassName);
               var images = document.querySelectorAll(imageClassName);
-              var links = document.querySelectorAll(linkClassName);
-              var authors = document.querySelectorAll(authorClassName); //change category name
+              var links = document.querySelectorAll(linkClassName); //change category name
 
-              var cateogryName = Category;
+              var cateogryName = "";
 
-              if (Category === "world") {
-                cateogryName = "International";
-              } else {
-                if (Category === "sex") {
-                  cateogryName = "health,love";
-                }
+              switch (Category) {
+                case 'world':
+                  cateogryName = "international";
+                  break;
+
+                case 'life-arts':
+                  cateogryName = "art&design";
+                  break;
+
+                case 'realestate':
+                  cateogryName = "business";
+                  break;
+
+                default:
+                  if (Category.indexOf('asia') != -1) {
+                    cateogryName = "international";
+                  } else {
+                    if (cateogryName.indexOf('africa') != -1) {
+                      categoryName = "international";
+                    } else {
+                      if (categoryName.indexOf('china') != -1) {
+                        categoryName = 'international';
+                      } else {
+                        if (categoryName.indexOf('america')) {
+                          categoryName = "us";
+                        } else {
+                          if (categoryName.indexOf('middle-east') != -1) {
+                            categoryName = "international";
+                          } else {
+                            if (categoryName.indexOf('canada') != -1) {
+                              categoryName = "canada";
+                            } else {
+                              cateogryName = Category;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+
               } //////////////////////////////
+              // change selectors for some categories 
+
+
+              if (Category === "technology" || Category.indexOf('type') != -1 || Category === "opinion" || Category === "politics" || Category === "business" || Category === "markets") {
+                var arr_images = [];
+                var arr_titles = [];
+                var arr_links = [];
+                var inDom = document.querySelectorAll('#main article');
+
+                for (var d = 0; d < 4; d++) {
+                  if (inDom[d].querySelector('img') != null) {
+                    arr_images.push(inDom[d]);
+                    arr_titles.push(inDom[d]);
+                    arr_links.push(inDom[d]);
+                  }
+                }
+
+                titles = arr_titles;
+                images = arr_images;
+                links = arr_links;
+                loop = 3;
+                condition = true;
+              } else {
+                loop = 1;
+                condition = false;
+              } ////////////////////////////////////
 
 
               var data = [];
 
-              for (var j = start; j < loop; j++) {
-                var type = "article";
-
-                if (links[j].href.indexOf('video') != -1) {
-                  type = "video";
-                }
-
+              for (var j = 0; j < loop; j++) {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
-                    link: links[j].href,
-                    images: type === "article" ? typeof images[j] != "undefined" ? images[j].srcset.substring(0, images[j].srcset.indexOf('*') - 1) : null : links[j].href,
+                    title: condition == true ? titles[j].querySelector('h3').textContent.trim() : titles[j].textContent.trim(),
+                    link: condition == true ? links[j].querySelector('a').href : links[j].href,
+                    images: condition == true ? typeof images[j] != "undefined" ? images[j].querySelector('img').src : null : typeof images[j] != "undefined" ? images[j].src : null,
                     Category: cateogryName,
-                    source: "VICE news",
-                    sourceLink: "https://www.vice.com/",
-                    sourceLogo: "vice news logo",
-                    author: typeof authors[j] != "undefined" ? authors[j].textContent : null,
-                    type: type
+                    source: "The WALL STREET JOURNAL",
+                    sourceLink: "https://www.wsj.com",
+                    sourceLogo: "Wallstreet logo"
                   });
                 }
               }
@@ -153,45 +202,38 @@ var VICENEWS = function VICENEWS() {
               return data;
             }, Category));
 
-          case 36:
+          case 35:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
-            _context.next = 45;
-            break;
 
-          case 41:
-            _context.prev = 41;
-            _context.t8 = _context["catch"](33);
-            i = i - 1;
-            console.log('try again');
-
-          case 45:
+          case 38:
             i++;
             _context.next = 8;
             break;
 
-          case 48:
-            _context.next = 50;
+          case 41:
+            console.log(AllData);
+            _context.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 50:
-            _context.next = 52;
+          case 44:
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 46:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[11, 16], [33, 41]]);
+    }, null, null, [[11, 16]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, imageItem;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -201,7 +243,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 29;
+            _context2.next = 24;
             break;
           }
 
@@ -230,62 +272,47 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 19;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var text = document.querySelector('.article__body-components').textContent;
-              return text;
-            } catch (_unused3) {
+              var text = document.querySelectorAll('.snippet div+div+div+div p');
+              var textArray = [];
+
+              for (var _i = 0; _i < text.length - 1; _i++) {
+                textArray.push(text[_i].textContent);
+                textArray.push('   ');
+              }
+
+              return textArray.join('\n');
+            } catch (_unused2) {
               return null;
             }
           }));
 
         case 19:
           Content = _context2.sent;
-          imageItem = "";
 
-          if (!(item.images === "" || item.images.length == 0)) {
-            _context2.next = 25;
-            break;
-          }
-
-          _context2.next = 24;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              var img = document.querySelector('picture source').srcset;
-              return img.substring(0, img.indexOf('*') - 1);
-            } catch (_unused4) {
-              return null;
-            }
-          }));
-
-        case 24:
-          imageItem = _context2.sent;
-
-        case 25:
-          if (Content != null && Content != "" && item.type === "article") {
+          if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
               link: item.link,
-              images: imageItem,
+              images: item.images,
               Category: item.Category,
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: item.author,
-              type: item.type,
               content: Content != null ? Content : null
             });
           }
 
-        case 26:
+        case 21:
           i++;
           _context2.next = 2;
           break;
 
-        case 29:
-          _context2.next = 31;
+        case 24:
+          _context2.next = 26;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 31:
+        case 26:
         case "end":
           return _context2.stop();
       }
@@ -293,4 +320,4 @@ var GetContent = function GetContent(page, data) {
   }, null, null, [[8, 13]]);
 };
 
-module.exports = VICENEWS;
+module.exports = WALLSTREET;

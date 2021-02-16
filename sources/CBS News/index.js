@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const {InsertData} = require('../../function/insertData');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -18,7 +19,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['Sports','news/Canada','news/Politics','news/Opinion','news/Business','news/Health','news/Entertainment','news/Technology','news/Investigates'];
+var Categories=['sports','news/canada','news/politics','news/opinion','news/business','news/health','news/entertainment','news/technology','news/investigates'];
 
 const CBC = () =>{
     (async()=>{
@@ -157,7 +158,6 @@ for(let i=0;i<Categories.length;i++){
        }
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
@@ -204,7 +204,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    return AllData_WithConetent;
+    await InsertData(AllData_WithConetent);
+
 }
 
 

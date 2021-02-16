@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const {InsertData} = require('../../function/insertData');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -129,13 +130,13 @@ var PageData = await page.evaluate((Category)=>{
          var data =[];
          for(let j=0;j<loop;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" && typeof(images[j])!="undefined" && images[j]!="")
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
                     {
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : images[j].src,
+                       images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:cateogryName,
                        source :"Los Angeles Times",
                        sourceLink:"https://www.latimes.com/",
@@ -198,9 +199,17 @@ const GetContent = async(page,data)=>{
                return text.textContent.replaceAll('Advertisement','').replaceAll("\n",' ').substring(0,1200)+" ...";
            }
         });
+
+        var author = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.author-name>span+span').textContent;
+            }catch{
+                return null;
+            }
+        })
     
 
-    if(item.images!=null && item.images!="" && Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -210,12 +219,13 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author:author,
                 content:Content!=null ? Content : null
           });
        }
     }
     
-    console.log(AllData_WithConetent)
+    await InsertData(AllData_WithConetent);
 }
 
 

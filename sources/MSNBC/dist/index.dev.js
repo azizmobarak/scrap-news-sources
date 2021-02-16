@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['sports', 'news/canada', 'news/politics', 'news/opinion', 'news/business', 'news/health', 'news/entertainment', 'news/technology', 'news/investigates'];
+var Categories = ['politics', 'health/coronavirus', 'business', 'think', 'world'];
 
-var CBC = function CBC() {
+var MSNBC = function MSNBC() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -64,7 +64,7 @@ var CBC = function CBC() {
             console.log(Category);
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"](["https://www.cbc.ca/", '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](['https://www.nbcnews.com/', '', Category].join('')));
 
           case 14:
             _context.next = 33;
@@ -74,7 +74,7 @@ var CBC = function CBC() {
             _context.prev = 16;
             _context.t0 = _context["catch"](11);
             _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"](["https://www.cbc.ca/", '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](['https://www.nbcnews.com/', '', Category].join('')));
 
           case 20:
             _context.next = 22;
@@ -100,80 +100,52 @@ var CBC = function CBC() {
           case 33:
             _context.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              // function to look for a word inside other words
-              var WordExist = function WordExist(searchIn) {
-                if (searchIn.indexOf("second") != -1) {
-                  return true;
-                } else {
-                  if (searchIn.indexOf("seconds") != -1) {
-                    return true;
-                  } else {
-                    if (searchIn.indexOf("minute") != -1) {
-                      return true;
-                    } else {
-                      if (searchIn.indexOf("minutes") != -1) {
-                        return true;
-                      } else {
-                        return false;
-                      }
-                    }
-                  }
-                }
-              };
-
-              var start = 0;
-              var end = 1; //change category name
+              // Los Angelece News classes
+              var loop = 0;
+              var titleClassName = "div.layout-grid-item .multi-up__content h2.tease-card__headline";
+              var linkClassName = "div.layout-grid-item .multi-up__content .multi-up__article article>.tease-card__picture>a";
+              var imageClassName = "div.layout-grid-item .multi-up__content .multi-up__article article>.tease-card__picture img"; //change category name
 
               var cateogryName = "";
 
-              if (Category.indexOf('/') != -1) {
-                if (Category.indexOf('investigates') != -1) {
-                  cateogryName = "investing";
-                } else {
-                  cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
-                }
+              if (Category === "health/coronavirus") {
+                cateogryName = "health";
+                imageClassName = ".cover-spread-tease .cover-spread-tease--null .cover-spread-tease__image img";
+                titleClassName = ".cover-spread-tease__text-wrapper h3.cover-spread-tease__headline";
+                linkClassName = ".cover-spread-tease .cover-spread-tease--null .cover-spread-tease__image a";
+                loop = 3;
               } else {
-                cateogryName = Category;
+                if (Category === "think") {
+                  cateogryName = "opinion";
+                  imageClassName = ".lazyload-wrapper img";
+                  titleClassName = ".lead-one-up__info h2.lead-one-up__title";
+                  linkClassName = ".lead-one-up__info h2.lead-one-up__title a";
+                  loop = 1;
+                } else {
+                  cateogryName = Category;
+                  loop = 3;
+                }
               } //////////////////////////////
-              // CBC classes by categories 
-
-
-              var titleClassName = ".card-content h3.headline";
-              var linkClassName = ".featuredArea a";
-              var imageClassName = ".cardImageWrap>figure.imageMedia>div>img";
-              var timeClassName = "div.card-content-bottom>.metadata>div>time.timeStamp";
-              var author = null;
-
-              if (Category === "news/opinion") {
-                author = document.querySelectorAll(".authorName");
-                end = 3;
-              } else {
-                if (Category === "sports") {
-                  end = 1;
-                } else {
-                  end = 3;
-                }
-              } // change the source logo to http 
+              // change the source logo to http 
 
 
               var titles = document.querySelectorAll(titleClassName);
               var images = document.querySelectorAll(imageClassName);
-              var time = document.querySelectorAll(timeClassName);
-              var links = document.querySelectorAll(linkClassName);
+              var links = document.querySelectorAll(linkClassName); ///////////////////////////////////////
+
               var data = [];
 
-              for (var j = start; j < end; j++) {
-                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
+              for (var j = 0; j < loop; j++) {
+                if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
+                    title: typeof images[j] != "undefined" ? titles[j].textContent.trim() : null,
                     link: links[j].href,
-                    images: j == 0 ? typeof images[j] != "undefined" ? images[j].src : null : null,
+                    images: typeof images[j] != "undefined" ? images[j].src : null,
                     Category: cateogryName,
-                    source: "CBC NEWS",
-                    sourceLink: "https://www.cbc.ca",
-                    sourceLogo: "cbc logo",
-                    author: author == null ? null : author[j].textContent
+                    source: "MSNBC NEWS",
+                    sourceLink: "https://www.nbcnews.com/",
+                    sourceLogo: "msnbc logo"
                   });
                 }
               }
@@ -194,14 +166,15 @@ var CBC = function CBC() {
             break;
 
           case 41:
-            _context.next = 43;
+            console.log(AllData);
+            _context.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 43:
-            _context.next = 45;
+          case 44:
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
+          case 46:
           case "end":
             return _context.stop();
         }
@@ -221,30 +194,35 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 14;
+            _context2.next = 22;
             break;
           }
 
           item = data[i];
           url = item.link;
-          _context2.next = 7;
+          console.log(url);
+          _context2.prev = 6;
+          _context2.next = 9;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context2.next = 9;
+        case 9:
+          _context2.next = 15;
+          break;
+
+        case 11:
+          _context2.prev = 11;
+          _context2.t0 = _context2["catch"](6);
+          _context2.next = 15;
+          return regeneratorRuntime.awrap(page["goto"](url));
+
+        case 15:
+          _context2.next = 17;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelectorAll('div.story p');
-            var textArray = [];
-
-            for (var _i = 2; _i < text.length; _i++) {
-              textArray.push(text[_i].textContent);
-              textArray.push('   ');
-            }
-
-            return textArray.join('\n');
+            var text = document.querySelector('.article-body__content').innerText;
+            return text;
           }));
 
-        case 9:
+        case 17:
           Content = _context2.sent;
 
           if (Content != null && Content != "") {
@@ -261,21 +239,21 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 11:
+        case 19:
           i++;
           _context2.next = 2;
           break;
 
-        case 14:
-          _context2.next = 16;
+        case 22:
+          _context2.next = 24;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 24:
         case "end":
           return _context2.stop();
       }
     }
-  });
+  }, null, null, [[6, 11]]);
 };
 
-module.exports = CBC;
+module.exports = MSNBC;

@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const {InsertData} = require('../../function/insertData')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -18,12 +19,12 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['topics/Security','topics/tech-industry','topics/Internet','topics/Culture','topics/Mobile','topics/sci-tech','topics/Computers','personal-finance/Investing','health/Fitness','health/healthy-eating','health/sleep','health/personal-care'];
+var Categories=['topics/security','topics/tech-industry','topics/internet','topics/culture','topics/mobile','topics/sci-tech','topics/computers','personal-finance/investing','health/fitness','health/healthy-eating','health/sleep','health/personal-care'];
 
 const CNET = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -69,27 +70,31 @@ var PageData = await page.evaluate((Category)=>{
            var cateogryName = "";
     
           if(i==9){
-              cateogryName="Health,Food"
+              cateogryName="health,food"
           }else{
             if(Category.indexOf("tech")!=-1){
-            cateogryName = "Technology";
+            cateogryName = "technology";
             }else{
                 if(Category.indexOf('sci-tech')!=-1){
-                    cateogryName = "Science,Technology";
+                    cateogryName = "science,technology";
                 }else{
                    if(Category.indexOf('sleep')!=-1 || cateogryName.indexOf('care')!=-1 || Category.indexOf('fitness')){
-                       cateogryName="Health";
+                       cateogryName="health";
                    }else{
-                    if(Category.indexOf('Computers')!=-1){
-                        cateogryName="Technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
+                    if(Category.indexOf('computers')!=-1){
+                        cateogryName="technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
                     }else{
-                        if(Category.indexOf('Mobile')!=-1){
-                            cateogryName="Technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
+                        if(Category.indexOf('cobile')!=-1){
+                            cateogryName="technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
                         }else{
-                            if(Category.indexOf('Internet')!=-1){
-                                cateogryName="Technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
+                            if(Category.indexOf('internet')!=-1){
+                                cateogryName="technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
                             }else{
-                                cateogryName=Category.substring(Category.indexOf('/')+1,Category.length);
+                                if(Category.indexOf('security')!=-1){
+                                       cateogryName="safety"
+                                }else{
+                                    cateogryName=Category.substring(Category.indexOf('/')+1,Category.length);
+                                }
                             }
                         }
                     }
@@ -106,17 +111,17 @@ var PageData = await page.evaluate((Category)=>{
       var imageClassName=".assetThumb>a>figure>img";
       var authorClassName=".assetAuthor";
 
-      if(Category.indexOf('health')!=-1 || Category.indexOf('Investing')!=-1){
+      if(Category.indexOf('health')!=-1 || Category.indexOf('investing')!=-1){
           authorClassName=".c-metaText_link"
       }
 
 
-      if(cateogryName==="Culture"){
+      if(cateogryName==="culture"){
            titleClassName=".assetText a";
            linkClassName=".assetText a";
            imageClassName=".assetBody>a>figure>img";
       }else{
-          if(cateogryName==="Investing" || cateogryName==="Health"){
+          if(cateogryName==="investing" || cateogryName==="health"){
             titleClassName=".latestScrollItems .c-universalLatest_text h3";
             linkClassName=".latestScrollItems .c-universalLatest_text>a";
             imageClassName=".c-universalLatest_image>a>span>img";
@@ -205,7 +210,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    return AllData_WithConetent;
+    await InsertData(AllData_WithConetent);
+
 }
 
 

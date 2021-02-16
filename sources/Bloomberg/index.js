@@ -3,6 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const {InsertData} = require('../../function/insertData')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -110,10 +111,10 @@ for(let i=0;i<Categories.length;i++){
     
     switch(Category){
         case "businessweek":
-           cateogryName="Business"
+           cateogryName="business"
             break;
         case "new-economy-forum" :
-            cateogryName="Economy"
+            cateogryName="economy"
             break;
         default :
              cateogryName =Category
@@ -150,7 +151,6 @@ for(let i=0;i<Categories.length;i++){
       console.log(AllData);
   
      await GetContent(page,AllData);
-     await page.waitFor(20000);
      await browser.close();
     })();
 }
@@ -191,7 +191,7 @@ const GetContent = async(page,data)=>{
                }
         });
 
-    if(item.images!=null && Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -207,7 +207,7 @@ const GetContent = async(page,data)=>{
        }
     }
     
-    return AllData_WithConetent;
+    await InsertData(AllData_WithConetent);
 }
 
 

@@ -8,7 +8,10 @@ var puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 
 var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 
-var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker'); //block ads
+var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+
+var _require = require('../../function/insertData'),
+    InsertData = _require.InsertData; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -140,11 +143,11 @@ var Bloomberg = function Bloomberg() {
 
               switch (Category) {
                 case "businessweek":
-                  cateogryName = "Business";
+                  cateogryName = "business";
                   break;
 
                 case "new-economy-forum":
-                  cateogryName = "Economy";
+                  cateogryName = "economy";
                   break;
 
                 default:
@@ -192,13 +195,9 @@ var Bloomberg = function Bloomberg() {
 
           case 44:
             _context.next = 46;
-            return regeneratorRuntime.awrap(page.waitFor(20000));
-
-          case 46:
-            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
+          case 46:
           case "end":
             return _context.stop();
         }
@@ -256,7 +255,7 @@ var GetContent = function GetContent(page, data) {
         case 12:
           author = _context2.sent;
 
-          if (item.images != null && Content != null && Content != "") {
+          if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -277,9 +276,10 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 17:
-          return _context2.abrupt("return", AllData_WithConetent);
+          _context2.next = 19;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 18:
+        case 19:
         case "end":
           return _context2.stop();
       }

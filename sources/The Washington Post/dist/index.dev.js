@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['sports', 'news/canada', 'news/politics', 'news/opinion', 'news/business', 'news/health', 'news/entertainment', 'news/technology', 'news/investigates'];
+var Categories = ['politics', 'opinions', 'national/investigations', 'business/technology', 'local/public-safety', 'world', 'sports', 'entertainment/books', 'goingoutguide/movies', 'economy', 'health-care', 'markets', 'climate-environment', 'education', 'food', 'health', 'lifestyle', 'science'];
 
-var CBC = function CBC() {
+var WASHINGTONPOST = function WASHINGTONPOST() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -38,7 +38,7 @@ var CBC = function CBC() {
           case 0:
             _context.next = 2;
             return regeneratorRuntime.awrap(puppeteer.launch({
-              headless: true,
+              headless: false,
               args: ['--enable-features=NetworkService', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--shm-size=3gb']
             }));
 
@@ -64,7 +64,7 @@ var CBC = function CBC() {
             console.log(Category);
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"](["https://www.cbc.ca/", '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
           case 14:
             _context.next = 33;
@@ -74,7 +74,7 @@ var CBC = function CBC() {
             _context.prev = 16;
             _context.t0 = _context["catch"](11);
             _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"](["https://www.cbc.ca/", '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
           case 20:
             _context.next = 22;
@@ -100,80 +100,98 @@ var CBC = function CBC() {
           case 33:
             _context.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              // function to look for a word inside other words
-              var WordExist = function WordExist(searchIn) {
-                if (searchIn.indexOf("second") != -1) {
-                  return true;
-                } else {
-                  if (searchIn.indexOf("seconds") != -1) {
-                    return true;
-                  } else {
-                    if (searchIn.indexOf("minute") != -1) {
-                      return true;
-                    } else {
-                      if (searchIn.indexOf("minutes") != -1) {
-                        return true;
-                      } else {
-                        return false;
-                      }
-                    }
-                  }
-                }
-              };
-
+              // Los Angelece News classes
+              var loop = 3;
               var start = 0;
-              var end = 1; //change category name
+              var titleClassName = ".story-list .story-body .story-headline h2";
+              var linkClassName = ".story-list .story-body .story-headline h2>a";
+              var imageClassName = ".story-list .story-image img";
+              var authorClassName = ".story-list .story-list-meta span.author";
 
-              var cateogryName = "";
-
-              if (Category.indexOf('/') != -1) {
-                if (Category.indexOf('investigates') != -1) {
-                  cateogryName = "investing";
-                } else {
-                  cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
-                }
+              if (Category === "opinions" || Category === "world" || Category === "sports") {
+                titleClassName = "#main-content .top-table h2>a";
+                linkClassName = "#main-content .top-table h2>a";
+                imageClassName = "#main-content .top-table .photo-wrapper img";
+                authorClassName = "#main-content .top-table .author";
               } else {
-                cateogryName = Category;
-              } //////////////////////////////
-              // CBC classes by categories 
-
-
-              var titleClassName = ".card-content h3.headline";
-              var linkClassName = ".featuredArea a";
-              var imageClassName = ".cardImageWrap>figure.imageMedia>div>img";
-              var timeClassName = "div.card-content-bottom>.metadata>div>time.timeStamp";
-              var author = null;
-
-              if (Category === "news/opinion") {
-                author = document.querySelectorAll(".authorName");
-                end = 3;
-              } else {
-                if (Category === "sports") {
-                  end = 1;
-                } else {
-                  end = 3;
+                if (Category.indexOf("books") != -1 || Category.indexOf("movies") != -1 || Category.indexOf("food") != -1) {
+                  titleClassName = "#main-content .moat-trackable h2.headline";
+                  linkClassName = "#main-content .moat-trackable h2.headline>a";
+                  imageClassName = "#main-content .moat-trackable .photo-wrapper img";
+                  authorClassName = "#main-content .moat-trackable span.author";
+                  start = 1;
                 }
-              } // change the source logo to http 
+              } // all elements
 
 
               var titles = document.querySelectorAll(titleClassName);
               var images = document.querySelectorAll(imageClassName);
-              var time = document.querySelectorAll(timeClassName);
               var links = document.querySelectorAll(linkClassName);
+              var authors = document.querySelectorAll(authorClassName); //change category name
+
+              var cateogryName = "";
+
+              if (Category.indexOf('investigations') != -1) {
+                cateogryName = "investing";
+              } else {
+                if (Category === 'business/technology') {
+                  cateogryName = "business,technology";
+                } else {
+                  if (Category.indexOf('safety') != -1) {
+                    cateogryName = "safety";
+                  } else {
+                    if (Category === 'world') {
+                      cateogryName = "International";
+                    } else {
+                      if (Category === "entertainment/books") {
+                        cateogryName = "entertainment,books";
+                      } else {
+                        if (Category.indexOf("movies") != -1) {
+                          cateogryName = "movies";
+                        } else {
+                          if (Category.indexOf('health-care') != -1) {
+                            cateogryName = "health";
+                          } else {
+                            if (Category === 'climate-environment') {
+                              cateogryName = "environement";
+                            } else {
+                              if (Category === "education") {
+                                cateogryName = "education";
+                              } else {
+                                if (Category === "lifestyle") {
+                                  cateogryName = "life&style";
+                                } else {
+                                  if (cateogryName === "poinions") {
+                                    cateogryName = "poinion";
+                                  } else {
+                                    cateogryName = Category;
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              } //////////////////////////////
+
+
               var data = [];
 
-              for (var j = start; j < end; j++) {
-                if (WordExist(typeof time[j] == "undefined" ? "nothing" : time[j].textContent) == true && typeof time[j] != "undefined" && typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
+              for (var j = 0; j < loop; j++) {
+                if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: j == 0 ? typeof images[j] != "undefined" ? images[j].src : null : null,
+                    images: typeof images[j] != "undefined" ? images[j].src : null,
                     Category: cateogryName,
-                    source: "CBC NEWS",
-                    sourceLink: "https://www.cbc.ca",
-                    sourceLogo: "cbc logo",
-                    author: author == null ? null : author[j].textContent
+                    source: "The Washington Post",
+                    sourceLink: "https://www.washingtonpost.com/",
+                    sourceLogo: "The Washingtonpost logo",
+                    author: typeof authors[j] != "undefined" ? authors[j].textContent : null
                   });
                 }
               }
@@ -221,30 +239,43 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 14;
+            _context2.next = 24;
             break;
           }
 
           item = data[i];
           url = item.link;
-          _context2.next = 7;
+          console.log(url);
+          _context2.next = 8;
+          return regeneratorRuntime.awrap(page.setJavaScriptEnabled(false));
+
+        case 8:
+          _context2.prev = 8;
+          _context2.next = 11;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context2.next = 9;
+        case 11:
+          _context2.next = 17;
+          break;
+
+        case 13:
+          _context2.prev = 13;
+          _context2.t0 = _context2["catch"](8);
+          _context2.next = 17;
+          return regeneratorRuntime.awrap(page["goto"](url));
+
+        case 17:
+          _context2.next = 19;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelectorAll('div.story p');
-            var textArray = [];
-
-            for (var _i = 2; _i < text.length; _i++) {
-              textArray.push(text[_i].textContent);
-              textArray.push('   ');
+            try {
+              var text = document.querySelector('.article-body').textContent;
+              return text;
+            } catch (_unused2) {
+              return null;
             }
-
-            return textArray.join('\n');
           }));
 
-        case 9:
+        case 19:
           Content = _context2.sent;
 
           if (Content != null && Content != "") {
@@ -257,25 +288,26 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
+              author: item.author,
               content: Content != null ? Content : null
             });
           }
 
-        case 11:
+        case 21:
           i++;
           _context2.next = 2;
           break;
 
-        case 14:
-          _context2.next = 16;
+        case 24:
+          _context2.next = 26;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 26:
         case "end":
           return _context2.stop();
       }
     }
-  });
+  }, null, null, [[8, 13]]);
 };
 
-module.exports = CBC;
+module.exports = WASHINGTONPOST;
