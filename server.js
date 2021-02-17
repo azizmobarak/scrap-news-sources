@@ -32,7 +32,7 @@ cron.schedule('* * 1 * *', () => {
 
 
 
-cron.schedule('* 45 * * *', () => {
+cron.schedule('45 * * * *', () => {
     console.log(2)
     // 45 hour
    const BBC = require('./sources/BBC');
@@ -40,7 +40,7 @@ cron.schedule('* 45 * * *', () => {
   });
 
 
-cron.schedule('* 15 * * *', () => {
+cron.schedule('15 * * * *', () => {
     console.log(3)
  // 15 min
 const Bloomberg = require('./sources/Bloomberg');
@@ -48,7 +48,7 @@ Bloomberg();
   });
 
 
-cron.schedule('30 20 * * *', () => {
+cron.schedule('20 * * * *', () => {
     console.log(4)
   // 15 min
   const CBC = require('./sources/CBS News');
@@ -56,7 +56,7 @@ cron.schedule('30 20 * * *', () => {
      });
 
 
-cron.schedule('* 23 * * *', () => {
+cron.schedule('23 * * * *', () => {
     console.log(5)
   //15 min
   const CNET = require('./sources/CNET');
@@ -64,7 +64,7 @@ cron.schedule('* 23 * * *', () => {
 });
 
 
-cron.schedule('* 30 * * *', () => {
+cron.schedule('30 * * * *', () => {
     console.log(6)
     //30
  const CNN = require('./sources/CNN');
@@ -72,7 +72,7 @@ cron.schedule('* 30 * * *', () => {
   });
 
 
-cron.schedule('* 20 * * *', () => {
+cron.schedule('20 * * * *', () => {
     console.log(7)
   // 20
    const FOXNEWS = require('./sources/Fox News Channel');
@@ -80,7 +80,7 @@ cron.schedule('* 20 * * *', () => {
   });
 
 
-cron.schedule('* * 22 * *', () => {
+cron.schedule('* 22 * *', () => {
     console.log(8)
 // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 const HBO = require('./sources/HBO');
@@ -88,14 +88,14 @@ HBO();
 });
 
 
-cron.schedule('* 28 * * *', () => {
+cron.schedule('28 * * *', () => {
     console.log(9)
 // 30 min
  const HuffPost = require('./sources/HuffPost');
  HuffPost();
 });
 
-cron.schedule('* 10 1 * *', () => {
+cron.schedule('10 1 * *', () => {
     console.log(10)
 //1h
  const LosAngelesNews = require('./sources/Los Angeles Daily News');
@@ -103,42 +103,42 @@ cron.schedule('* 10 1 * *', () => {
 });
 
 
-cron.schedule('* 5 1 * *', () => {
+cron.schedule('5 1 * *', () => {
     console.log(11)
     //1h
      const LosAngelesNews = require('./sources/Los Angeles Daily News');
      LosAngelesNews();
 });
 
-cron.schedule('* 3 1 * *', () => {
+cron.schedule('3 1 * *', () => {
     console.log(12)
   //1h
 const LosAngeleceTimes = require('./sources/Los Angeles Times');
 LosAngeleceTimes();
 });
 
-cron.schedule('* 8 1 * *', () => {
+cron.schedule('8 1 * *', () => {
     console.log(13)
     //1h
 const MSNBC = require('./sources/MSNBC');
 MSNBC()
 });
 
-cron.schedule('* 35 * * *', () => {
+cron.schedule('35 * * *', () => {
     console.log(14)
     //1h
 const Gardian = require('./sources/The Guardian');
 Gardian();
 });
 
-cron.schedule('* 33 * * *', () => {
+cron.schedule('33 * * *', () => {
     console.log(15)
     //1h
 const NEWYORKTIMES = require("./sources/The New York Times");
 NEWYORKTIMES();
 });
 
-cron.schedule('* 40 * * *', () => {
+cron.schedule('40 * * *', () => {
     console.log(16)
     //1h
 const WALLSTREET = require('./sources/The Wall Street Journal');
@@ -146,14 +146,14 @@ WALLSTREET();
 });
 
 
-cron.schedule('* 55 * * *', () => {
+cron.schedule('55 * * *', () => {
     console.log(17)
     //1h
 const WASHINGTONPOST = require('./sources/The Washington Post');
 WASHINGTONPOST();
 });
 
-cron.schedule('* 50 * * *', () => {
+cron.schedule('50 * * *', () => {
     console.log(18)
     //1h
 const VICENEWS = require('./sources/Vice News');
