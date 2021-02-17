@@ -23,7 +23,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-cron.schedule('* * 1 * *', () => {
+cron.schedule('* 1 * * *', () => {
     console.log(1)
     // 1 hour
     const ABC_NEWS = require('./sources/ABC News');

@@ -31,7 +31,7 @@ con.connect(process.env.DATABASE, {
     // })
   }
 });
-cron.schedule('* * 1 * *', function () {
+cron.schedule('* 1 * * *', function () {
   console.log(1); // 1 hour
 
   var ABC_NEWS = require('./sources/ABC News');
