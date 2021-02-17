@@ -15,12 +15,20 @@ var _require = require('./function/insertData'),
 
 var cron = require('node-cron');
 
+var _require2 = require('./model/Category'),
+    category = _require2.category;
+
 con.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, function (err, db) {
-  if (err) console.log(err);else {
-    console.log('connected');
+  if (err) console.log(err);else {// var model = category('articles');
+    // model.find({},(err,doc)=>{
+    // if(err)console.log(err)
+    // else{
+    //     console.log(doc)
+    // }
+    // })
   }
 });
 cron.schedule('* * */1 * *', function () {
