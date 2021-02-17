@@ -24,7 +24,7 @@ var Categories=['us','economy','technology','opinion','realestate','world','poli
 const WALLSTREET = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',

@@ -24,7 +24,7 @@ var Categories=['politics','opinions','national/investigations','business/techno
 const WASHINGTONPOST = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
