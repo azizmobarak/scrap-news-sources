@@ -80,77 +80,77 @@ cron.schedule('20 * * * *', function () {
 
   FOXNEWS();
 });
-cron.schedule('* 22 * *', function () {
+cron.schedule('* 22 * * *', function () {
   console.log(8); // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 
   var HBO = require('./sources/HBO');
 
   HBO();
 });
-cron.schedule('28 * * *', function () {
+cron.schedule('28 * * * *', function () {
   console.log(9); // 30 min
 
   var HuffPost = require('./sources/HuffPost');
 
   HuffPost();
 });
-cron.schedule('10 1 * *', function () {
+cron.schedule('10 1 * * *', function () {
   console.log(10); //1h
 
   var LosAngelesNews = require('./sources/Los Angeles Daily News');
 
   LosAngelesNews();
 });
-cron.schedule('5 1 * *', function () {
+cron.schedule('5 1 * * *', function () {
   console.log(11); //1h
 
   var LosAngelesNews = require('./sources/Los Angeles Daily News');
 
   LosAngelesNews();
 });
-cron.schedule('3 1 * *', function () {
+cron.schedule('3 1 * * *', function () {
   console.log(12); //1h
 
   var LosAngeleceTimes = require('./sources/Los Angeles Times');
 
   LosAngeleceTimes();
 });
-cron.schedule('8 1 * *', function () {
+cron.schedule('8 1 * * *', function () {
   console.log(13); //1h
 
   var MSNBC = require('./sources/MSNBC');
 
   MSNBC();
 });
-cron.schedule('35 * * *', function () {
+cron.schedule('35 * * * *', function () {
   console.log(14); //1h
 
   var Gardian = require('./sources/The Guardian');
 
   Gardian();
 });
-cron.schedule('33 * * *', function () {
+cron.schedule('33 * * * *', function () {
   console.log(15); //1h
 
   var NEWYORKTIMES = require("./sources/The New York Times");
 
   NEWYORKTIMES();
 });
-cron.schedule('40 * * *', function () {
+cron.schedule('40 * * * *', function () {
   console.log(16); //1h
 
   var WALLSTREET = require('./sources/The Wall Street Journal');
 
   WALLSTREET();
 });
-cron.schedule('55 * * *', function () {
+cron.schedule('55 * * * *', function () {
   console.log(17); //1h
 
   var WASHINGTONPOST = require('./sources/The Washington Post');
 
   WASHINGTONPOST();
 });
-cron.schedule('50 * * *', function () {
+cron.schedule('50 * * * *', function () {
   console.log(18); //1h
 
   var VICENEWS = require('./sources/Vice News');
