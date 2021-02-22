@@ -30,10 +30,14 @@ con.connect(process.env.DATABASE, {
     // }
     // });
   }
-}); // //cron.schedule('* 1 * * *', () => {
+});
+
+var DailyMail = require('./sources/Daily Mail');
+
+DailyMail(); // //cron.schedule('* 1 * * *', () => {
 //     // 1 hour
-//     const ABC_NEWS = require('./sources/ABC News');
-//      ABC_NEWS();
+// const ABC_NEWS = require('./sources/ABC News');
+//  ABC_NEWS();
 //   //});
 // //cron.schedule('45 * * * *', () => {
 //     // 45 hour
@@ -75,13 +79,12 @@ con.connect(process.env.DATABASE, {
 //  const HuffPost = require('./sources/HuffPost');
 //  HuffPost();
 // });
-
-cron.schedule('10 1 * * *', function () {
-  //1h
-  var LosAngelesNews = require('./sources/Los Angeles Daily News');
-
-  LosAngelesNews();
-}); // cron.schedule('5 1 * * *', () => {
+// cron.schedule('10 1 * * *', () => {
+// //1h
+//  const LosAngelesNews = require('./sources/Los Angeles Daily News');
+//  LosAngelesNews();
+// });
+// cron.schedule('5 1 * * *', () => {
 //     //1h
 //      const LosAngelesNews = require('./sources/Los Angeles Daily News');
 //      LosAngelesNews();

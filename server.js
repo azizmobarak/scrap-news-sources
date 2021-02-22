@@ -22,11 +22,14 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
+const DailyMail = require('./sources/Daily Mail');
+DailyMail();
+
 
 // //cron.schedule('* 1 * * *', () => {
 //     // 1 hour
-//     const ABC_NEWS = require('./sources/ABC News');
-//      ABC_NEWS();
+    // const ABC_NEWS = require('./sources/ABC News');
+    //  ABC_NEWS();
 //   //});
 
 
@@ -86,11 +89,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 //  HuffPost();
 // });
 
-cron.schedule('10 1 * * *', () => {
-//1h
- const LosAngelesNews = require('./sources/Los Angeles Daily News');
- LosAngelesNews();
-});
+// cron.schedule('10 1 * * *', () => {
+// //1h
+//  const LosAngelesNews = require('./sources/Los Angeles Daily News');
+//  LosAngelesNews();
+// });
 
 
 // cron.schedule('5 1 * * *', () => {
