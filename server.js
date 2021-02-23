@@ -22,8 +22,12 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-const DailyMail = require('./sources/Daily Mail');
-DailyMail();
+
+cron.schedule('22 1 * * *', () => {
+    //1 hour
+    const DailyMail = require('./sources/Daily Mail');
+    DailyMail();
+});
 
 
 // //cron.schedule('* 1 * * *', () => {

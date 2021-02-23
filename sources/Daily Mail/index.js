@@ -22,13 +22,13 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['worldnews','israel','china','nigeria','turkey','coronavirus','royals','crime','ushome','us-economy','sport/football','sport/fa_cup','sport/champions_league','sport/transfernews','sport/boxing','sport/rugbyunion','sport/golf','sport/cricket','sport/formulaone','sport/tennis','sport/mma','sport/racing','usshowbiz','tvshowbiz/the-masked-singer-uk','arts','auhome','breaking_news','new_zealand','femail','femail/food','best-buys','health','news/world-health-organization','sciencetech/nasa','sciencetech/apple','sciencetech/twitter','money/markets','money/saving','money/investing','money/bills','money/cars','money/holidays','money/cardsloans','money/pensions','money/mortgageshome','travel/escape','travel/destinations','tvshowbiz'];
+var Categories=['worldnews','israel','china','nigeria','turkey','coronavirus','royals','crime','ushome','us-economy','sport/football','sport/fa_cup','sport/champions_league','sport/transfernews','sport/boxing','sport/rugbyunion','sport/golf','sport/cricket','sport/formulaone','sport/tennis','sport/mma','sport/racing','usshowbiz','tvshowbiz/the-masked-singer-uk','arts','auhome','breaking_news','new_zealand','femail','femail/food','best-buys','health','world-health-organization','sciencetech/nasa','sciencetech/apple','sciencetech/twitter','money/markets','money/saving','money/investing','money/bills','money/cars','money/holidays','money/cardsloans','money/pensions','money/mortgageshome','travel/escape','travel/destinations','tvshowbiz'];
 
 
 const Daily_News = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -51,8 +51,14 @@ for(let i=0;i<Categories.length;i++){
         console.log(Category);
         //navigate to category sub route
 
-        var URL = 'https://www.dailymail.co.uk/news/'
-        if(Category.indexOf('sport')!=-1 || Category==="auhome" || Category==="usshowbiz"){
+        var URL = 'https://www.dailymail.co.uk/news/';
+
+        if(Category.indexOf('sport')!=-1 || Category==="auhome" || Category==="usshowbiz" ||
+           Category==="tvshowbiz/the-masked-singer-uk" || Category==="usshowbiz" || 
+           Category.indexOf('femail')!=-1 || Category==="best-buys" || Category==="health" ||
+           Category.indexOf('sciencetech')!=-1 || Category.indexOf('money')!=-1 || 
+           Category==="tvshowbiz" || Category.indexOf('travel')!=-1
+        ){
             URL = 'https://www.dailymail.co.uk/'
         }
 
@@ -68,46 +74,89 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-var categoryName=Category;
-var ArticleDom = document.querySelectorAll(".article-tri-headline");
-var titleClassName ="h2>a";
-var linkClassName="h2>a";
-var imageClassName="img";
+    var categoryName=Category;
+    var ArticleDom = document.querySelectorAll(".article-tri-headline");
+    var titleClassName ="h2>a";
+    var linkClassName="h2>a";
+    var imageClassName="img";
+    var ImageData=true;
 
 
 if(categoryName==="worldnews"){
     categoryName="international";
-                      }
+}
+
 if(categoryName==="israel" || categoryName==="china" || 
     categoryName==="nigeria" || categoryName==="turkey" || 
     categoryName==="coronavirus" || categoryName==="crime" || 
-    categoryName==="royals" || categoryName==="us-economy")
+    categoryName==="royals" || categoryName==="us-economy" ||
+    categoryName==="tvshowbiz/the-masked-singer-uk" ||
+    categoryName==="arts" ||  categoryName==="new_zealand" ||
+    categoryName==="breaking_news" || categoryName==="femail/food" ||
+    categoryName==="world-health-organization" || categoryName==="sciencetech/nasa" ||
+    categoryName==="sciencetech/apple" || categoryName==="sciencetech/twitter" ||
+    categoryName==="money/markets"   || categoryName==="best-buys"
+    )
     {
     ArticleDom=document.querySelectorAll('.article-small');
-    var cat = categoryName;
    
-    if(categoryName==="crime") cat = "safety";
-    if(categoryName==="royals") cat = "UK,international";
-    if(categoryName==="china"|| categoryName==="israel" || categoryName==="nigeria" || categoryName==="turkey") cat="international,"+categoryName;
+    if(categoryName==="crime") categoryName = "safety";
+    if(categoryName==="royals") categoryName = "UK,international";
+    if(categoryName==="china"|| categoryName==="israel" || categoryName==="nigeria" || categoryName==="turkey") categoryName="international,"+categoryName;
     if(categoryName==="us-economy") categoryName = "US,economy";
+    if(categoryName==="coronavirus") categoryName="health,"+categoryName;
+    if(categoryName==="tvshowbiz/the-masked-singer-uk") categoryName="celebrity,UK,TV";
+    if(categoryName.indexOf('food')!=-1) categoryName="food,women";
+    if(categoryName.indexOf('sciencetech')!=-1) categoryName="science";
+    if(categoryName.indexOf('best-buys')!=-1) categoryName="shopping";
+    if(categoryName==="world-health-organization") categoryName="health";
+    if(categoryName==="breaking_news") categoryName="international";
+    if(categoryName==="arts") categoryName="art&design";
 
-    categoryName=cat;
+    ImageData=false;
 }
 
 
 if(categoryName==="ushome") categoryName = "US,international";
+if(categoryName==="femail") categoryName = "women";
+if(categoryName==="auhome") categoryName = "AU,international";
+if(categoryName.indexOf('money')!=-1) categoryName="money";
+if(categoryName==="money/markets") categoryName="money,market";
+if(categoryName==="money/investing") categoryName="money,investing";
+if(categoryName.indexOf('travel')!=-1) categoryName="travel";
+
+
+if(categoryName.indexOf('sport')!=-1){
+
+    var subCategory = categoryName.substring(categoryName.indexOf('/')+1,categoryName.length);
+    
+    if(subCategory==="fa_cup" || subCategory==="champions_league" || subCategory==="transfernews"){
+      ArticleDom=document.querySelectorAll('.article-small');
+      ImageData=true;
+      categoryName="sport,football"
+    }else{
+        if(subCategory==="rugbyunion") categoryName="sport,rugby";
+       else{
+        if(subCategory==="mma") categoryName="sport";
+        else{
+            categoryName="sport,"+subCategory;
+        }
+       }
+    }
+    
+}
     
             
                      
     var data =[];
-         for(let j=0;j<ArticleDom.length/2;j++){
+         for(let j=0;j<(ArticleDom.length>4? 4 : ArticleDom.length);j++){
            
               if(typeof(ArticleDom[j])!=undefined && ArticleDom[j].querySelector(titleClassName)!="" && ArticleDom[j].querySelector(titleClassName)!=null){
                    data.push({
                        time : Date.now(),
                        title : ArticleDom[j].querySelector(titleClassName).textContent,
                        link : ArticleDom[j].querySelector(linkClassName).href,
-                       images :  typeof(ArticleDom[j].querySelector(imageClassName))==="undefined" || ArticleDom[j].querySelector(imageClassName).src.indexOf('http') ==-1 ? null : ArticleDom[j].querySelector(imageClassName).src,
+                       images :  typeof(ArticleDom[j].querySelector(imageClassName))==="undefined" ? null : ImageData==false ?  ArticleDom[j].querySelector(imageClassName).src : (j==0 ? ArticleDom[j].querySelector(imageClassName).src : (typeof( ArticleDom[j].querySelector(imageClassName).dataset.src)!="undefined" ?  ArticleDom[j].querySelector(imageClassName).dataset.src :  ArticleDom[j].querySelector(imageClassName).src) ),
                        Category:categoryName,
                        source :"Daily Mail",
                        sourceLink:"https://www.dailymail.co.uk/",
@@ -145,18 +194,21 @@ const GetContent = async(page,data)=>{
         console.log(url)
     
         var Content = await page.evaluate(()=>{
-            var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
-            return text;
+            var text = document.querySelectorAll('.mol-para-with-font');
+            var content="";
+            for(let i=0;i<text.length;i++){
+               content = content +" \n "+text[i].textContent;
+            }
+            return content;
         });
 
         var author = await page.evaluate(()=>{
            try{
-            const auth =document.querySelector('.Byline__Author').textContent;
-            const upperCaseWords = auth.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g);
-            return upperCaseWords[0]+" "+upperCaseWords[1]
+            const auth =document.querySelector('.author-section').textContent.split(' ');
+            return auth[1]+" "+auth[2];
            }catch{
                return null;
-           }
+            }
         });
     
     if(item.images!=null && Content!=null && Content!=""){
@@ -175,6 +227,7 @@ const GetContent = async(page,data)=>{
        }
     
     }
+   // console.log(AllData_WithConetent);
     await InsertData(AllData_WithConetent);
 }
 
