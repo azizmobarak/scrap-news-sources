@@ -48,7 +48,6 @@ for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
-        console.log(Category);
         //navigate to category sub route
 
         var URL = 'https://www.dailymail.co.uk/news/';
@@ -167,7 +166,6 @@ if(categoryName.indexOf('sport')!=-1){
                       return data;
                },Category);
 
-               console.log(PageData)
                PageData.map(item=>{
                    AllData.push(item)
                })
@@ -191,7 +189,6 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-        console.log(url)
     
         var Content = await page.evaluate(()=>{
             var text = document.querySelectorAll('.mol-para-with-font');
