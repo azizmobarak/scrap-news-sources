@@ -31,18 +31,18 @@ con.connect(process.env.DATABASE, {
     // }
     // });
   }
-});
-cron.schedule('22 1 * * *', function () {
-  // 1 hour
-  var DailyMail = require('./sources/Daily Mail');
+}); // cron.schedule('22 1 * * *', () => {
+//    // 1 hour
+//     const DailyMail = require('./sources/Daily Mail');
+//     DailyMail();
+// });
 
-  DailyMail();
-}); // //cron.schedule('* 1 * * *', () => {
-//     // 1 hour
-// const ABC_NEWS = require('./sources/ABC News');
-//  ABC_NEWS();
-//   //});
-// //cron.schedule('45 * * * *', () => {
+cron.schedule('* 1 * * *', function () {
+  // 1 hour
+  var ABC_NEWS = require('./sources/ABC News');
+
+  ABC_NEWS();
+}); // //cron.schedule('45 * * * *', () => {
 //     // 45 hour
 //     const BBC = require('./sources/BBC');
 //      BBC();
