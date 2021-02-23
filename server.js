@@ -53,18 +53,18 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('20 * * * *', () => {
-  // 15 min
-  const CBC = require('./sources/CBS News');
-  CBC();
-});
-
-
-// cron.schedule('23 * * * *', () => {
-//   //15 min
-//   const CNET = require('./sources/CNET');
-//   CNET();
+// cron.schedule('20 * * * *', () => {
+//   // 15 min
+//   const CBC = require('./sources/CBS News');
+//   CBC();
 // });
+
+
+cron.schedule('23 * * * *', () => {
+  //15 min
+  const CNET = require('./sources/CNET');
+  CNET();
+});
 
 
 // cron.schedule('30 * * * *', () => {
