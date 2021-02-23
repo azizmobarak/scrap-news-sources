@@ -22,7 +22,8 @@ con.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, function (err, db) {
-  if (err) console.log(err);else {// var model = category('articles');
+  if (err) console.log(err);else {
+    console.log('in 2'); // var model = category('articles');
     // model.find({},(err,doc)=>{
     // if(err)console.log(err)
     // else{

@@ -11,6 +11,7 @@ const {category} = require('./model/Category');
 con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true},(err,db)=>{
     if(err)console.log(err);
     else{
+        console.log('in 2')
         // var model = category('articles');
         // model.find({},(err,doc)=>{
         // if(err)console.log(err)
