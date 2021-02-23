@@ -40,18 +40,18 @@ con.connect(process.env.DATABASE, {
 //     const ABC_NEWS = require('./sources/ABC News');
 //      ABC_NEWS();
 //   });
-
-cron.schedule('45 * * * *', function () {
-  // 45 hour
-  var BBC = require('./sources/BBC');
-
-  BBC();
-}); // cron.schedule('15 * * * *', () => {
-//  // 15 min
-// const Bloomberg = require('./sources/Bloomberg');
-// Bloomberg();
+// cron.schedule('45 * * * *', () => {
+//    // 45 hour
+//     const BBC = require('./sources/BBC');
+//     BBC();
 //   });
-// cron.schedule('20 * * * *', () => {
+
+cron.schedule('15 * * * *', function () {
+  // 15 min
+  var Bloomberg = require('./sources/Bloomberg');
+
+  Bloomberg();
+}); // cron.schedule('20 * * * *', () => {
 //   // 15 min
 //   const CBC = require('./sources/CBS News');
 //   CBC();

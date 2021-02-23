@@ -38,18 +38,19 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-cron.schedule('45 * * * *', () => {
-   // 45 hour
-    const BBC = require('./sources/BBC');
-    BBC();
-  });
-
-
-// cron.schedule('15 * * * *', () => {
-//  // 15 min
-// const Bloomberg = require('./sources/Bloomberg');
-// Bloomberg();
+// cron.schedule('45 * * * *', () => {
+//    // 45 hour
+//     const BBC = require('./sources/BBC');
+//     BBC();
 //   });
+
+
+cron.schedule('15 * * * *', () => {
+ // 15 min
+const Bloomberg = require('./sources/Bloomberg');
+Bloomberg();
+
+});
 
 
 // cron.schedule('20 * * * *', () => {
