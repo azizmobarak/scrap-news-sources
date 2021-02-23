@@ -22,8 +22,7 @@ con.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, function (err, db) {
-  if (err) console.log(err);else {
-    console.log('in 2'); // var model = category('articles');
+  if (err) console.log(err);else {// var model = category('articles');
     // model.find({},(err,doc)=>{
     // if(err)console.log(err)
     // else{
@@ -36,18 +35,18 @@ con.connect(process.env.DATABASE, {
 //     const DailyMail = require('./sources/Daily Mail');
 //     DailyMail();
 // });
+// cron.schedule('* 1 * * *', () => {
+//    // 1 hour
+//     const ABC_NEWS = require('./sources/ABC News');
+//      ABC_NEWS();
+//   });
 
-cron.schedule('* 1 * * *', function () {
-  // 1 hour
-  var ABC_NEWS = require('./sources/ABC News');
+cron.schedule('45 * * * *', function () {
+  // 45 hour
+  var BBC = require('./sources/BBC');
 
-  ABC_NEWS();
-}); // //cron.schedule('45 * * * *', () => {
-//     // 45 hour
-//     const BBC = require('./sources/BBC');
-//      BBC();
-//   //});
-// cron.schedule('15 * * * *', () => {
+  BBC();
+}); // cron.schedule('15 * * * *', () => {
 //  // 15 min
 // const Bloomberg = require('./sources/Bloomberg');
 // Bloomberg();

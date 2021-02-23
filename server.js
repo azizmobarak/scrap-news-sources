@@ -11,7 +11,6 @@ const {category} = require('./model/Category');
 con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true},(err,db)=>{
     if(err)console.log(err);
     else{
-        console.log('in 2')
         // var model = category('articles');
         // model.find({},(err,doc)=>{
         // if(err)console.log(err)
@@ -31,19 +30,19 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('* 1 * * *', () => {
-   // 1 hour
-    const ABC_NEWS = require('./sources/ABC News');
-     ABC_NEWS();
+// cron.schedule('* 1 * * *', () => {
+//    // 1 hour
+//     const ABC_NEWS = require('./sources/ABC News');
+//      ABC_NEWS();
+//   });
+
+
+
+cron.schedule('45 * * * *', () => {
+   // 45 hour
+    const BBC = require('./sources/BBC');
+    BBC();
   });
-
-
-
-// //cron.schedule('45 * * * *', () => {
-//     // 45 hour
-//     const BBC = require('./sources/BBC');
-//      BBC();
-//   //});
 
 
 // cron.schedule('15 * * * *', () => {
