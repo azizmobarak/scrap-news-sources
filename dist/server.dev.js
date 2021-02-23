@@ -31,13 +31,13 @@ con.connect(process.env.DATABASE, {
     // }
     // });
   }
-}); // cron.schedule('22 1 * * *', () => {
-//1 hour
+});
+cron.schedule('22 1 * * *', function () {
+  // 1 hour
+  var DailyMail = require('./sources/Daily Mail');
 
-var DailyMail = require('./sources/Daily Mail');
-
-DailyMail(); // });
-// //cron.schedule('* 1 * * *', () => {
+  DailyMail();
+}); // //cron.schedule('* 1 * * *', () => {
 //     // 1 hour
 // const ABC_NEWS = require('./sources/ABC News');
 //  ABC_NEWS();
