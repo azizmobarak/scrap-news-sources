@@ -55,50 +55,49 @@ var CNN = function CNN() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 41;
+              _context.next = 39;
               break;
             }
 
             //get the right category by number
             Category = Categories[i];
-            console.log(Category);
-            _context.prev = 11;
-            _context.next = 14;
+            _context.prev = 10;
+            _context.next = 13;
             return regeneratorRuntime.awrap(page["goto"](['https://edition.cnn.com/', '', Category].join('')));
 
-          case 14:
-            _context.next = 33;
+          case 13:
+            _context.next = 32;
             break;
 
-          case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](11);
-            _context.next = 20;
+          case 15:
+            _context.prev = 15;
+            _context.t0 = _context["catch"](10);
+            _context.next = 19;
             return regeneratorRuntime.awrap(page["goto"](['https://edition.cnn.com/', '', Category].join('')));
 
-          case 20:
-            _context.next = 22;
+          case 19:
+            _context.next = 21;
             return regeneratorRuntime.awrap(page.solveRecaptchas());
 
-          case 22:
+          case 21:
             _context.t1 = regeneratorRuntime;
             _context.t2 = Promise;
             _context.t3 = page.waitForNavigation();
             _context.t4 = page.click(".g-recaptcha");
-            _context.next = 28;
+            _context.next = 27;
             return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
               return el.click();
             }));
 
-          case 28:
+          case 27:
             _context.t5 = _context.sent;
             _context.t6 = [_context.t3, _context.t4, _context.t5];
             _context.t7 = _context.t2.all.call(_context.t2, _context.t6);
-            _context.next = 33;
+            _context.next = 32;
             return _context.t1.awrap.call(_context.t1, _context.t7);
 
-          case 33:
-            _context.next = 35;
+          case 32:
+            _context.next = 34;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var loop = 1; // CNN classes
 
@@ -164,32 +163,31 @@ var CNN = function CNN() {
               return data;
             }, Category));
 
-          case 35:
+          case 34:
             PageData = _context.sent;
-            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 38:
+          case 36:
             i++;
             _context.next = 8;
             break;
 
-          case 41:
-            _context.next = 43;
+          case 39:
+            _context.next = 41;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 43:
-            _context.next = 45;
+          case 41:
+            _context.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
+          case 43:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[11, 16]]);
+    }, null, null, [[10, 15]]);
   })();
 }; // the final result 
 

@@ -60,18 +60,18 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('23 * * * *', () => {
-  //15 min
-  const CNET = require('./sources/CNET');
-  CNET();
+// cron.schedule('23 * * * *', () => {
+//   //15 min
+//   const CNET = require('./sources/CNET');
+//   CNET();
+// });
+
+
+cron.schedule('30 * * * *', () => {
+    //30
+ const CNN = require('./sources/CNN');
+ CNN();
 });
-
-
-// cron.schedule('30 * * * *', () => {
-//     //30
-//  const CNN = require('./sources/CNN');
-//  CNN();
-//   });
 
 
 // cron.schedule('20 * * * *', () => {

@@ -55,18 +55,18 @@ con.connect(process.env.DATABASE, {
 //   const CBC = require('./sources/CBS News');
 //   CBC();
 // });
+// cron.schedule('23 * * * *', () => {
+//   //15 min
+//   const CNET = require('./sources/CNET');
+//   CNET();
+// });
 
-cron.schedule('23 * * * *', function () {
-  //15 min
-  var CNET = require('./sources/CNET');
+cron.schedule('30 * * * *', function () {
+  //30
+  var CNN = require('./sources/CNN');
 
-  CNET();
-}); // cron.schedule('30 * * * *', () => {
-//     //30
-//  const CNN = require('./sources/CNN');
-//  CNN();
-//   });
-// cron.schedule('20 * * * *', () => {
+  CNN();
+}); // cron.schedule('20 * * * *', () => {
 //   // 20
 //    const FOXNEWS = require('./sources/Fox News Channel');
 //    FOXNEWS();

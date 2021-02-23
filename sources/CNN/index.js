@@ -45,7 +45,6 @@ for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
-        console.log(Category)
       
 
       try{
@@ -142,7 +141,6 @@ for(let i=0;i<Categories.length;i++){
                       return data;
                },Category);
 
-               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
