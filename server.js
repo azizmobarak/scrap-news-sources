@@ -45,19 +45,19 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 //   });
 
 
-cron.schedule('15 * * * *', () => {
- // 15 min
-const Bloomberg = require('./sources/Bloomberg');
-Bloomberg();
+// cron.schedule('15 * * * *', () => {
+//  // 15 min
+// const Bloomberg = require('./sources/Bloomberg');
+// Bloomberg();
 
+// });
+
+
+cron.schedule('20 * * * *', () => {
+  // 15 min
+  const CBC = require('./sources/CBS News');
+  CBC();
 });
-
-
-// cron.schedule('20 * * * *', () => {
-//   // 15 min
-//   const CBC = require('./sources/CBS News');
-//   CBC();
-//      });
 
 
 // cron.schedule('23 * * * *', () => {
