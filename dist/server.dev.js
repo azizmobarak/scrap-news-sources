@@ -70,33 +70,30 @@ con.connect(process.env.DATABASE, {
 //    const FOXNEWS = require('./sources/Fox News Channel');
 //    FOXNEWS();
 // });
-// cron.schedule('* 22 * * *', () => {
+// cron.schedule('00 */1 * * *', () => {
 // // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // const HBO = require('./sources/HBO');
-// HBO();
+// //HBO();
+// var d =new Date;
+// console.log('runing',d.getMinutes())
 // });
 // cron.schedule('28 * * * *', () => {
 // // 30 min
 //  const HuffPost = require('./sources/HuffPost');
 //  HuffPost();
 // });
+// cron.schedule('10 1 * * *', () => {
+// //1h
+//  const LosAngelesNews = require('./sources/Los Angeles Daily News');
+//  LosAngelesNews();
+// });
 
-cron.schedule('10 1 * * *', function () {
+cron.schedule('30 */1 * * *', function () {
   //1h
-  var LosAngelesNews = require('./sources/Los Angeles Daily News');
+  var LosAngeleceTimes = require('./sources/Los Angeles Times');
 
-  LosAngelesNews();
-}); // cron.schedule('5 1 * * *', () => {
-//     //1h
-//      const LosAngelesNews = require('./sources/Los Angeles Daily News');
-//      LosAngelesNews();
-// });
-// cron.schedule('3 1 * * *', () => {
-//   //1h
-// const LosAngeleceTimes = require('./sources/Los Angeles Times');
-// LosAngeleceTimes();
-// });
-// cron.schedule('8 1 * * *', () => {
+  LosAngeleceTimes();
+}); // cron.schedule('8 1 * * *', () => {
 //     //1h
 // const MSNBC = require('./sources/MSNBC');
 // MSNBC()

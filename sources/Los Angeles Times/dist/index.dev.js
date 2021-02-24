@@ -173,7 +173,7 @@ var LosAngelesTimes = function LosAngelesTimes() {
                     Category: cateogryName,
                     source: "Los Angeles Times",
                     sourceLink: "https://www.latimes.com/",
-                    sourceLogo: "LaTimes logo"
+                    sourceLogo: "https://www.pngkey.com/png/detail/196-1964217_the-los-angeles-times-los-angeles-times-logo.png"
                   });
                 }
               }
