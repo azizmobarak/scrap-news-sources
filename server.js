@@ -88,17 +88,17 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('28 * * * *', () => {
-// 30 min
- const HuffPost = require('./sources/HuffPost');
- HuffPost();
-});
-
-// cron.schedule('10 1 * * *', () => {
-// //1h
-//  const LosAngelesNews = require('./sources/Los Angeles Daily News');
-//  LosAngelesNews();
+// cron.schedule('28 * * * *', () => {
+// // 30 min
+//  const HuffPost = require('./sources/HuffPost');
+//  HuffPost();
 // });
+
+cron.schedule('10 1 * * *', () => {
+//1h
+ const LosAngelesNews = require('./sources/Los Angeles Daily News');
+ LosAngelesNews();
+});
 
 
 // cron.schedule('5 1 * * *', () => {

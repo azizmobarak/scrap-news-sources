@@ -161,7 +161,7 @@ var LosAngelesNews = function LosAngelesNews() {
                     Category: cateogryName,
                     source: "Los Angeles Daily News",
                     sourceLink: "https://www.dailynews.com/",
-                    sourceLogo: "dailynews logo"
+                    sourceLogo: "https://www.brainsway.com/wp-content/uploads/2019/05/img47.png"
                   });
                 }
               }
