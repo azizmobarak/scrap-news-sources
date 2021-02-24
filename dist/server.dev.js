@@ -66,8 +66,8 @@ con.connect(process.env.DATABASE, {
 //  CNN();
 // });
 
-cron.schedule('20 * * * *', function () {
-  // 20
+cron.schedule('30 * * * *', function () {
+  // 30
   var FOXNEWS = require('./sources/Fox News Channel');
 
   FOXNEWS();

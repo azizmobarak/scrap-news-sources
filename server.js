@@ -74,8 +74,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('20 * * * *', () => {
-  // 20
+cron.schedule('30 * * * *', () => {
+  // 30
    const FOXNEWS = require('./sources/Fox News Channel');
    FOXNEWS();
   });
