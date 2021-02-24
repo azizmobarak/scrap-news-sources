@@ -144,9 +144,9 @@ for(let i=0;i<Categories.length;i++){
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:Category,
-                       source :"Fox News",
+                       source :"Fox News Channel",
                        sourceLink:"https://www.foxnews.com",
-                       sourceLogo:"FoxNews logo"
+                       sourceLogo:"https://pbs.twimg.com/profile_images/918480715158716419/4X8oCbge_400x400.jpg"
                     });
                    }
                }

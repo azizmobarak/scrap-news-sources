@@ -60,18 +60,18 @@ con.connect(process.env.DATABASE, {
 //   const CNET = require('./sources/CNET');
 //   CNET();
 // });
+// cron.schedule('30 * * * *', () => {
+//     //30
+//  const CNN = require('./sources/CNN');
+//  CNN();
+// });
 
-cron.schedule('30 * * * *', function () {
-  //30
-  var CNN = require('./sources/CNN');
+cron.schedule('20 * * * *', function () {
+  // 20
+  var FOXNEWS = require('./sources/Fox News Channel');
 
-  CNN();
-}); // cron.schedule('20 * * * *', () => {
-//   // 20
-//    const FOXNEWS = require('./sources/Fox News Channel');
-//    FOXNEWS();
-//   });
-// cron.schedule('* 22 * * *', () => {
+  FOXNEWS();
+}); // cron.schedule('* 22 * * *', () => {
 // // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // const HBO = require('./sources/HBO');
 // HBO();
