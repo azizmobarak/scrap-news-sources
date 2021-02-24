@@ -65,18 +65,18 @@ con.connect(process.env.DATABASE, {
 //  const CNN = require('./sources/CNN');
 //  CNN();
 // });
-
-cron.schedule('30 * * * *', function () {
-  // 30
-  var FOXNEWS = require('./sources/Fox News Channel');
-
-  FOXNEWS();
-}); // cron.schedule('* 22 * * *', () => {
-// // with low content and link to page contain videos about the movie/serie run it for 24h and more.
-// const HBO = require('./sources/HBO');
-// HBO();
+// cron.schedule('30 * * * *', () => {
+//   // 30
+//    const FOXNEWS = require('./sources/Fox News Channel');
+//    FOXNEWS();
 // });
-// cron.schedule('28 * * * *', () => {
+
+cron.schedule('* 22 * * *', function () {
+  // with low content and link to page contain videos about the movie/serie run it for 24h and more.
+  var HBO = require('./sources/HBO');
+
+  HBO();
+}); // cron.schedule('28 * * * *', () => {
 // // 30 min
 //  const HuffPost = require('./sources/HuffPost');
 //  HuffPost();

@@ -96,7 +96,7 @@ for(let i=0;i<Categories.length;i++){
                        Category:Category,
                        source :"HBO",
                        sourceLink:"https://www.hbo.com/",
-                       sourceLogo:"HBO logo",
+                       sourceLogo:"https://tvline.com/wp-content/uploads/2020/08/hbo-logo.jpg",
                        content : content[j].textContent
                     });
                    }
