@@ -164,7 +164,7 @@ var PageData = await page.evaluate((Category)=>{
                        Category: cateogryName,
                        source :"The Gardian",
                        sourceLink:"https://www.theguardian.com/",
-                       sourceLogo:"The Gardian logo"
+                       sourceLogo:"https://www.youthalive.org/wp-content/uploads/2020/07/the-guardian-logo.jpg"
                          });
                    }
               }

@@ -110,18 +110,17 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // console.log("heel")
 // });
 
-cron.schedule('4 */1 * * *', () => {
-    //1h
-const MSNBC = require('./sources/MSNBC');
-MSNBC()
-});
-
-// cron.schedule('35 * * * *', () => {
-//     console.log(14)
+// cron.schedule('4 */1 * * *', () => {
 //     //1h
-// const Gardian = require('./sources/The Guardian');
-// Gardian();
+// const MSNBC = require('./sources/MSNBC');
+// MSNBC()
 // });
+
+cron.schedule('*/35 * * * *', () => {
+//1h
+const Gardian = require('./sources/The Guardian');
+Gardian();
+});
 
 // cron.schedule('33 * * * *', () => {
 //     //1h

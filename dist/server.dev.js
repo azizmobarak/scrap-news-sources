@@ -93,19 +93,18 @@ con.connect(process.env.DATABASE, {
 // //LosAngeleceTimes();
 // console.log("heel")
 // });
-
-cron.schedule('4 */1 * * *', function () {
-  //1h
-  var MSNBC = require('./sources/MSNBC');
-
-  MSNBC();
-}); // cron.schedule('35 * * * *', () => {
-//     console.log(14)
+// cron.schedule('4 */1 * * *', () => {
 //     //1h
-// const Gardian = require('./sources/The Guardian');
-// Gardian();
+// const MSNBC = require('./sources/MSNBC');
+// MSNBC()
 // });
-// cron.schedule('33 * * * *', () => {
+
+cron.schedule('*/35 * * * *', function () {
+  //1h
+  var Gardian = require('./sources/The Guardian');
+
+  Gardian();
+}); // cron.schedule('33 * * * *', () => {
 //     //1h
 // const NEWYORKTIMES = require("./sources/The New York Times");
 // NEWYORKTIMES();
