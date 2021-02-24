@@ -145,7 +145,7 @@ var MSNBC = function MSNBC() {
                     Category: cateogryName,
                     source: "MSNBC NEWS",
                     sourceLink: "https://www.nbcnews.com/",
-                    sourceLogo: "msnbc logo"
+                    sourceLogo: "https://png.pngitem.com/pimgs/s/488-4884737_msnbc-news-cnbc-logo-png-transparent-png.png"
                   });
                 }
               }
@@ -225,7 +225,7 @@ var GetContent = function GetContent(page, data) {
         case 17:
           Content = _context2.sent;
 
-          if (Content != null && Content != "") {
+          if (Content != null && Content != "" && item.title != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,

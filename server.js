@@ -103,17 +103,18 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('30 */1 * * *', () => {
-  //1h
-const LosAngeleceTimes = require('./sources/Los Angeles Times');
-LosAngeleceTimes();
-});
-
-// cron.schedule('8 1 * * *', () => {
-//     //1h
-// const MSNBC = require('./sources/MSNBC');
-// MSNBC()
+// cron.schedule('*/30 * * * *', () => {
+//   //1h
+// const LosAngeleceTimes = require('./sources/Los Angeles Times');
+// //LosAngeleceTimes();
+// console.log("heel")
 // });
+
+cron.schedule('4 */1 * * *', () => {
+    //1h
+const MSNBC = require('./sources/MSNBC');
+MSNBC()
+});
 
 // cron.schedule('35 * * * *', () => {
 //     console.log(14)
