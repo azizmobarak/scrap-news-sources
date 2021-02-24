@@ -81,18 +81,18 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('* 22 * * *', () => {
-// with low content and link to page contain videos about the movie/serie run it for 24h and more.
-const HBO = require('./sources/HBO');
-HBO();
-});
-
-
-// cron.schedule('28 * * * *', () => {
-// // 30 min
-//  const HuffPost = require('./sources/HuffPost');
-//  HuffPost();
+// cron.schedule('* 22 * * *', () => {
+// // with low content and link to page contain videos about the movie/serie run it for 24h and more.
+// const HBO = require('./sources/HBO');
+// HBO();
 // });
+
+
+cron.schedule('28 * * * *', () => {
+// 30 min
+ const HuffPost = require('./sources/HuffPost');
+ HuffPost();
+});
 
 // cron.schedule('10 1 * * *', () => {
 // //1h

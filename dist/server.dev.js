@@ -70,18 +70,18 @@ con.connect(process.env.DATABASE, {
 //    const FOXNEWS = require('./sources/Fox News Channel');
 //    FOXNEWS();
 // });
-
-cron.schedule('* 22 * * *', function () {
-  // with low content and link to page contain videos about the movie/serie run it for 24h and more.
-  var HBO = require('./sources/HBO');
-
-  HBO();
-}); // cron.schedule('28 * * * *', () => {
-// // 30 min
-//  const HuffPost = require('./sources/HuffPost');
-//  HuffPost();
+// cron.schedule('* 22 * * *', () => {
+// // with low content and link to page contain videos about the movie/serie run it for 24h and more.
+// const HBO = require('./sources/HBO');
+// HBO();
 // });
-// cron.schedule('10 1 * * *', () => {
+
+cron.schedule('28 * * * *', function () {
+  // 30 min
+  var HuffPost = require('./sources/HuffPost');
+
+  HuffPost();
+}); // cron.schedule('10 1 * * *', () => {
 // //1h
 //  const LosAngelesNews = require('./sources/Los Angeles Daily News');
 //  LosAngelesNews();

@@ -210,7 +210,7 @@ var HuffPost = function HuffPost() {
               }
 
               if (Category === 'world-news') {
-                cateogryName = "International";
+                cateogryName = "international";
               }
 
               if (Category === "news/us-news") {
@@ -230,7 +230,7 @@ var HuffPost = function HuffPost() {
                     Category: cateogryName,
                     source: "HuffPost",
                     sourceLink: url,
-                    sourceLogo: "HuffPost logo"
+                    sourceLogo: "http://www.logo-designer.co/wp-content/uploads/2017/04/2017-huffpost-new-logo-design-2.png"
                   });
                 }
               }
