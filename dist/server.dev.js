@@ -98,18 +98,18 @@ con.connect(process.env.DATABASE, {
 // const MSNBC = require('./sources/MSNBC');
 // MSNBC()
 // });
-
-cron.schedule('*/35 * * * *', function () {
-  //1h
-  var Gardian = require('./sources/The Guardian');
-
-  Gardian();
-}); // cron.schedule('33 * * * *', () => {
-//     //1h
-// const NEWYORKTIMES = require("./sources/The New York Times");
-// NEWYORKTIMES();
+// cron.schedule('*/35 * * * *', () => {
+// //1h
+// const Gardian = require('./sources/The Guardian');
+// Gardian();
 // });
-// cron.schedule('40 * * * *', () => {
+
+cron.schedule('33 */1 * * *', function () {
+  //1h
+  var NEWYORKTIMES = require("./sources/The_New_York_Times");
+
+  NEWYORKTIMES();
+}); // cron.schedule('40 * * * *', () => {
 //     //1h
 // const WALLSTREET = require('./sources/The Wall Street Journal');
 // WALLSTREET();
