@@ -122,17 +122,17 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // Gardian();
 // });
 
-cron.schedule('33 */1 * * *', () => {
-    //1h
-const NEWYORKTIMES = require("./sources/The_New_York_Times");
-NEWYORKTIMES();
-});
-
-// cron.schedule('40 * * * *', () => {
+// cron.schedule('33 */1 * * *', () => {
 //     //1h
-// const WALLSTREET = require('./sources/The Wall Street Journal');
-// WALLSTREET();
+// const NEWYORKTIMES = require("./sources/The_New_York_Times");
+// NEWYORKTIMES();
 // });
+
+cron.schedule('*/40 * * * *', () => {
+    //1h
+const WALLSTREET = require('./sources/The_Wall_Street_Journal');
+WALLSTREET();
+});
 
 
 // cron.schedule('55 * * * *', () => {

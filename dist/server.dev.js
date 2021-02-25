@@ -103,18 +103,18 @@ con.connect(process.env.DATABASE, {
 // const Gardian = require('./sources/The Guardian');
 // Gardian();
 // });
-
-cron.schedule('33 */1 * * *', function () {
-  //1h
-  var NEWYORKTIMES = require("./sources/The_New_York_Times");
-
-  NEWYORKTIMES();
-}); // cron.schedule('40 * * * *', () => {
+// cron.schedule('33 */1 * * *', () => {
 //     //1h
-// const WALLSTREET = require('./sources/The Wall Street Journal');
-// WALLSTREET();
+// const NEWYORKTIMES = require("./sources/The_New_York_Times");
+// NEWYORKTIMES();
 // });
-// cron.schedule('55 * * * *', () => {
+
+cron.schedule('*/40 * * * *', function () {
+  //1h
+  var WALLSTREET = require('./sources/The_Wall_Street_Journal');
+
+  WALLSTREET();
+}); // cron.schedule('55 * * * *', () => {
 //     //1h
 // const WASHINGTONPOST = require('./sources/The Washington Post');
 // WASHINGTONPOST();
