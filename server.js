@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3232;
 const con = require("mongoose");
-const {insertData, InsertData} = require('./function/insertData');
+const {InsertData} = require('./function/insertData');
 const cron = require('node-cron')
 const {category} = require('./model/Category');
 
@@ -30,9 +30,25 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
+
+var articledetails =[{
+              title : "test title",
+              link : "https://abcnews.go.com/Business/wireStory/closing-prices-crude-oil-gold-commodities-76119304",
+              image : "test all",
+              Category:"category2,business",
+              source :"media",
+              sourceLogo:"logo",
+              mediaName:"medai name",
+              author : "aziz mobarak",
+              content:"bla bla bla bla"
+             // articleDescription:article.content
+      }]
+    InsertData(articledetails)
+
+
 // cron.schedule('30 */2 * * *', () => {
- const INVESTOPEDIA = require('./sources/Investopedia');
- INVESTOPEDIA();
+//  const INVESTOPEDIA = require('./sources/Investopedia');
+//  INVESTOPEDIA();
 // });
 
 // // cron.schedule('22 1 * * *', () => {
@@ -44,8 +60,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 // // cron.schedule('* 1 * * *', () => {
 // //    // 1 hour
-// //     const ABC_NEWS = require('./sources/ABC News');
-// //      ABC_NEWS();
+    // const ABC_NEWS = require('./sources/ABC_News');
+    //  ABC_NEWS();
 // //   });
 
 
@@ -115,12 +131,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-// // cron.schedule('*/30 * * * *', () => {
-// //   //1h
-// // const LosAngeleceTimes = require('./sources/Los Angeles Times');
-// // //LosAngeleceTimes();
-// // console.log("heel")
-// // });
+//cron.schedule('*/30 * * * *', () => {
+  //1h
+// const LosAngeleceTimes = require('./sources/Los_Angeles_Times');
+// LosAngeleceTimes();
+//});
 
 // // cron.schedule('4 */1 * * *', () => {
 // //     //1h

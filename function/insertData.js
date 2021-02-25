@@ -8,7 +8,7 @@ var type="Article";
     data.map(article=>{
 
         var articleCateory = article.Category.split(',');
-      
+              
         for(let cat=0;cat< articleCateory.length ;cat++ ){
              
           var articledetails ={
@@ -25,8 +25,9 @@ var type="Article";
               articleDescription:article.content
       }
 
-  console.log(articleCateory[cat])
-    var Model =  category("articles");
+      console.log(articledetails)
+      
+       var Model =  category("articles");
       Model.find({$and : [
           {articleSourceLink:articledetails.articleSourceLink},
           {categoryName:articledetails.categoryName}
@@ -34,7 +35,6 @@ var type="Article";
           if(err) console.log(err)
           else{
              if(typeof doc[0]!="undefined"){
-                 console.log('exist')
              } else{
                    var newModel = new Model(articledetails);
                    newModel.save((err,doc)=>{
@@ -46,7 +46,7 @@ var type="Article";
              }
           }
       })
-      
+
         }
          });
 }
