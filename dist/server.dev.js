@@ -108,23 +108,23 @@ con.connect(process.env.DATABASE, {
 // const NEWYORKTIMES = require("./sources/The_New_York_Times");
 // NEWYORKTIMES();
 // });
-
-cron.schedule('*/40 * * * *', function () {
-  //1h
-  var WALLSTREET = require('./sources/The_Wall_Street_Journal');
-
-  WALLSTREET();
-}); // cron.schedule('55 * * * *', () => {
+// cron.schedule('*/40 * * * *', () => {
+//     //1h
+// const WALLSTREET = require('./sources/The_Wall_Street_Journal');
+// WALLSTREET();
+// });
+// cron.schedule('55 * * * *', () => {
 //     //1h
 // const WASHINGTONPOST = require('./sources/The Washington Post');
 // WASHINGTONPOST();
 // });
-// cron.schedule('50 * * * *', () => {
-//     //1h
-// const VICENEWS = require('./sources/Vice News');
-// VICENEWS();
-// });
 
+cron.schedule('50 */1 * * *', function () {
+  //1h
+  var VICENEWS = require('./sources/Vice News');
+
+  VICENEWS();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

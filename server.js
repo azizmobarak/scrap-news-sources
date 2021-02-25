@@ -23,6 +23,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
+
 // cron.schedule('22 1 * * *', () => {
 //    // 1 hour
 //     const DailyMail = require('./sources/Daily Mail');
@@ -128,11 +129,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // NEWYORKTIMES();
 // });
 
-cron.schedule('*/40 * * * *', () => {
-    //1h
-const WALLSTREET = require('./sources/The_Wall_Street_Journal');
-WALLSTREET();
-});
+// cron.schedule('*/40 * * * *', () => {
+//     //1h
+// const WALLSTREET = require('./sources/The_Wall_Street_Journal');
+// WALLSTREET();
+// });
 
 
 // cron.schedule('55 * * * *', () => {
@@ -141,11 +142,11 @@ WALLSTREET();
 // WASHINGTONPOST();
 // });
 
-// cron.schedule('50 * * * *', () => {
-//     //1h
-// const VICENEWS = require('./sources/Vice News');
-// VICENEWS();
-// });
+cron.schedule('50 */1 * * *', () => {
+    //1h
+const VICENEWS = require('./sources/Vice News');
+VICENEWS();
+});
 
 
 
