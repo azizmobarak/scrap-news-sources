@@ -30,10 +30,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('30 */2 * * *', () => {
-const INVESTOPEDIA = require('./sources/Investopedia');
-INVESTOPEDIA();
-});
+// cron.schedule('30 */2 * * *', () => {
+ const INVESTOPEDIA = require('./sources/Investopedia');
+ INVESTOPEDIA();
+// });
 
 // // cron.schedule('22 1 * * *', () => {
 // //    // 1 hour

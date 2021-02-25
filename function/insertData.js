@@ -8,8 +8,6 @@ var type="Article";
     data.map(article=>{
 
         var articleCateory = article.Category.split(',');
-        
-        console.log(articleCateory)
       
         for(let cat=0;cat< articleCateory.length ;cat++ ){
              
@@ -26,8 +24,9 @@ var type="Article";
               articleLanguage:lang,
               articleDescription:article.content
       }
-      
-      var Model =  category("articles");
+
+  console.log(articleCateory[cat])
+    var Model =  category("articles");
       Model.find({$and : [
           {articleSourceLink:articledetails.articleSourceLink},
           {categoryName:articledetails.categoryName}
@@ -47,6 +46,7 @@ var type="Article";
              }
           }
       })
+      
         }
          });
 }
