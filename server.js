@@ -31,21 +31,6 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-var articledetails =[{
-              title : "test title",
-              link : "https://abcnews.go.com/Business/wireStory/closing-prices-crude-oil-gold-commodities-76119304",
-              image : "test all",
-              Category:"category2,business",
-              source :"media",
-              sourceLogo:"logo",
-              mediaName:"medai name",
-              author : "aziz mobarak",
-              content:"bla bla bla bla"
-             // articleDescription:article.content
-      }]
-    InsertData(articledetails)
-
-
 // cron.schedule('30 */2 * * *', () => {
 //  const INVESTOPEDIA = require('./sources/Investopedia');
 //  INVESTOPEDIA();
@@ -73,12 +58,10 @@ var articledetails =[{
 // //   });
 
 
-// // cron.schedule('15 * * * *', () => {
-// //  // 15 min
-// // const Bloomberg = require('./sources/Bloomberg');
-// // Bloomberg();
-
-// // });
+cron.schedule('15 */1 * * *', () => {
+const Bloomberg = require('./sources/Bloomberg');
+Bloomberg();
+});
 
 
 // // cron.schedule('20 * * * *', () => {
