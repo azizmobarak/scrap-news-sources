@@ -5,6 +5,7 @@ const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const fs = require('fs');
 const {InsertData} = require('../../function/insertData');
+const { category } = require('../../model/Category');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -20,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['news/us-news','impact/business','section/health','entertainment/celebrity','entertainment/arts','life/style','life/taste','news/media','news/world-news','entertainment/tv','life/Travel','voices/women','life/relationships','news-australia','news-canada','news-uk'];
+var Categories=['news/us-news','impact/business','section/health','entertainment/celebrity','entertainment/arts','life/style','life/taste','news/media','news/world-news','entertainment/tv','life/travel','voices/women','life/relationships','news-australia','news-canada','news-uk'];
 
 const HuffPost = () =>{
     (async()=>{
@@ -48,6 +49,8 @@ for(let k=0;k<5;k++){
         console.log("cookie passed")
        }
 }
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -58,11 +61,11 @@ for(let i=0;i<Categories.length;i++){
         var url="https://www.huffpost.com/";
         if(Category==="news-australia"){
             url = "https://www.huffingtonpost.com.au/news";
-            Category = "Australia"
+            Category = "australia"
         }else{
             if(Category==="news-canada"){
                 url="https://www.huffingtonpost.ca/news/";
-                Category="Canada";
+                Category="canada";
             }else{
                 if(Category==="news-uk"){
                     url="https://www.huffingtonpost.co.uk/news";
@@ -73,7 +76,7 @@ for(let i=0;i<Categories.length;i++){
 
       try{
          //navigate to category sub route
-         if(Category==="Australia" || Category==="UK" || Category==="Canada"){
+         if(Category==="australia" || Category==="UK" || Category==="canada"){
             await page.goto(url);
          }else{
             await page.goto([url,'',Category].join(''));
@@ -82,7 +85,7 @@ for(let i=0;i<Categories.length;i++){
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }catch(e){
          //navigate to category sub route
-         if(Category==="Australia" || Category==="UK"  || Category==="Canada"){
+         if(Category==="australia" || Category==="UK"  || Category==="canada"){
             await page.goto(url);
          }else{
             await page.goto([url,'',Category].join(''));
@@ -130,15 +133,22 @@ var PageData = await page.evaluate((Category,url)=>{
              }else{
                 cateogryName="life&style";
              }
+         }else{
+                if(Category.indexOf('taste')!=-1){
+                   cateogryName="life&style";
+                }else{
+                        cateogryName=Category.substring(Category.indexOf('/')+1,Category.length);
+                }
          }
      }
     }
-    if(Category==='world-news'){
-        cateogryName="international"
-    }
-    if(Category==="news/us-news"){
-        cateogryName="US";
-    }
+
+
+
+if(Category==='news/world-news')cateogryName="international"
+if(Category==="news/us-news") cateogryName="US";
+
+
     //////////////////////////////
 
          var data =[];
@@ -161,13 +171,21 @@ var PageData = await page.evaluate((Category,url)=>{
                       return data;
     },Category,url);
 
-               console.log(PageData);
                PageData.map(item=>{
+                   console.log(item.Category)
                    AllData.push(item)
                });
-       }
+    }
+  }catch{
+    await browser.close();
+    }
+    try{
      await GetContent(page,AllData);
-     await browser.close();
+    }catch{
+        await browser.close();
+    }
+
+    await browser.close();
     })();
 }
 

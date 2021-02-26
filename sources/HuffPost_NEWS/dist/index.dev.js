@@ -13,7 +13,10 @@ var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 var fs = require('fs');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../model/Category'),
+    category = _require2.category; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -29,7 +32,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['news/us-news', 'impact/business', 'section/health', 'entertainment/celebrity', 'entertainment/arts', 'life/style', 'life/taste', 'news/media', 'news/world-news', 'entertainment/tv', 'life/Travel', 'voices/women', 'life/relationships', 'news-australia', 'news-canada', 'news-uk'];
+var Categories = ['news/us-news', 'impact/business', 'section/health', 'entertainment/celebrity', 'entertainment/arts', 'life/style', 'life/taste', 'news/media', 'news/world-news', 'entertainment/tv', 'life/travel', 'voices/women', 'life/relationships', 'news-australia', 'news-canada', 'news-uk'];
 
 var HuffPost = function HuffPost() {
   (function _callee() {
@@ -83,9 +86,10 @@ var HuffPost = function HuffPost() {
             break;
 
           case 22:
+            _context.prev = 22;
             i = 0;
 
-          case 23:
+          case 24:
             if (!(i < Categories.length)) {
               _context.next = 68;
               break;
@@ -98,11 +102,11 @@ var HuffPost = function HuffPost() {
 
             if (Category === "news-australia") {
               url = "https://www.huffingtonpost.com.au/news";
-              Category = "Australia";
+              Category = "australia";
             } else {
               if (Category === "news-canada") {
                 url = "https://www.huffingtonpost.ca/news/";
-                Category = "Canada";
+                Category = "canada";
               } else {
                 if (Category === "news-uk") {
                   url = "https://www.huffingtonpost.co.uk/news";
@@ -111,71 +115,71 @@ var HuffPost = function HuffPost() {
               }
             }
 
-            _context.prev = 28;
+            _context.prev = 29;
 
-            if (!(Category === "Australia" || Category === "UK" || Category === "Canada")) {
-              _context.next = 34;
+            if (!(Category === "australia" || Category === "UK" || Category === "canada")) {
+              _context.next = 35;
               break;
             }
 
-            _context.next = 32;
+            _context.next = 33;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 32:
-            _context.next = 36;
+          case 33:
+            _context.next = 37;
             break;
 
-          case 34:
-            _context.next = 36;
+          case 35:
+            _context.next = 37;
             return regeneratorRuntime.awrap(page["goto"]([url, '', Category].join('')));
 
-          case 36:
-            _context.next = 60;
+          case 37:
+            _context.next = 61;
             break;
 
-          case 38:
-            _context.prev = 38;
-            _context.t1 = _context["catch"](28);
+          case 39:
+            _context.prev = 39;
+            _context.t1 = _context["catch"](29);
 
-            if (!(Category === "Australia" || Category === "UK" || Category === "Canada")) {
-              _context.next = 45;
+            if (!(Category === "australia" || Category === "UK" || Category === "canada")) {
+              _context.next = 46;
               break;
             }
 
-            _context.next = 43;
+            _context.next = 44;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 43:
-            _context.next = 47;
+          case 44:
+            _context.next = 48;
             break;
 
-          case 45:
-            _context.next = 47;
+          case 46:
+            _context.next = 48;
             return regeneratorRuntime.awrap(page["goto"]([url, '', Category].join('')));
 
-          case 47:
-            _context.next = 49;
+          case 48:
+            _context.next = 50;
             return regeneratorRuntime.awrap(page.solveRecaptchas());
 
-          case 49:
+          case 50:
             _context.t2 = regeneratorRuntime;
             _context.t3 = Promise;
             _context.t4 = page.waitForNavigation();
             _context.t5 = page.click(".g-recaptcha");
-            _context.next = 55;
+            _context.next = 56;
             return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
               return el.click();
             }));
 
-          case 55:
+          case 56:
             _context.t6 = _context.sent;
             _context.t7 = [_context.t4, _context.t5, _context.t6];
             _context.t8 = _context.t3.all.call(_context.t3, _context.t7);
-            _context.next = 60;
+            _context.next = 61;
             return _context.t2.awrap.call(_context.t2, _context.t8);
 
-          case 60:
-            _context.next = 62;
+          case 61:
+            _context.next = 63;
             return regeneratorRuntime.awrap(page.evaluate(function (Category, url) {
               // HuffPost Classes
               var titleClassName = ".zone__content a.card__headline--long>h2";
@@ -197,26 +201,26 @@ var HuffPost = function HuffPost() {
 
               if (Category.indexOf('/') != -1) {
                 if (Category.indexOf('arts') != -1 && Category.indexOf('entertainment') != -1) {
-                  cateogryName = "art&design,entertainment";
+                  cateogryName = "entertainment";
                 } else {
                   if (Category.indexOf('life') != -1) {
                     if (Category.indexOf('travel') != -1) {
-                      cateogryName = "life&style,travel";
+                      cateogryName = "travel";
                     } else {
                       cateogryName = "life&style";
+                    }
+                  } else {
+                    if (Category.indexOf('taste') != -1) {
+                      cateogryName = "life&style";
+                    } else {
+                      cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
                     }
                   }
                 }
               }
 
-              if (Category === 'world-news') {
-                cateogryName = "international";
-              }
-
-              if (Category === "news/us-news") {
-                cateogryName = "US";
-              } //////////////////////////////
-
+              if (Category === 'news/world-news') cateogryName = "international";
+              if (Category === "news/us-news") cateogryName = "US"; //////////////////////////////
 
               var data = [];
 
@@ -238,32 +242,53 @@ var HuffPost = function HuffPost() {
               return data;
             }, Category, url));
 
-          case 62:
+          case 63:
             PageData = _context.sent;
-            console.log(PageData);
             PageData.map(function (item) {
+              console.log(item.Category);
               AllData.push(item);
             });
 
           case 65:
             i++;
-            _context.next = 23;
+            _context.next = 24;
             break;
 
           case 68:
-            _context.next = 70;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
+            _context.next = 74;
+            break;
 
           case 70:
-            _context.next = 72;
+            _context.prev = 70;
+            _context.t9 = _context["catch"](22);
+            _context.next = 74;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 72:
+          case 74:
+            _context.prev = 74;
+            _context.next = 77;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
+
+          case 77:
+            _context.next = 83;
+            break;
+
+          case 79:
+            _context.prev = 79;
+            _context.t10 = _context["catch"](74);
+            _context.next = 83;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 83:
+            _context.next = 85;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 85:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[9, 16], [28, 38]]);
+    }, null, null, [[9, 16], [22, 70], [29, 39], [74, 79]]);
   })();
 };
 
