@@ -217,25 +217,29 @@ var FOXNEWS = function FOXNEWS() {
 
           case 49:
             _context.prev = 49;
-            _context.next = 56;
-            break;
+            _context.next = 52;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
 
           case 52:
-            _context.prev = 52;
-            _context.t9 = _context["catch"](49);
-            _context.next = 56;
-            return regeneratorRuntime.awrap(browser.close());
+            _context.next = 58;
+            break;
 
-          case 56:
+          case 54:
+            _context.prev = 54;
+            _context.t9 = _context["catch"](49);
             _context.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
           case 58:
+            _context.next = 60;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 60:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 45], [14, 19], [49, 52]]);
+    }, null, null, [[7, 45], [14, 19], [49, 54]]);
   })();
 };
 
@@ -281,6 +285,10 @@ var GetContent = function GetContent(page, data) {
             var auth = document.querySelector('.author-byline span>span>a');
 
             if (typeof auth != "undefined" && auth != null) {
+              if (auth.textContent.indexOf('Content provided') != -1) {
+                return null;
+              }
+
               return auth.textContent;
             } else {
               return null;

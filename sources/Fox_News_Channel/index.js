@@ -174,7 +174,7 @@ for(let i=0;i<Categories.length;i++){
         await browser.close();
        }
      try{
-       // await GetContent(page,AllData);
+        await GetContent(page,AllData);
      }catch{
         await browser.close();
      }
@@ -214,6 +214,9 @@ const GetContent = async(page,data)=>{
         var Author = await page.evaluate(()=>{
             var auth = document.querySelector('.author-byline span>span>a');
             if(typeof auth !="undefined" && auth!=null){
+                if(auth.textContent.indexOf('Content provided')!=-1){
+                    return null;
+                }
                 return auth.textContent;
             }else{
                 return null;
