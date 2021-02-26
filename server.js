@@ -101,11 +101,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-// cron.schedule('28 * * * *', () => {
+cron.schedule('5 */1 * * *', () => {
 // 30 min
   const HuffPost = require('./sources/HuffPost_NEWS');
   HuffPost();
-// });
+});
 
 // // cron.schedule('10 1 * * *', () => {
 // // //1h

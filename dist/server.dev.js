@@ -88,13 +88,13 @@ con.connect(process.env.DATABASE, {
 // // var d =new Date;
 // // console.log('runing',d.getMinutes())
 // // });
-// cron.schedule('28 * * * *', () => {
-// 30 min
 
-var HuffPost = require('./sources/HuffPost_NEWS');
+cron.schedule('5 */1 * * *', function () {
+  // 30 min
+  var HuffPost = require('./sources/HuffPost_NEWS');
 
-HuffPost(); // });
-// // cron.schedule('10 1 * * *', () => {
+  HuffPost();
+}); // // cron.schedule('10 1 * * *', () => {
 // // //1h
 // //  const LosAngelesNews = require('./sources/Los Angeles Daily News');
 // //  LosAngelesNews();
