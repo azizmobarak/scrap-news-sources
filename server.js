@@ -43,11 +43,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-// // cron.schedule('* 1 * * *', () => {
+cron.schedule('*/45 * * * *', () => {
 // //    // 1 hour
-    // const ABC_NEWS = require('./sources/ABC_News');
-    //  ABC_NEWS();
-// //   });
+     const ABC_NEWS = require('./sources/ABC_News');
+      ABC_NEWS();
+   });
 
 
 
@@ -85,11 +85,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-cron.schedule('5 */1 * * *', () => {
-// //   // 30
- const FOXNEWS = require('./sources/Fox_News_Channel');
-  FOXNEWS();
- });
+// cron.schedule('5 */1 * * *', () => {
+// // //   // 30
+//  const FOXNEWS = require('./sources/Fox_News_Channel');
+//   FOXNEWS();
+//  });
 
 
 // // cron.schedule('00 */1 * * *', () => {

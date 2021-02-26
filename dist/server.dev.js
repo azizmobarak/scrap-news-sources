@@ -47,12 +47,13 @@ con.connect(process.env.DATABASE, {
 // //     const DailyMail = require('./sources/Daily Mail');
 // //     DailyMail();
 // // });
-// // cron.schedule('* 1 * * *', () => {
-// //    // 1 hour
-// const ABC_NEWS = require('./sources/ABC_News');
-//  ABC_NEWS();
-// //   });
-// // cron.schedule('45 * * * *', () => {
+
+cron.schedule('*/45 * * * *', function () {
+  // //    // 1 hour
+  var ABC_NEWS = require('./sources/ABC_News');
+
+  ABC_NEWS();
+}); // // cron.schedule('45 * * * *', () => {
 // //    // 45 hour
 // //     const BBC = require('./sources/BBC');
 // //     BBC();
@@ -76,13 +77,12 @@ con.connect(process.env.DATABASE, {
 // //  const CNN = require('./sources/CNN');
 // //  CNN();
 // // });
-
-cron.schedule('5 */1 * * *', function () {
-  // //   // 30
-  var FOXNEWS = require('./sources/Fox_News_Channel');
-
-  FOXNEWS();
-}); // // cron.schedule('00 */1 * * *', () => {
+// cron.schedule('5 */1 * * *', () => {
+// // //   // 30
+//  const FOXNEWS = require('./sources/Fox_News_Channel');
+//   FOXNEWS();
+//  });
+// // cron.schedule('00 */1 * * *', () => {
 // // // with low content and link to page contain videos about the movie/serie run it for 24h and more.
 // // const HBO = require('./sources/HBO');
 // // //HBO();

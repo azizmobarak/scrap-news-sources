@@ -1,6 +1,6 @@
 /node_modules
 
-/sources/ABC_NEWS
+#/sources/ABC_NEWS
 
 /sources/BBC_NEWS
 
@@ -14,7 +14,7 @@
 
 /sources/Daily_Mail
 
-#/sources/FOX_News_Channel
+/sources/FOX_News_Channel
 
 /sources/HBO_NEWS
 
