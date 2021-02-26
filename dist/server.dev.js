@@ -47,21 +47,21 @@ con.connect(process.env.DATABASE, {
 // //     const DailyMail = require('./sources/Daily Mail');
 // //     DailyMail();
 // // });
-
-cron.schedule('*/45 * * * *', function () {
-  // //    // 1 hour
-  var ABC_NEWS = require('./sources/ABC_News');
-
-  ABC_NEWS();
-}); // // cron.schedule('45 * * * *', () => {
+// cron.schedule('*/45 * * * *', () => {
+// // //    // 1 hour
+//      const ABC_NEWS = require('./sources/ABC_News');
+//       ABC_NEWS();
+//    });
+// // cron.schedule('45 * * * *', () => {
 // //    // 45 hour
 // //     const BBC = require('./sources/BBC');
 // //     BBC();
 // //   });
 // cron.schedule('15 */1 * * *', () => {
-// const Bloomberg = require('./sources/Bloomberg');
-// Bloomberg();
-// });
+
+var Bloomberg = require('./sources/Bloomberg_News');
+
+Bloomberg(); // });
 // // cron.schedule('20 * * * *', () => {
 // //   // 15 min
 // //   const CBC = require('./sources/CBS News');

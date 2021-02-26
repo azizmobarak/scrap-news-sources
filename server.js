@@ -43,11 +43,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-cron.schedule('*/45 * * * *', () => {
-// //    // 1 hour
-     const ABC_NEWS = require('./sources/ABC_News');
-      ABC_NEWS();
-   });
+// cron.schedule('*/45 * * * *', () => {
+// // //    // 1 hour
+//      const ABC_NEWS = require('./sources/ABC_News');
+//       ABC_NEWS();
+//    });
 
 
 
@@ -59,8 +59,8 @@ cron.schedule('*/45 * * * *', () => {
 
 
 // cron.schedule('15 */1 * * *', () => {
-// const Bloomberg = require('./sources/Bloomberg');
-// Bloomberg();
+ const Bloomberg = require('./sources/Bloomberg_News');
+ Bloomberg();
 // });
 
 

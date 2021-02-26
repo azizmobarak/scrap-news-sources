@@ -1,10 +1,10 @@
 /node_modules
 
-#/sources/ABC_NEWS
+/sources/ABC_NEWS
 
 /sources/BBC_NEWS
 
-/sources/Bloomberg_News
+#/sources/Bloomberg_News
 
 /sources/CBS_News 
 
