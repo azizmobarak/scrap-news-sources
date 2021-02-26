@@ -14,11 +14,11 @@
 
 /sources/Daily_Mail
 
-/sources/FOX_News_Channel
+#/sources/FOX_News_Channel
 
 /sources/HBO_NEWS
 
-#/sources/HuffPost_NEWS
+/sources/HuffPost_NEWS
 
 /sources/Los_Angeles_Times
 

@@ -85,11 +85,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-// // cron.schedule('30 * * * *', () => {
+cron.schedule('5 */1 * * *', () => {
 // //   // 30
-// //    const FOXNEWS = require('./sources/Fox News Channel');
-// //    FOXNEWS();
-// // });
+ const FOXNEWS = require('./sources/Fox_News_Channel');
+  FOXNEWS();
+ });
 
 
 // // cron.schedule('00 */1 * * *', () => {
@@ -101,11 +101,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // // });
 
 
-cron.schedule('5 */1 * * *', () => {
-// 30 min
-  const HuffPost = require('./sources/HuffPost_NEWS');
-  HuffPost();
-});
+// cron.schedule('5 */1 * * *', () => {
+// // 30 min
+//   const HuffPost = require('./sources/HuffPost_NEWS');
+//   HuffPost();
+// });
 
 // // cron.schedule('10 1 * * *', () => {
 // // //1h
