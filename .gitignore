@@ -12,7 +12,7 @@
 
 /sources/CNN_NEWS
 
-#/sources/Daily_Mail
+/sources/Daily_Mail
 
 /sources/FOX_News_Channel
 
@@ -42,4 +42,4 @@
 
 /sources/Investopedia
 
-/ESPN_NEWS
+#/ESPN_NEWS

@@ -30,6 +30,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
+// cron.schedule('30 */2 * * *', () => {
+ const ESPN = require('./sources/ESPN_NEWS');
+ ESPN();
+// });
 
 // cron.schedule('30 */2 * * *', () => {
 //  const INVESTOPEDIA = require('./sources/Investopedia');
@@ -59,8 +63,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 // cron.schedule('15 */1 * * *', () => {
- const Bloomberg = require('./sources/Bloomberg_News');
- Bloomberg();
+//  const Bloomberg = require('./sources/Bloomberg_News');
+//  Bloomberg();
 // });
 
 

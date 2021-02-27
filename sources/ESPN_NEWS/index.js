@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['nba','soccer','mma','nfl'];
+var Categories=['nba','soccer','mma','nfl','boxing','golf','racing','tennis','f1'];
 
 const ESPN = () =>{
     (async()=>{
@@ -41,6 +41,8 @@ const ESPN = () =>{
 
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -49,6 +51,7 @@ for(let i=0;i<Categories.length;i++){
         //navigate to category sub route
        try{
         await page.goto(['https://www.espn.com/','',Category].join(''));
+        await page.click('#onetrust-accept-btn-handler')
        }catch{
         await page.goto(['https://www.espn.com/','',Category].join(''));
        }
@@ -58,67 +61,63 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-               // function to look for a word inside other words for time
-        const WordExist=(searchIn)=>{
-                    if(searchIn.indexOf("second")!=-1){
-                         return true;
-                         }else{
-                       if(searchIn.indexOf("seconds")!=-1){
-                      return true;
-                       }else{
-                         if(searchIn.indexOf("minute")!=-1){
-                       return true;
-                       }else{
-                       if(searchIn.indexOf("minutes")!=-1){
-                           return true;
-                          }else{
-                        if(searchIn.indexOf("hour")!=-1){
-                          return true;
-                         }else{
-                     if(searchIn.startsWith("1 hour")!=false || searchIn.startsWith("2 hours")!=false || searchIn.startsWith("an hour")!=false){
-                                return true;
-                        }else{
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    }
-    
 
-         var titles = document.querySelectorAll('.contentItem__padding h1');
-         var images =document.querySelectorAll('.contentItem__padding figure>picture>img');
-         var links = document.querySelectorAll('.contentItem__padding')
+         var titles = document.querySelectorAll('.contentItem .contentItem__content--story h1');
+         var images =document.querySelectorAll('.contentItem .contentItem__content--story figure>picture>source+source')
+         var links = document.querySelectorAll('.contentItem .contentItem__content--story a')
+
+         if(Category==="mba"){
+             Category="basketball";
+         }else{
+             if(Category==="soccer"){
+                 Category="football"
+             }else{
+                 if(Category==="nfl"){
+                     Category="rugby"
+                 }else{
+                     if(Category==="f1"){
+                         Category="formulaone"
+                     }else{
+                         if(Category==="mma"){
+                             Category="sport"
+                         }
+                     }
+                 }
+             }
+         }
             
-                     
+         
                 var data =[];
-         for(let j=0;j<titles.length;j++){
+         for(let j=0;j<3;j++){
            
-              if(WordExist(time[j].textContent)==true){
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent,
-                       link : titles[j].href,
-                       images :  typeof(images[j])=="undefined" ? null : images[j].src,
+                       link : links[j].href,
+                       images :  (typeof(images[j+1])=="undefined" || images[j+1]==null ) ? null : images[j+1].getAttribute('data-srcset')==null ? null : images[j+1].getAttribute('data-srcset').split(",")[0],
                        Category:Category,
-                       source :"ABC NEWS",
-                       sourceLink:"https://abcnews.go.com",
-                       sourceLogo:"https://gray-wbay-prod.cdn.arcpublishing.com/resizer/fln06LgHS8awdDtCHhWoikKI7UE=/1200x675/smart/cloudfront-us-east-1.images.arcpublishing.com/gray/X3TAX5IMPBHY7EBGM6XW47YETE.jpg"
+                       source :"ESPN",
+                       sourceLink:"https://espn.com",
+                       sourceLogo:"https://i.pinimg.com/originals/b3/69/c7/b369c7454adc03bfea8c6b2f4268be5a.png"
                       });
                    }
                }
                       return data;
                },Category);
-               console.log(PageData)
                PageData.map(item=>{
                    AllData.push(item)
                })
+       }}catch{
+        await browser.close();
        }
 
-  
-     await GetContent(page,AllData);
+       try{
+        await GetContent(page,AllData);
+       }catch{
+        await browser.close();
+       }
+
      await browser.close();
     })();
 }
@@ -135,18 +134,25 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-        console.log(url)
     
         var Content = await page.evaluate(()=>{
-            var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
-            return text;
+            try{
+                var text = document.querySelectorAll(".article-body p");
+            var cont="";
+            for(let i=0;i<text.length;i++){
+             cont=cont+"\n"+text[i].textContent;
+            }
+            return cont;
+            }catch{
+                return null;
+            }
         });
 
         var author = await page.evaluate(()=>{
            try{
-            const auth =document.querySelector('.Byline__Author').textContent;
-            const upperCaseWords = auth.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g);
-            return upperCaseWords[0]+" "+upperCaseWords[1]
+            const auth =document.querySelector(".author").textContent
+            if(auth==="ESPN") auth=null;
+            return auth;
            }catch{
                return null;
            }

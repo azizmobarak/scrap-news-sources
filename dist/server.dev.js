@@ -39,6 +39,11 @@ con.connect(process.env.DATABASE, {
     });
   }
 }); // cron.schedule('30 */2 * * *', () => {
+
+var ESPN = require('./sources/ESPN_NEWS');
+
+ESPN(); // });
+// cron.schedule('30 */2 * * *', () => {
 //  const INVESTOPEDIA = require('./sources/Investopedia');
 //  INVESTOPEDIA();
 // });
@@ -58,10 +63,9 @@ con.connect(process.env.DATABASE, {
 // //     BBC();
 // //   });
 // cron.schedule('15 */1 * * *', () => {
-
-var Bloomberg = require('./sources/Bloomberg_News');
-
-Bloomberg(); // });
+//  const Bloomberg = require('./sources/Bloomberg_News');
+//  Bloomberg();
+// });
 // // cron.schedule('20 * * * *', () => {
 // //   // 15 min
 // //   const CBC = require('./sources/CBS News');
