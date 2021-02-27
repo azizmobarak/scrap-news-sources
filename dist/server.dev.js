@@ -38,12 +38,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
+});
+cron.schedule('20 */1 * * *', function () {
+  var ESPN = require('./sources/ESPN_NEWS');
+
+  ESPN();
 }); // cron.schedule('30 */2 * * *', () => {
-
-var ESPN = require('./sources/ESPN_NEWS');
-
-ESPN(); // });
-// cron.schedule('30 */2 * * *', () => {
 //  const INVESTOPEDIA = require('./sources/Investopedia');
 //  INVESTOPEDIA();
 // });
