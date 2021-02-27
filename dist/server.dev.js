@@ -40,10 +40,14 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('20 */1 * * *', function () {
-  var ESPN = require('./sources/ESPN_NEWS');
+  var CVT = require('./sources/CTV');
 
-  ESPN();
-}); // cron.schedule('30 */2 * * *', () => {
+  CVT();
+}); // cron.schedule('20 */1 * * *', () => {
+//  const ESPN = require('./sources/ESPN_NEWS');
+//  ESPN();
+// });
+// cron.schedule('30 */2 * * *', () => {
 //  const INVESTOPEDIA = require('./sources/Investopedia');
 //  INVESTOPEDIA();
 // });

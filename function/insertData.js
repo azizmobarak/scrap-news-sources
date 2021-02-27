@@ -8,8 +8,6 @@ var type="Article";
     data.map(article=>{
 
         var articleCateory = article.Category.split(',');
-              
-        for(let cat=0;cat< articleCateory.length ;cat++ ){
              
           var articledetails ={
               articleTitle : article.title,
@@ -46,8 +44,6 @@ var type="Article";
              }
           }
       })
-
-        }
          });
 }
 
