@@ -30,10 +30,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('20 */1 * * *', () => {
-   const CVT = require('./sources/CTV');
-   CVT();
-});
+//cron.schedule('20 */1 * * *', () => {
+  // const CVT = require('./sources/CTV');
+  // CVT();
+//});
 
 
 // cron.schedule('20 */1 * * *', () => {
