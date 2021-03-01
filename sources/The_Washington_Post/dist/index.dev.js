@@ -55,7 +55,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 40;
+              _context.next = 42;
               break;
             }
 
@@ -98,6 +98,12 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 32:
             _context.next = 34;
+            return regeneratorRuntime.awrap(page.screenshot({
+              path: 'screenshot.png'
+            }));
+
+          case 34:
+            _context.next = 36;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -198,27 +204,27 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 34:
+          case 36:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 37:
+          case 39:
             i++;
             _context.next = 8;
             break;
 
-          case 40:
-            _context.next = 42;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
-
           case 42:
             _context.next = 44;
-            return regeneratorRuntime.awrap(browser.close());
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
 
           case 44:
+            _context.next = 46;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 46:
           case "end":
             return _context.stop();
         }
