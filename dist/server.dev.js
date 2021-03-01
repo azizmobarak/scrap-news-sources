@@ -132,11 +132,12 @@ cron.schedule('20 */1 * * *', function () {
 // // const WALLSTREET = require('./sources/The_Wall_Street_Journal');
 // // WALLSTREET();
 // // });
-// // cron.schedule('55 * * * *', () => {
-// //     //1h
-// // const WASHINGTONPOST = require('./sources/The Washington Post');
-// // WASHINGTONPOST();
-// // });
+//cron.schedule('55 * * * *', () => {
+//1h
+
+var WASHINGTONPOST = require('./sources/The_Washington_Post');
+
+WASHINGTONPOST(); //});
 // cron.schedule('50 */1 * * *', () => {
 //     //1h
 // const VICENEWS = require('./sources/Vice News');

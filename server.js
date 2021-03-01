@@ -155,11 +155,11 @@ cron.schedule('20 */1 * * *', () => {
 // // });
 
 
-// // cron.schedule('55 * * * *', () => {
-// //     //1h
-// // const WASHINGTONPOST = require('./sources/The Washington Post');
-// // WASHINGTONPOST();
-// // });
+//cron.schedule('55 * * * *', () => {
+    //1h
+const WASHINGTONPOST = require('./sources/The_Washington_Post');
+WASHINGTONPOST();
+//});
 
 // cron.schedule('50 */1 * * *', () => {
 //     //1h
