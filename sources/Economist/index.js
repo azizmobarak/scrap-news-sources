@@ -50,9 +50,14 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.marketwatch.com/economy-politics?mod=top_nav');
+        await page.goto('https://www.economist.com/the-economist-explains/');
+       try{
+        await page.click('#_evidon-banner-acceptbutton');
+       }catch(e){
+       console.log(e)
+       }
        }catch{
-        await page.goto('https://www.marketwatch.com/economy-politics?mod=top_nav');
+        await page.goto('https://www.economist.com/the-economist-explains/');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -61,20 +66,20 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.region--primary .column--primary>.element--article>.article__content>h3');
-    var images =document.querySelectorAll('.region--primary .column--primary>.element--article>figure>a>img')
-    var links = document.querySelectorAll('.region--primary .column--primary>.element--article>figure>a')
+    var titles = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a>span');
+    var images =document.querySelectorAll('.ds-layout-grid>.teaser__image>img')
+    var links = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a')
        
          
         var data =[];
-         for(let j=0;j<6;j++){
+         for(let j=0;j<titles.length;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : typeof(images[j])==="undefined" ? null : images[j].srcset.substring(0, images[j].srcset.indexOf(' ')),
+                       images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
                        source :"MARKETWATCH",
                        sourceLink:"https://www.marketwatch.com/",
@@ -84,7 +89,7 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-              // console.log(PageData);
+               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                })
@@ -94,7 +99,8 @@ for(let i=0;i<Categories.length;i++){
 
        try{
         await GetContent(page,AllData);
-       }catch{
+       }catch(e){
+        console.log(e);
         await browser.close();
        }
 
@@ -114,36 +120,31 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
+      //  console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
 
-             var first_text = document.querySelectorAll("#js-article__body>p");
+             var first_text = document.querySelectorAll(".article__body-text");
             var first_cont="";
             for(let i=0;i<first_text.length;i++){
                 first_cont=first_cont+"\n"+first_text[i].textContent;
             }
 
-            var second_text = document.querySelectorAll(".paywall>p");
-            var second_cont="";
-            for(let i=0;i<second_text.length;i++){
-                second_cont=second_cont+"\n"+second_text[i].textContent;
-            }
-
-            return first_cont+"\n"+second_cont;
+              return first_cont;
             }catch{
                 return null;
             }
         });
 
-        var author = await page.evaluate(()=>{
-            try{
-             return document.querySelector('.author').textContent.trim();
-            }catch{
-              return null;
-            }
-        })
+        // var author = await page.evaluate(()=>{
+        //     try{
+        //      return document.querySelector('.author').textContent.trim();
+        //     }catch{
+        //       return null;
+        //     }
+        // })
 
     
     if(Content!=null && Content!=""){
@@ -156,7 +157,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : author,
+                author : null,
                 content:Content
           });
        }

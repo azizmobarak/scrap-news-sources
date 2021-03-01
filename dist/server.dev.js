@@ -37,12 +37,12 @@ con.connect(process.env.DATABASE, {
     // }
     // });
   }
-});
-cron.schedule('00 */1 * * *', function () {
-  var marketwatch = require('./sources/marketWatch');
+}); //cron.schedule('00 */1 * * *', () => {
 
-  marketwatch();
-}); //cron.schedule('20 */1 * * *', () => {
+var economist = require('./sources/Economist');
+
+economist(); //});
+//cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});
