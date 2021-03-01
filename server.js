@@ -30,6 +30,12 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
+
+//cron.schedule('20 */1 * * *', () => {
+  const marca = require('./sources/MARCA');
+  marca();
+//});
+
 //cron.schedule('20 */1 * * *', () => {
   // const CVT = require('./sources/CTV');
   // CVT();
@@ -157,8 +163,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 //cron.schedule('55 * * * *', () => {
     //1h
-const WASHINGTONPOST = require('./sources/The_Washington_Post');
-WASHINGTONPOST();
+// const WASHINGTONPOST = require('./sources/The_Washington_Post');
+// WASHINGTONPOST();
 //});
 
 // cron.schedule('50 */1 * * *', () => {

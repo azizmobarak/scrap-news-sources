@@ -30,7 +30,7 @@
 
 /sources/The_Wall_Street_Journal
 
-#/sources/The_Washington_Post 
+/sources/The_Washington_Post
 
 /sources/Time_NEWS
 
@@ -42,6 +42,10 @@
 
 /sources/Investopedia
 
-/ESPN_NEWS
+/sources/ESPN_NEWS
 
-/CTV
+/sources/CTV
+
+/test.html
+
+#sources/Marca
