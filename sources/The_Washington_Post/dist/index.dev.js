@@ -100,8 +100,8 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 32:
             _context.next = 34;
-            return regeneratorRuntime.awrap(page.$eval("body", function (element) {
-              return element.innerHTML;
+            return regeneratorRuntime.awrap(page.evaluate(function () {
+              return document.querySelector('body').innerHTML;
             }));
 
           case 34:
