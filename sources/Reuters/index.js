@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy'];
+var Categories=['international'];
 
-const MARKETWATCH = () =>{
+const Reuters = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,14 +50,9 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.economist.com/the-economist-explains/');
-       try{
-        await page.click('#_evidon-banner-acceptbutton');
-       }catch(e){
-       console.log(e)
-       }
+        await page.goto('https://www.reuters.com/world');
        }catch{
-        await page.goto('https://www.economist.com/the-economist-explains/');
+        await page.goto('https://www.reuters.com/world');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -66,9 +61,9 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a>span');
-    var images =document.querySelectorAll('.ds-layout-grid>.teaser__image>img')
-    var links = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a')
+    var titles = document.querySelectorAll('.story>.story-content>a>h3');
+    var images =document.querySelectorAll('.story>.story-photo>a>img')
+    var links = document.querySelectorAll('.story>.story-photo>a')
        
          
         var data =[];
@@ -81,9 +76,9 @@ for(let i=0;i<Categories.length;i++){
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"MARKETWATCH",
-                       sourceLink:"https://www.marketwatch.com/",
-                       sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
+                       source :"Reuters",
+                       sourceLink:"https://www.reuters.com",
+                       sourceLogo:"https://www.aiduce.org/wp-content/uploads/2013/03/Reuters-Logo.jpg"
                       });
                    }
                }
@@ -120,31 +115,30 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-      //  console.log(url)
+       // console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
-
-             var first_text = document.querySelectorAll(".article__body-text");
+            var first_text = document.querySelectorAll(".ArticleBodyWrapper>p");
             var first_cont="";
-            for(let i=0;i<first_text.length;i++){
+            for(let i=0;i<first_text.length;i++)
+                {
                 first_cont=first_cont+"\n"+first_text[i].textContent;
-            }
-
+                }
               return first_cont;
             }catch{
                 return null;
             }
         });
 
-        // var author = await page.evaluate(()=>{
-        //     try{
-        //      return document.querySelector('.author').textContent.trim();
-        //     }catch{
-        //       return null;
-        //     }
-        // })
+        var author = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.Byline-author-2BSir').textContent.trim();
+            }catch{
+              return null;
+            }
+        })
 
     
     if(Content!=null && Content!=""){
@@ -157,7 +151,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : null,
+                author : author,
                 content:Content
           });
        }
@@ -168,4 +162,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=MARKETWATCH;
+module.exports=Reuters;

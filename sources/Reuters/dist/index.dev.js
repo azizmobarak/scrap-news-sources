@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy'];
+var Categories = ['international'];
 
-var MARKETWATCH = function MARKETWATCH() {
+var Reuters = function Reuters() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -55,7 +55,7 @@ var MARKETWATCH = function MARKETWATCH() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 36;
+              _context.next = 28;
               break;
             }
 
@@ -64,38 +64,24 @@ var MARKETWATCH = function MARKETWATCH() {
 
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.economist.com/the-economist-explains/'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.reuters.com/world'));
 
           case 14:
-            _context.prev = 14;
-            _context.next = 17;
-            return regeneratorRuntime.awrap(page.click('#_evidon-banner-acceptbutton'));
+            _context.next = 20;
+            break;
 
-          case 17:
+          case 16:
+            _context.prev = 16;
+            _context.t0 = _context["catch"](11);
+            _context.next = 20;
+            return regeneratorRuntime.awrap(page["goto"]('https://www.reuters.com/world'));
+
+          case 20:
             _context.next = 22;
-            break;
-
-          case 19:
-            _context.prev = 19;
-            _context.t0 = _context["catch"](14);
-            console.log(_context.t0);
-
-          case 22:
-            _context.next = 28;
-            break;
-
-          case 24:
-            _context.prev = 24;
-            _context.t1 = _context["catch"](11);
-            _context.next = 28;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.economist.com/the-economist-explains/'));
-
-          case 28:
-            _context.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a>span');
-              var images = document.querySelectorAll('.ds-layout-grid>.teaser__image>img');
-              var links = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a');
+              var titles = document.querySelectorAll('.story>.story-content>a>h3');
+              var images = document.querySelectorAll('.story>.story-photo>a>img');
+              var links = document.querySelectorAll('.story>.story-photo>a');
               var data = [];
 
               for (var j = 0; j < titles.length; j++) {
@@ -106,9 +92,9 @@ var MARKETWATCH = function MARKETWATCH() {
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "MARKETWATCH",
-                    sourceLink: "https://www.marketwatch.com/",
-                    sourceLogo: "https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
+                    source: "Reuters",
+                    sourceLink: "https://www.reuters.com",
+                    sourceLogo: "https://www.aiduce.org/wp-content/uploads/2013/03/Reuters-Logo.jpg"
                   });
                 }
               }
@@ -116,59 +102,59 @@ var MARKETWATCH = function MARKETWATCH() {
               return data;
             }, Category));
 
-          case 30:
+          case 22:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 33:
+          case 25:
             i++;
             _context.next = 9;
             break;
 
-          case 36:
-            _context.next = 42;
+          case 28:
+            _context.next = 34;
             break;
 
-          case 38:
-            _context.prev = 38;
-            _context.t2 = _context["catch"](7);
-            _context.next = 42;
+          case 30:
+            _context.prev = 30;
+            _context.t1 = _context["catch"](7);
+            _context.next = 34;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 42:
-            _context.prev = 42;
-            _context.next = 45;
+          case 34:
+            _context.prev = 34;
+            _context.next = 37;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 45:
-            _context.next = 52;
+          case 37:
+            _context.next = 44;
             break;
 
-          case 47:
-            _context.prev = 47;
-            _context.t3 = _context["catch"](42);
-            console.log(_context.t3);
-            _context.next = 52;
+          case 39:
+            _context.prev = 39;
+            _context.t2 = _context["catch"](34);
+            console.log(_context.t2);
+            _context.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
-            _context.next = 54;
+          case 44:
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
+          case 46:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 38], [11, 24], [14, 19], [42, 47]]);
+    }, null, null, [[7, 30], [11, 16], [34, 39]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -178,7 +164,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 14;
+            _context2.next = 17;
             break;
           }
 
@@ -191,7 +177,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var first_text = document.querySelectorAll(".article__body-text");
+              var first_text = document.querySelectorAll(".ArticleBodyWrapper>p");
               var first_cont = "";
 
               for (var _i = 0; _i < first_text.length; _i++) {
@@ -206,14 +192,18 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context2.sent;
+          _context2.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.Byline-author-2BSir').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
 
-          // var author = await page.evaluate(()=>{
-          //     try{
-          //      return document.querySelector('.author').textContent.trim();
-          //     }catch{
-          //       return null;
-          //     }
-          // })
+        case 12:
+          author = _context2.sent;
+
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
@@ -224,21 +214,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: null,
+              author: author,
               content: Content
             });
           }
 
-        case 11:
+        case 14:
           i++;
           _context2.next = 2;
           break;
 
-        case 14:
-          _context2.next = 16;
+        case 17:
+          _context2.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 19:
         case "end":
           return _context2.stop();
       }
@@ -246,4 +236,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = MARKETWATCH;
+module.exports = Reuters;
