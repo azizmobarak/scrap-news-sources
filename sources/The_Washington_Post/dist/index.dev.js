@@ -58,7 +58,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 44;
+              _context.next = 36;
               break;
             }
 
@@ -69,42 +69,24 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
           case 13:
-            _context.next = 15;
-            return regeneratorRuntime.awrap(page.waitForSelector('button.continue-btn'));
+            _context.next = 19;
+            break;
 
           case 15:
             _context.prev = 15;
-            _context.next = 18;
-            return regeneratorRuntime.awrap(page.click('button.continue-btn'));
-
-          case 18:
-            _context.next = 23;
-            break;
-
-          case 20:
-            _context.prev = 20;
-            _context.t0 = _context["catch"](15);
-            console.log(_context.t0);
-
-          case 23:
-            _context.next = 29;
-            break;
-
-          case 25:
-            _context.prev = 25;
-            _context.t1 = _context["catch"](10);
-            _context.next = 29;
+            _context.t0 = _context["catch"](10);
+            _context.next = 19;
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
-          case 29:
-            _context.next = 31;
+          case 19:
+            _context.next = 21;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               return document.querySelector('body').innerHTML;
             }));
 
-          case 31:
+          case 21:
             body = _context.sent;
-            _context.next = 34;
+            _context.next = 24;
             return regeneratorRuntime.awrap(fs.writeFile("test.html", body, function (err) {
               if (err) {
                 return console.log(err);
@@ -113,14 +95,16 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               console.log("The file was saved!");
             }));
 
-          case 34:
-            _context.next = 36;
-            return regeneratorRuntime.awrap(page.screenshot({
-              path: 'screenshot.png'
-            }));
+          case 24:
+            _context.next = 26;
+            return regeneratorRuntime.awrap(page.waitForSelector('button.continue-btn'));
 
-          case 36:
-            _context.next = 38;
+          case 26:
+            _context.next = 28;
+            return regeneratorRuntime.awrap(page.click('button.continue-btn'));
+
+          case 28:
+            _context.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -221,32 +205,32 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 38:
+          case 30:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 41:
+          case 33:
             i++;
             _context.next = 8;
             break;
 
-          case 44:
-            _context.next = 46;
+          case 36:
+            _context.next = 38;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context.next = 48;
+          case 38:
+            _context.next = 40;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
+          case 40:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 25], [15, 20]]);
+    }, null, null, [[10, 15]]);
   })();
 };
 
