@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['international'];
+var Categories = ['investing'];
 
-var Reuters = function Reuters() {
+var Investing = function Investing() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -64,7 +64,7 @@ var Reuters = function Reuters() {
 
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.reuters.com/world'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.investing.com/news/'));
 
           case 14:
             _context.next = 20;
@@ -74,17 +74,17 @@ var Reuters = function Reuters() {
             _context.prev = 16;
             _context.t0 = _context["catch"](11);
             _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.reuters.com/world'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.investing.com/news/'));
 
           case 20:
             _context.next = 22;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('.story>.story-content>a>h3');
-              var images = document.querySelectorAll('.story>.story-photo>a>img');
-              var links = document.querySelectorAll('.story>.story-photo>a');
+              var titles = document.querySelectorAll('#latestNews Article>.textDiv>a');
+              var images = document.querySelectorAll('#latestNews Article>a>img');
+              var links = document.querySelectorAll('#latestNews Article>.textDiv>a');
               var data = [];
 
-              for (var j = 0; j < titles.length; j++) {
+              for (var j = 0; j < 4; j++) {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
@@ -92,9 +92,9 @@ var Reuters = function Reuters() {
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "Reuters",
-                    sourceLink: "https://www.reuters.com",
-                    sourceLogo: "https://www.aiduce.org/wp-content/uploads/2013/03/Reuters-Logo.jpg"
+                    source: "Investing.com",
+                    sourceLink: "https://www.investing.com",
+                    sourceLogo: "https://csgroupbb.com/wp-content/uploads/2020/11/investing_300X300.png"
                   });
                 }
               }
@@ -154,7 +154,7 @@ var Reuters = function Reuters() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -164,7 +164,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 14;
             break;
           }
 
@@ -177,7 +177,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var first_text = document.querySelectorAll(".ArticleBodyWrapper>p");
+              var first_text = document.querySelectorAll(".articlePage>p");
               var first_cont = "";
 
               for (var _i = 0; _i < first_text.length; _i++) {
@@ -192,18 +192,14 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context2.sent;
-          _context2.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.Byline-author-2BSir').textContent.trim();
-            } catch (_unused4) {
-              return null;
-            }
-          }));
 
-        case 12:
-          author = _context2.sent;
-
+          // var author = await page.evaluate(()=>{
+          //     try{
+          //      return document.querySelector('.Byline-author-2BSir').textContent.trim();
+          //     }catch{
+          //       return null;
+          //     }
+          // })
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
@@ -214,21 +210,20 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: author,
+              author: null,
               content: Content
             });
           }
 
-        case 14:
+        case 11:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
-          _context2.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 14:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
-        case 19:
+        case 15:
         case "end":
           return _context2.stop();
       }
@@ -236,4 +231,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = Reuters;
+module.exports = Investing;

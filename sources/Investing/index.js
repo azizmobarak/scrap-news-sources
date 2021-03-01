@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['international'];
+var Categories=['investing'];
 
-const Reuters = () =>{
+const Investing = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,9 +50,9 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.reuters.com/world');
+        await page.goto('https://www.investing.com/news/');
        }catch{
-        await page.goto('https://www.reuters.com/world');
+        await page.goto('https://www.investing.com/news/');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -61,13 +61,13 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.story>.story-content>a>h3');
-    var images =document.querySelectorAll('.story>.story-photo>a>img')
-    var links = document.querySelectorAll('.story>.story-photo>a')
+    var titles = document.querySelectorAll('#latestNews Article>.textDiv>a');
+    var images =document.querySelectorAll('#latestNews Article>a>img')
+    var links = document.querySelectorAll('#latestNews Article>.textDiv>a')
        
          
         var data =[];
-         for(let j=0;j<titles.length;j++){
+         for(let j=0;j<4;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
@@ -76,9 +76,9 @@ for(let i=0;i<Categories.length;i++){
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"Reuters",
-                       sourceLink:"https://www.reuters.com",
-                       sourceLogo:"https://www.aiduce.org/wp-content/uploads/2013/03/Reuters-Logo.jpg"
+                       source :"Investing.com",
+                       sourceLink:"https://www.investing.com",
+                       sourceLogo:"https://csgroupbb.com/wp-content/uploads/2020/11/investing_300X300.png"
                       });
                    }
                }
@@ -120,7 +120,7 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
         
             try{
-            var first_text = document.querySelectorAll(".ArticleBodyWrapper>p");
+            var first_text = document.querySelectorAll(".articlePage>p");
             var first_cont="";
             for(let i=0;i<first_text.length;i++)
                 {
@@ -132,13 +132,13 @@ const GetContent = async(page,data)=>{
             }
         });
 
-        var author = await page.evaluate(()=>{
-            try{
-             return document.querySelector('.Byline-author-2BSir').textContent.trim();
-            }catch{
-              return null;
-            }
-        })
+        // var author = await page.evaluate(()=>{
+        //     try{
+        //      return document.querySelector('.Byline-author-2BSir').textContent.trim();
+        //     }catch{
+        //       return null;
+        //     }
+        // })
 
     
     if(Content!=null && Content!=""){
@@ -151,15 +151,15 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : author,
+                author : null,
                 content:Content
           });
        }
     
     }
-   // console.log(AllData_WithConetent)
-    await InsertData(AllData_WithConetent);
+   console.log(AllData_WithConetent)
+   // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=Reuters;
+module.exports=Investing;

@@ -39,9 +39,9 @@ con.connect(process.env.DATABASE, {
   }
 }); //cron.schedule('00 */1 * * *', () => {
 
-var reuters = require('./sources/Reuters');
+var investing = require('./sources/Investing');
 
-reuters(); //});
+investing(); //});
 //cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
