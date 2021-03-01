@@ -11,7 +11,9 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var fs = require('fs'); //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -31,7 +33,7 @@ var Categories = ['politics', 'opinions', 'national/investigations', 'business/t
 
 var WASHINGTONPOST = function WASHINGTONPOST() {
   (function _callee() {
-    var browser, page, AllData, i, Category, PageData;
+    var browser, page, AllData, i, Category, body, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -55,7 +57,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 42;
+              _context.next = 47;
               break;
             }
 
@@ -98,12 +100,29 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 32:
             _context.next = 34;
+            return regeneratorRuntime.awrap(page.$eval("body", function (element) {
+              return element.innerHTML;
+            }));
+
+          case 34:
+            body = _context.sent;
+            _context.next = 37;
+            return regeneratorRuntime.awrap(fs.writeFile("test.html", body, function (err) {
+              if (err) {
+                return console.log(err);
+              }
+
+              console.log("The file was saved!");
+            }));
+
+          case 37:
+            _context.next = 39;
             return regeneratorRuntime.awrap(page.screenshot({
               path: 'screenshot.png'
             }));
 
-          case 34:
-            _context.next = 36;
+          case 39:
+            _context.next = 41;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -204,27 +223,27 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 36:
+          case 41:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 39:
+          case 44:
             i++;
             _context.next = 8;
             break;
 
-          case 42:
-            _context.next = 44;
+          case 47:
+            _context.next = 49;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context.next = 46;
+          case 49:
+            _context.next = 51;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
+          case 51:
           case "end":
             return _context.stop();
         }

@@ -4,6 +4,7 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const fs = require('fs')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -63,6 +64,18 @@ for(let i=0;i<Categories.length;i++){
          ]);
     }
 
+
+    var body = await page.$eval("body", (element) => {
+        return element.innerHTML
+          });
+
+    await fs.writeFile("test.html",body, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("The file was saved!");
+    }); 
+    
 
 
 await page.screenshot({path: 'screenshot.png'});
