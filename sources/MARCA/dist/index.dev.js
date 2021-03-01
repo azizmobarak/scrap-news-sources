@@ -55,7 +55,7 @@ var MARCA = function MARCA() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 28;
+              _context.next = 27;
               break;
             }
 
@@ -104,51 +104,50 @@ var MARCA = function MARCA() {
 
           case 22:
             PageData = _context.sent;
-            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 25:
+          case 24:
             i++;
             _context.next = 9;
             break;
 
-          case 28:
-            _context.next = 34;
+          case 27:
+            _context.next = 33;
             break;
 
-          case 30:
-            _context.prev = 30;
+          case 29:
+            _context.prev = 29;
             _context.t1 = _context["catch"](7);
-            _context.next = 34;
+            _context.next = 33;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 34:
-            _context.prev = 34;
-            _context.next = 37;
+          case 33:
+            _context.prev = 33;
+            _context.next = 36;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 37:
-            _context.next = 43;
+          case 36:
+            _context.next = 42;
             break;
 
-          case 39:
-            _context.prev = 39;
-            _context.t2 = _context["catch"](34);
-            _context.next = 43;
+          case 38:
+            _context.prev = 38;
+            _context.t2 = _context["catch"](33);
+            _context.next = 42;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context.next = 45;
+          case 42:
+            _context.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
+          case 44:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 30], [11, 16], [34, 39]]);
+    }, null, null, [[7, 29], [11, 16], [33, 38]]);
   })();
 };
 

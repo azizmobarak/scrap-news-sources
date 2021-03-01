@@ -38,12 +38,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
+});
+cron.schedule('00 */1 * * *', function () {
+  var marca = require('./sources/MARCA');
+
+  marca();
 }); //cron.schedule('20 */1 * * *', () => {
-
-var marca = require('./sources/MARCA');
-
-marca(); //});
-//cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});
