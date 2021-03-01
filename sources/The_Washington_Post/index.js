@@ -51,28 +51,29 @@ for(let i=0;i<Categories.length;i++){
       try{
          //navigate to category sub route
         await page.goto(['https://www.washingtonpost.com/','',Category].join(''));
+        await page.click('.continue-btn');
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }catch(e){
          //navigate to category sub route
          await page.goto(['https://www.washingtonpost.com/','',Category].join(''));
-         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);
+        //  //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+        //  await page.solveRecaptchas();
+        //  await Promise.all([
+        //      page.waitForNavigation(),
+        //      page.click(".g-recaptcha"),
+        //      await page.$eval('input[type=submit]', el => el.click())
+        //  ]);
     }
 
 
-    var body = await page.evaluate(() => document.querySelector('body').innerHTML);
+    // var body = await page.evaluate(() => document.querySelector('body').innerHTML);
 
-    await fs.writeFile("test.html",body, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-        console.log("The file was saved!");
-    }); 
+    // await fs.writeFile("test.html",body, function(err) {
+    //     if(err) {
+    //         return console.log(err);
+    //     }
+    //     console.log("The file was saved!");
+    // }); 
     
 
 
