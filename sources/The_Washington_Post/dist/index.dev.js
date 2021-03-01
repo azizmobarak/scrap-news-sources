@@ -57,7 +57,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 31;
+              _context.next = 37;
               break;
             }
 
@@ -68,27 +68,37 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
           case 13:
-            _context.next = 15;
+            _context.prev = 13;
+            _context.next = 16;
             return regeneratorRuntime.awrap(page.click('.continue-btn'));
 
-          case 15:
+          case 16:
             _context.next = 21;
             break;
 
-          case 17:
-            _context.prev = 17;
-            _context.t0 = _context["catch"](10);
-            _context.next = 21;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
+          case 18:
+            _context.prev = 18;
+            _context.t0 = _context["catch"](13);
+            console.log(_context.t0);
 
           case 21:
-            _context.next = 23;
+            _context.next = 27;
+            break;
+
+          case 23:
+            _context.prev = 23;
+            _context.t1 = _context["catch"](10);
+            _context.next = 27;
+            return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
+
+          case 27:
+            _context.next = 29;
             return regeneratorRuntime.awrap(page.screenshot({
               path: 'screenshot.png'
             }));
 
-          case 23:
-            _context.next = 25;
+          case 29:
+            _context.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -189,32 +199,32 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 25:
+          case 31:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 28:
+          case 34:
             i++;
             _context.next = 8;
             break;
 
-          case 31:
-            _context.next = 33;
+          case 37:
+            _context.next = 39;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 33:
-            _context.next = 35;
+          case 39:
+            _context.next = 41;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 35:
+          case 41:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 17]]);
+    }, null, null, [[10, 23], [13, 18]]);
   })();
 };
 
