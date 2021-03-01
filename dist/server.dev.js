@@ -21,28 +21,27 @@ con.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, function (err, db) {
-  if (err) console.log(err);else {
-    var model = category('articles');
-    model.find({
-      status: null
-    }, function (err, doc) {
-      if (err) console.log(err);else {// doc.map(item=>{
-        //    // console.log(item.status)
-        //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-        //         if(err) console.log(err)
-        //         else{
-        //             console.log(count)
-        //         }
-        //     });
-        // })
-      }
-    });
+  if (err) console.log(err);else {// var model = category('articles');
+    // model.find({status:null},(err,doc)=>{
+    // if(err)console.log(err)
+    // else{
+    //     // doc.map(item=>{
+    //     //    // console.log(item.status)
+    //     //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
+    //     //         if(err) console.log(err)
+    //     //         else{
+    //     //             console.log(count)
+    //     //         }
+    //     //     });
+    //     // })
+    // }
+    // });
   }
 });
 cron.schedule('00 */1 * * *', function () {
-  var marca = require('./sources/MARCA');
+  var marketwatch = require('./sources/marketWatch');
 
-  marca();
+  marketwatch();
 }); //cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();

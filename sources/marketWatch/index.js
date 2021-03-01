@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['nba','soccer','mma','nfl','boxing','golf','racing','tennis','f1'];
+var Categories=['economy'];
 
-const ESPN = () =>{
+const MARKETWATCH = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,10 +50,9 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto(['https://www.espn.com/','',Category].join(''));
-        await page.click('#onetrust-accept-btn-handler')
+        await page.goto('https://www.marketwatch.com/economy-politics?mod=top_nav');
        }catch{
-        await page.goto(['https://www.espn.com/','',Category].join(''));
+        await page.goto('https://www.marketwatch.com/economy-politics?mod=top_nav');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -62,49 +61,30 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-         var titles = document.querySelectorAll('.contentItem .contentItem__content--story h1');
-         var images =document.querySelectorAll('.contentItem .contentItem__content--story figure>picture>source+source')
-         var links = document.querySelectorAll('.contentItem .contentItem__content--story a')
-
-         if(Category==="mba"){
-             Category="basketball";
-         }else{
-             if(Category==="soccer"){
-                 Category="football"
-             }else{
-                 if(Category==="nfl"){
-                     Category="rugby"
-                 }else{
-                     if(Category==="f1"){
-                         Category="formulaone"
-                     }else{
-                         if(Category==="mma"){
-                             Category="sport"
-                         }
-                     }
-                 }
-             }
-         }
-            
+    var titles = document.querySelectorAll('.region--primary .column--primary>.element--article>.article__content>h3');
+    var images =document.querySelectorAll('.region--primary .column--primary>.element--article>figure>a>img')
+    var links = document.querySelectorAll('.region--primary .column--primary>.element--article>figure>a')
+       
          
-                var data =[];
-         for(let j=0;j<3;j++){
+        var data =[];
+         for(let j=0;j<6;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent,
+                       title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images :  (typeof(images[j+1])=="undefined" || images[j+1]==null ) ? null : images[j+1].getAttribute('data-srcset')==null ? null : images[j+1].getAttribute('data-srcset').split(",")[0],
+                       images : typeof(images[j])==="undefined" ? null : images[j].srcset.substring(0, images[j].srcset.indexOf(' ')),
                        Category:Category,
-                       source :"ESPN",
-                       sourceLink:"https://espn.com",
-                       sourceLogo:"https://i.pinimg.com/originals/b3/69/c7/b369c7454adc03bfea8c6b2f4268be5a.png"
+                       source :"MARKETWATCH",
+                       sourceLink:"https://www.marketwatch.com/",
+                       sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
                       });
                    }
                }
                       return data;
                },Category);
+              // console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                })
@@ -136,29 +116,37 @@ const GetContent = async(page,data)=>{
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
+        
             try{
-                var text = document.querySelectorAll(".article-body p");
-            var cont="";
-            for(let i=0;i<text.length;i++){
-             cont=cont+"\n"+text[i].textContent;
+
+             var first_text = document.querySelectorAll("#js-article__body>p");
+            var first_cont="";
+            for(let i=0;i<first_text.length;i++){
+                first_cont=first_cont+"\n"+first_text[i].textContent;
             }
-            return cont;
+
+            var second_text = document.querySelectorAll(".paywall>p");
+            var second_cont="";
+            for(let i=0;i<second_text.length;i++){
+                second_cont=second_cont+"\n"+second_text[i].textContent;
+            }
+
+            return first_cont+"\n"+second_cont;
             }catch{
                 return null;
             }
         });
 
         var author = await page.evaluate(()=>{
-           try{
-            const auth =document.querySelector(".author").textContent
-            if(auth==="ESPN") auth=null;
-            return auth;
-           }catch{
-               return null;
-           }
-        });
+            try{
+             return document.querySelector('.author').textContent.trim();
+            }catch{
+              return null;
+            }
+        })
+
     
-    if(item.images!=null && Content!=null && Content!=""){
+    if(Content!=null && Content!=""){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -174,8 +162,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
+   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=ESPN;
+module.exports=MARKETWATCH;

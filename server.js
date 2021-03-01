@@ -11,29 +11,29 @@ const {category} = require('./model/Category');
 con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true},(err,db)=>{
     if(err)console.log(err);
     else{
-        var model = category('articles');
-        model.find({status:null},(err,doc)=>{
-        if(err)console.log(err)
-        else{
-            // doc.map(item=>{
-            //    // console.log(item.status)
-            //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-            //         if(err) console.log(err)
-            //         else{
-            //             console.log(count)
-            //         }
-            //     });
-            // })
-        }
-        });
+        // var model = category('articles');
+        // model.find({status:null},(err,doc)=>{
+        // if(err)console.log(err)
+        // else{
+        //     // doc.map(item=>{
+        //     //    // console.log(item.status)
+        //     //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
+        //     //         if(err) console.log(err)
+        //     //         else{
+        //     //             console.log(count)
+        //     //         }
+        //     //     });
+        //     // })
+        // }
+        // });
      }
 });
 
 
 
 cron.schedule('00 */1 * * *', () => {
-  const marca = require('./sources/MARCA');
-  marca();
+  const marketwatch = require('./sources/marketWatch');
+  marketwatch();
 });
 
 //cron.schedule('20 */1 * * *', () => {

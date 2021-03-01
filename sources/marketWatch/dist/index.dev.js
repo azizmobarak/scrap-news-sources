@@ -1,7 +1,5 @@
 'use strict';
 
-function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only"); }
-
 var puppeteer = require('puppeteer-extra');
 
 var puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
@@ -29,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['nba', 'soccer', 'mma', 'nfl', 'boxing', 'golf', 'racing', 'tennis', 'f1'];
+var Categories = ['economy'];
 
-var ESPN = function ESPN() {
+var MARKETWATCH = function MARKETWATCH() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -57,7 +55,7 @@ var ESPN = function ESPN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 29;
+              _context.next = 27;
               break;
             }
 
@@ -66,62 +64,37 @@ var ESPN = function ESPN() {
 
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.espn.com/', '', Category].join('')));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.marketwatch.com/economy-politics?mod=top_nav'));
 
           case 14:
-            _context.next = 16;
-            return regeneratorRuntime.awrap(page.click('#onetrust-accept-btn-handler'));
-
-          case 16:
-            _context.next = 22;
+            _context.next = 20;
             break;
 
-          case 18:
-            _context.prev = 18;
+          case 16:
+            _context.prev = 16;
             _context.t0 = _context["catch"](11);
+            _context.next = 20;
+            return regeneratorRuntime.awrap(page["goto"]('https://www.marketwatch.com/economy-politics?mod=top_nav'));
+
+          case 20:
             _context.next = 22;
-            return regeneratorRuntime.awrap(page["goto"](['https://www.espn.com/', '', Category].join('')));
-
-          case 22:
-            _context.next = 24;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('.contentItem .contentItem__content--story h1');
-              var images = document.querySelectorAll('.contentItem .contentItem__content--story figure>picture>source+source');
-              var links = document.querySelectorAll('.contentItem .contentItem__content--story a');
-
-              if (Category === "mba") {
-                Category = "basketball";
-              } else {
-                if (Category === "soccer") {
-                  Category = "football";
-                } else {
-                  if (Category === "nfl") {
-                    Category = "rugby";
-                  } else {
-                    if (Category === "f1") {
-                      Category = "formulaone";
-                    } else {
-                      if (Category === "mma") {
-                        Category = "sport";
-                      }
-                    }
-                  }
-                }
-              }
-
+              var titles = document.querySelectorAll('.region--primary .column--primary>.element--article>.article__content>h3');
+              var images = document.querySelectorAll('.region--primary .column--primary>.element--article>figure>a>img');
+              var links = document.querySelectorAll('.region--primary .column--primary>.element--article>figure>a');
               var data = [];
 
-              for (var j = 0; j < 3; j++) {
+              for (var j = 0; j < 6; j++) {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent,
+                    title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: typeof images[j + 1] == "undefined" || images[j + 1] == null ? null : images[j + 1].getAttribute('data-srcset') == null ? null : images[j + 1].getAttribute('data-srcset').split(",")[0],
+                    images: typeof images[j] === "undefined" ? null : images[j].srcset.substring(0, images[j].srcset.indexOf(' ')),
                     Category: Category,
-                    source: "ESPN",
-                    sourceLink: "https://espn.com",
-                    sourceLogo: "https://i.pinimg.com/originals/b3/69/c7/b369c7454adc03bfea8c6b2f4268be5a.png"
+                    source: "MARKETWATCH",
+                    sourceLink: "https://www.marketwatch.com/",
+                    sourceLogo: "https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
                   });
                 }
               }
@@ -129,52 +102,53 @@ var ESPN = function ESPN() {
               return data;
             }, Category));
 
-          case 24:
+          case 22:
             PageData = _context.sent;
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 26:
+          case 24:
             i++;
             _context.next = 9;
             break;
 
-          case 29:
-            _context.next = 35;
+          case 27:
+            _context.next = 33;
             break;
 
-          case 31:
-            _context.prev = 31;
+          case 29:
+            _context.prev = 29;
             _context.t1 = _context["catch"](7);
-            _context.next = 35;
+            _context.next = 33;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 35:
-            _context.prev = 35;
-            _context.next = 38;
+          case 33:
+            _context.prev = 33;
+            _context.next = 36;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 38:
-            _context.next = 44;
+          case 36:
+            _context.next = 42;
             break;
 
-          case 40:
-            _context.prev = 40;
-            _context.t2 = _context["catch"](35);
+          case 38:
+            _context.prev = 38;
+            _context.t2 = _context["catch"](33);
+            _context.next = 42;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 42:
             _context.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
           case 44:
-            _context.next = 46;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 46:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 31], [11, 18], [35, 40]]);
+    }, null, null, [[7, 29], [11, 16], [33, 38]]);
   })();
 };
 
@@ -202,14 +176,21 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var text = document.querySelectorAll(".article-body p");
-              var cont = "";
+              var first_text = document.querySelectorAll("#js-article__body>p");
+              var first_cont = "";
 
-              for (var _i = 0; _i < text.length; _i++) {
-                cont = cont + "\n" + text[_i].textContent;
+              for (var _i = 0; _i < first_text.length; _i++) {
+                first_cont = first_cont + "\n" + first_text[_i].textContent;
               }
 
-              return cont;
+              var second_text = document.querySelectorAll(".paywall>p");
+              var second_cont = "";
+
+              for (var _i2 = 0; _i2 < second_text.length; _i2++) {
+                second_cont = second_cont + "\n" + second_text[_i2].textContent;
+              }
+
+              return first_cont + "\n" + second_cont;
             } catch (_unused4) {
               return null;
             }
@@ -220,9 +201,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var auth = document.querySelector(".author").textContent;
-              if (auth === "ESPN") auth = (_readOnlyError("auth"), null);
-              return auth;
+              return document.querySelector('.author').textContent.trim();
             } catch (_unused5) {
               return null;
             }
@@ -231,7 +210,7 @@ var GetContent = function GetContent(page, data) {
         case 12:
           author = _context2.sent;
 
-          if (item.images != null && Content != null && Content != "") {
+          if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -263,4 +242,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = ESPN;
+module.exports = MARKETWATCH;
