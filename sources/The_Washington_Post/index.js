@@ -52,6 +52,12 @@ for(let i=0;i<Categories.length;i++){
       try{
          //navigate to category sub route
         await page.goto(['https://www.washingtonpost.com/','',Category].join(''));
+        try{
+            await page.waitForSelector('button.continue-btn');
+        await page.click('button.continue-btn');
+        await page.waitForSelector('button[type=submit]');
+        await page.waitForSelector('button[type=submit]');
+        }catch(e){console.log(e)}
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }catch(e){
          //navigate to category sub route
@@ -77,10 +83,8 @@ for(let i=0;i<Categories.length;i++){
     
 
 
-//await page.screenshot({path: 'screenshot.png'});
+await page.screenshot({path: 'screenshot.png'});
 
-await page.waitForSelector('button.continue-btn')
-await page.click('button.continue-btn');
 
       // get the data from the page
 var PageData = await page.evaluate((Category)=>{

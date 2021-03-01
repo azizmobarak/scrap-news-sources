@@ -58,7 +58,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 36;
+              _context.next = 48;
               break;
             }
 
@@ -69,24 +69,50 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
           case 13:
-            _context.next = 19;
+            _context.prev = 13;
+            _context.next = 16;
+            return regeneratorRuntime.awrap(page.waitForSelector('button.continue-btn'));
+
+          case 16:
+            _context.next = 18;
+            return regeneratorRuntime.awrap(page.click('button.continue-btn'));
+
+          case 18:
+            _context.next = 20;
+            return regeneratorRuntime.awrap(page.waitForSelector('button[type=submit]'));
+
+          case 20:
+            _context.next = 22;
+            return regeneratorRuntime.awrap(page.waitForSelector('button[type=submit]'));
+
+          case 22:
+            _context.next = 27;
             break;
 
-          case 15:
-            _context.prev = 15;
-            _context.t0 = _context["catch"](10);
-            _context.next = 19;
+          case 24:
+            _context.prev = 24;
+            _context.t0 = _context["catch"](13);
+            console.log(_context.t0);
+
+          case 27:
+            _context.next = 33;
+            break;
+
+          case 29:
+            _context.prev = 29;
+            _context.t1 = _context["catch"](10);
+            _context.next = 33;
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
-          case 19:
-            _context.next = 21;
+          case 33:
+            _context.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               return document.querySelector('body').innerHTML;
             }));
 
-          case 21:
+          case 35:
             body = _context.sent;
-            _context.next = 24;
+            _context.next = 38;
             return regeneratorRuntime.awrap(fs.writeFile("test.html", body, function (err) {
               if (err) {
                 return console.log(err);
@@ -95,16 +121,14 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               console.log("The file was saved!");
             }));
 
-          case 24:
-            _context.next = 26;
-            return regeneratorRuntime.awrap(page.waitForSelector('button.continue-btn'));
+          case 38:
+            _context.next = 40;
+            return regeneratorRuntime.awrap(page.screenshot({
+              path: 'screenshot.png'
+            }));
 
-          case 26:
-            _context.next = 28;
-            return regeneratorRuntime.awrap(page.click('button.continue-btn'));
-
-          case 28:
-            _context.next = 30;
+          case 40:
+            _context.next = 42;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -205,32 +229,32 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 30:
+          case 42:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 33:
+          case 45:
             i++;
             _context.next = 8;
             break;
 
-          case 36:
-            _context.next = 38;
+          case 48:
+            _context.next = 50;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 38:
-            _context.next = 40;
+          case 50:
+            _context.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 40:
+          case 52:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 15]]);
+    }, null, null, [[10, 29], [13, 24]]);
   })();
 };
 
