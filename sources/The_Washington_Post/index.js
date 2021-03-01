@@ -26,6 +26,7 @@ const WASHINGTONPOST = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
+        ignoreHTTPSErrors: true,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -51,12 +52,10 @@ for(let i=0;i<Categories.length;i++){
       try{
          //navigate to category sub route
         await page.goto(['https://www.washingtonpost.com/','',Category].join(''));
-        for(let i=0;i<6;i++){
-            console.log(i);
-            try{
+        await page.waitForSelector('button.continue-btn')
+        try{
             await page.click('button.continue-btn');
             }catch(e){console.log(e)}
-        }
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }catch(e){
          //navigate to category sub route
