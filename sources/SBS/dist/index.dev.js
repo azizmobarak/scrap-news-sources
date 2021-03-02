@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['education'];
+var Categories = ['international'];
 
 var ninenews = function ninenews() {
   (function _callee() {
@@ -55,7 +55,7 @@ var ninenews = function ninenews() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 34;
+              _context.next = 30;
               break;
             }
 
@@ -64,48 +64,40 @@ var ninenews = function ninenews() {
 
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.9news.com/education'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.sbs.com.au/news/topic/world'));
 
           case 14:
             _context.next = 16;
-            return regeneratorRuntime.awrap(page.waitForSelector('.story-list__image-link>div>img'));
+            return regeneratorRuntime.awrap(page.WaitForSelector('.media-image>a>picture>img:nth-of-type(6)'));
 
           case 16:
-            _context.next = 24;
+            _context.next = 22;
             break;
 
           case 18:
             _context.prev = 18;
             _context.t0 = _context["catch"](11);
             _context.next = 22;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.9news.com/education'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.sbs.com.au/news/topic/world'));
 
           case 22:
             _context.next = 24;
-            return regeneratorRuntime.awrap(page.waitForSelector('.story-list__image-link>div>img'));
-
-          case 24:
-            _context.next = 26;
-            return regeneratorRuntime.awrap(page.click('button.notifications__button'));
-
-          case 26:
-            _context.next = 28;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link');
-              var images = document.querySelectorAll('.story-list>.story-list__list li .story-list__image-link>div>img');
-              var links = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link');
+              var titles = document.querySelectorAll('.preview__headline');
+              var images = document.querySelectorAll('.media-image>a>picture>source');
+              var links = document.querySelectorAll('.preview__headline>a');
               var data = [];
 
-              for (var j = 0; j < titles.length; j++) {
+              for (var j = 0; j < 6; j++) {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: typeof images[j == 0 ? j : j + 2] === "undefined" ? null : images[j].src,
+                    images: typeof images[j == 0 ? j : j + 2] === "undefined" ? null : images[j].srcset,
                     Category: Category,
-                    source: "9NEWS",
-                    sourceLink: "https://www.9news.com",
+                    source: "SBS News",
+                    sourceLink: "https://www.sbs.com.au",
                     sourceLogo: "https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
                   });
                 }
@@ -114,59 +106,59 @@ var ninenews = function ninenews() {
               return data;
             }, Category));
 
-          case 28:
+          case 24:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 31:
+          case 27:
             i++;
             _context.next = 9;
             break;
 
-          case 34:
-            _context.next = 40;
+          case 30:
+            _context.next = 36;
             break;
+
+          case 32:
+            _context.prev = 32;
+            _context.t1 = _context["catch"](7);
+            _context.next = 36;
+            return regeneratorRuntime.awrap(browser.close());
 
           case 36:
             _context.prev = 36;
-            _context.t1 = _context["catch"](7);
-            _context.next = 40;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 40:
-            _context.prev = 40;
-            _context.next = 43;
+            _context.next = 39;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 43:
-            _context.next = 50;
+          case 39:
+            _context.next = 46;
             break;
 
-          case 45:
-            _context.prev = 45;
-            _context.t2 = _context["catch"](40);
+          case 41:
+            _context.prev = 41;
+            _context.t2 = _context["catch"](36);
             console.log(_context.t2);
-            _context.next = 50;
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context.next = 52;
+          case 46:
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 48:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 36], [11, 18], [40, 45]]);
+    }, null, null, [[7, 32], [11, 18], [36, 41]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -176,7 +168,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 15;
             break;
           }
 
@@ -186,35 +178,18 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          _context2.next = 9;
+          console.log(url);
+          _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var first_text = document.querySelectorAll(".article__body div>p");
-              var first_cont = "";
-
-              for (var _i = 0; _i < first_text.length; _i++) {
-                first_cont = first_cont + "\n" + first_text[_i].textContent;
-              }
-
-              return first_cont;
+              return document.querySelector('.article__body').textContent.length > 400 ? document.querySelector('.article__body').textContent.trim().substring(0, 1050) : null;
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context2.sent;
-          _context2.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector(".article__author").textContent.trim().substring(8, 100);
-            } catch (_unused4) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -226,20 +201,20 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: author,
+              author: null,
               content: Content
             });
           }
 
-        case 14:
+        case 12:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
+        case 15:
           console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
-        case 18:
+        case 16:
         case "end":
           return _context2.stop();
       }

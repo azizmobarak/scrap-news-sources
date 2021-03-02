@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['education'];
+var Categories=['international'];
 
 const ninenews = () =>{
     (async()=>{
@@ -50,40 +50,40 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.9news.com/education');
-        await page.waitForSelector('.story-list__image-link>div>img');
+        await page.goto('https://www.sbs.com.au/news/topic/world');
+        await page.WaitForSelector('.media-image>a>picture>img:nth-of-type(6)')
     //    try{
     //     await page.click('#_evidon-banner-acceptbutton');
     //    }catch(e){
     //    console.log(e)
     //    }
        }catch{
-        await page.goto('https://www.9news.com/education');
-        await page.waitForSelector('.story-list__image-link>div>img');
+        await page.goto('https://www.sbs.com.au/news/topic/world');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-await page.click('button.notifications__button')
+
+
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link');
-    var images = document.querySelectorAll('.story-list>.story-list__list li .story-list__image-link>div>img')
-    var links = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link')
+    var titles = document.querySelectorAll('.preview__headline');
+    var images = document.querySelectorAll('.media-image>a>picture>source')
+    var links = document.querySelectorAll('.preview__headline>a')
        
          
         var data =[];
-         for(let j=0;j<titles.length;j++){
+         for(let j=0;j<6;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : typeof(images[j==0 ? j : j+2]) === "undefined" ? null : images[j].src,
+                       images : typeof(images[j==0 ? j : j+2]) === "undefined" ? null : images[j].srcset,
                        Category:Category,
-                       source :"9NEWS",
-                       sourceLink:"https://www.9news.com",
+                       source :"SBS News",
+                       sourceLink:"https://www.sbs.com.au",
                        sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
                       });
                    }
@@ -121,31 +121,16 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-      //  console.log(url)
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
         
-            try{
-            var first_text = document.querySelectorAll(".article__body div>p");
-            var first_cont="";
-            for(let i=0;i<first_text.length;i++){
-                first_cont=first_cont+"\n"+first_text[i].textContent;
-            }
-
-            return first_cont;
-            
-            }catch{
-                return null;
-            }
+               try{
+                return document.querySelector('.article__body').textContent.length>400 ? document.querySelector('.article__body').textContent.trim().substring(0,1050) : null;
+                }catch{
+                    return null;
+                }
         });
-
-        var author = await page.evaluate(()=>{
-            try{
-             return document.querySelector(".article__author").textContent.trim().substring(8,100);
-            }catch{
-              return null;
-            }
-        })
 
     
     if(Content!=null && Content!=""){
@@ -158,8 +143,8 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : author,
-                content:Content
+                author : null,
+                content:Content,
           });
        }
     

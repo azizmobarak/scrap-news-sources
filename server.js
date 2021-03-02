@@ -32,8 +32,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 //cron.schedule('00 */1 * * *', () => {
-  const ninenews = require('./sources/9news');
-  ninenews();
+  const sbs = require('./sources/SBS');
+  sbs();
 //});
 
 //cron.schedule('20 */1 * * *', () => {
