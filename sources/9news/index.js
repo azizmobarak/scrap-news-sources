@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['entertainment'];
+var Categories=['education'];
 
-const hollywoodnews = () =>{
+const ninenews = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,33 +50,41 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.hollywoodnews.com/');
+        await page.goto('https://www.9news.com/education');
+        await page.waitForSelector('.story-list__image-link>div>img');
+    //    try{
+    //     await page.click('#_evidon-banner-acceptbutton');
+    //    }catch(e){
+    //    console.log(e)
+    //    }
        }catch{
-        await page.goto('https://www.hollywoodnews.com/');
-       // await page.waitForSelector(".section-theme-border>a>img");
+        await page.goto('https://www.9news.com/education');
+        await page.waitForSelector('.story-list__image-link>div>img');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-
-    
+await page.click('button.notifications__button')
          // get the data from the page
-    var PageData = await page.evaluate((Category)=>{
+var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.latest-articles> h4>a');
-    var links = document.querySelectorAll('.latest-articles> h4>a');
+    var titles = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link');
+    var images = document.querySelectorAll('.story-list>.story-list__list li .story-list__image-link>div>img')
+    var links = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link')
        
+         
         var data =[];
-         for(let j=0;j<titles.length/2;j++){
+         for(let j=0;j<titles.length;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
+                       images : typeof(images[j==0 ? j : j+2]) === "undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"HollyWood News",
-                       sourceLink:"https://www.hollywoodnews.com",
-                       sourceLogo:"https://www.hollywoodnews.com/wp-content/themes/starmagazine/images/logo.jpg"
+                       source :"9NEWS",
+                       sourceLink:"https://www.9news.com",
+                       sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
                       });
                    }
                }
@@ -85,7 +93,7 @@ for(let i=0;i<Categories.length;i++){
                console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
-               })
+               });
        }}catch{
         await browser.close();
        }
@@ -113,18 +121,19 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-       // console.log(url)
+      //  console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
-            var first_text = document.querySelectorAll(".entry-content>p");
+            var first_text = document.querySelectorAll(".article__body div>p");
             var first_cont="";
-            for(let i=0;i<first_text.length;i++)
-                {
+            for(let i=0;i<first_text.length;i++){
                 first_cont=first_cont+"\n"+first_text[i].textContent;
-                }
-              return first_cont.trim();
+            }
+
+            return first_cont;
+            
             }catch{
                 return null;
             }
@@ -132,20 +141,10 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-             return document.querySelector('.entry-author>a').textContent.trim();
+             return document.querySelector(".article__author").textContent.trim().substring(8,100);
             }catch{
               return null;
             }
-        })
-
-
-        var images =await page.evaluate(()=>{
-         try{
-             return document.querySelector('.entry-content>p>img').src;
-         }catch{
-             return null;
-         }
-
         })
 
     
@@ -154,7 +153,7 @@ const GetContent = async(page,data)=>{
                 time : Date.now(),
                 title : item.title,
                 link : item.link,
-                images : images,
+                images : item.images,
                 Category:item.Category,
                 source :item.source,
                 sourceLink:item.sourceLink,
@@ -165,9 +164,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-     //console.log(AllData_WithConetent)
-     await InsertData(AllData_WithConetent);
+    console.log(AllData_WithConetent)
+   // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=hollywoodnews;
+module.exports=ninenews;

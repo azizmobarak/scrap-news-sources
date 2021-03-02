@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['entertainment'];
+var Categories = ['education'];
 
-var hollywoodnews = function hollywoodnews() {
+var ninenews = function ninenews() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -55,7 +55,7 @@ var hollywoodnews = function hollywoodnews() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 28;
+              _context.next = 34;
               break;
             }
 
@@ -64,35 +64,49 @@ var hollywoodnews = function hollywoodnews() {
 
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.hollywoodnews.com/'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.9news.com/education'));
 
           case 14:
-            _context.next = 20;
-            break;
+            _context.next = 16;
+            return regeneratorRuntime.awrap(page.waitForSelector('.story-list__image-link>div>img'));
 
           case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](11);
-            _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.hollywoodnews.com/'));
+            _context.next = 24;
+            break;
 
-          case 20:
+          case 18:
+            _context.prev = 18;
+            _context.t0 = _context["catch"](11);
             _context.next = 22;
+            return regeneratorRuntime.awrap(page["goto"]('https://www.9news.com/education'));
+
+          case 22:
+            _context.next = 24;
+            return regeneratorRuntime.awrap(page.waitForSelector('.story-list__image-link>div>img'));
+
+          case 24:
+            _context.next = 26;
+            return regeneratorRuntime.awrap(page.click('button.notifications__button'));
+
+          case 26:
+            _context.next = 28;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('.latest-articles> h4>a');
-              var links = document.querySelectorAll('.latest-articles> h4>a');
+              var titles = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link');
+              var images = document.querySelectorAll('.story-list>.story-list__list li .story-list__image-link>div>img');
+              var links = document.querySelectorAll('.story-list>.story-list__list li  .story-list__title-link');
               var data = [];
 
-              for (var j = 0; j < titles.length / 2; j++) {
+              for (var j = 0; j < titles.length; j++) {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
+                    images: typeof images[j == 0 ? j : j + 2] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "HollyWood News",
-                    sourceLink: "https://www.hollywoodnews.com",
-                    sourceLogo: "https://www.hollywoodnews.com/wp-content/themes/starmagazine/images/logo.jpg"
+                    source: "9NEWS",
+                    sourceLink: "https://www.9news.com",
+                    sourceLogo: "https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
                   });
                 }
               }
@@ -100,59 +114,59 @@ var hollywoodnews = function hollywoodnews() {
               return data;
             }, Category));
 
-          case 22:
+          case 28:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 25:
+          case 31:
             i++;
             _context.next = 9;
             break;
 
-          case 28:
-            _context.next = 34;
+          case 34:
+            _context.next = 40;
             break;
 
-          case 30:
-            _context.prev = 30;
+          case 36:
+            _context.prev = 36;
             _context.t1 = _context["catch"](7);
-            _context.next = 34;
+            _context.next = 40;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 34:
-            _context.prev = 34;
-            _context.next = 37;
+          case 40:
+            _context.prev = 40;
+            _context.next = 43;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 37:
-            _context.next = 44;
+          case 43:
+            _context.next = 50;
             break;
 
-          case 39:
-            _context.prev = 39;
-            _context.t2 = _context["catch"](34);
+          case 45:
+            _context.prev = 45;
+            _context.t2 = _context["catch"](40);
             console.log(_context.t2);
-            _context.next = 44;
+            _context.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 44:
-            _context.next = 46;
+          case 50:
+            _context.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
+          case 52:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 30], [11, 16], [34, 39]]);
+    }, null, null, [[7, 36], [11, 18], [40, 45]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author, images;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -162,7 +176,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 20;
+            _context2.next = 17;
             break;
           }
 
@@ -175,14 +189,14 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var first_text = document.querySelectorAll(".entry-content>p");
+              var first_text = document.querySelectorAll(".article__body div>p");
               var first_cont = "";
 
               for (var _i = 0; _i < first_text.length; _i++) {
                 first_cont = first_cont + "\n" + first_text[_i].textContent;
               }
 
-              return first_cont.trim();
+              return first_cont;
             } catch (_unused3) {
               return null;
             }
@@ -193,7 +207,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.entry-author>a').textContent.trim();
+              return document.querySelector(".article__author").textContent.trim().substring(8, 100);
             } catch (_unused4) {
               return null;
             }
@@ -201,24 +215,13 @@ var GetContent = function GetContent(page, data) {
 
         case 12:
           author = _context2.sent;
-          _context2.next = 15;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.entry-content>p>img').src;
-            } catch (_unused5) {
-              return null;
-            }
-          }));
-
-        case 15:
-          images = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
               link: item.link,
-              images: images,
+              images: item.images,
               Category: item.Category,
               source: item.source,
               sourceLink: item.sourceLink,
@@ -228,16 +231,15 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 17:
+        case 14:
           i++;
           _context2.next = 2;
           break;
 
-        case 20:
-          _context2.next = 22;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 17:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
-        case 22:
+        case 18:
         case "end":
           return _context2.stop();
       }
@@ -245,4 +247,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = hollywoodnews;
+module.exports = ninenews;
