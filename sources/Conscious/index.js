@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic'];
+var Categories=['life&style'];
 
-const Investing = () =>{
+const Conscious = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,10 +50,9 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.mirror.co.uk/news/politics');
-        await page.waitForSelector(".section-theme-border>a>img");
+        await page.goto('https://www.consciouslifestylemag.com');
        }catch{
-        await page.goto('https://www.mirror.co.uk/news/politics');
+        await page.goto('https://www.consciouslifestylemag.com');
        // await page.waitForSelector(".section-theme-border>a>img");
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
@@ -63,24 +62,23 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('div.channel-news>.teaser>.headline');
-    var images =document.querySelectorAll('div.channel-news>.teaser>figure>a>img')
-    var links = document.querySelectorAll('div.channel-news>.teaser>.headline')
+    var titles = document.querySelectorAll('main>article>header>h3.entry-title>a');
+    var images =document.querySelectorAll('main>article>header>.clm-entry-image>a>img')
+    var links = document.querySelectorAll('main>article>header>h3.entry-title>a')
        
-         
         var data =[];
-         for(let j=0;j<5;j++){
+         for(let j=0;j<titles.length/2;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : typeof(images[j+1])==="undefined" ? null : images[j+1].src,
+                       images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"The Mirror",
-                       sourceLink:"https://www.mirror.co.uk",
-                       sourceLogo:"https://cdn.freebiesupply.com/logos/large/2x/the-mirror-logo-png-transparent.png"
+                       source :"ConsciousLifeStyle",
+                       sourceLink:"https://www.consciouslifestylemag.com/",
+                       sourceLogo:"https://breathingtree.co.uk/wp-content/uploads/2018/09/Conscious-Lifestyle.jpg"
                       });
                    }
                }
@@ -122,13 +120,13 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
         
             try{
-            var first_text = document.querySelectorAll(".article-body>p");
+            var first_text = document.querySelectorAll(".entry-content>.vm_column>p");
             var first_cont="";
-            for(let i=0;i<first_text.length;i++)
+            for(let i=3;i<first_text.length;i++)
                 {
                 first_cont=first_cont+"\n"+first_text[i].textContent;
                 }
-              return first_cont;
+              return first_cont.trim();
             }catch{
                 return null;
             }
@@ -136,7 +134,7 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-             return document.querySelector('.author>a').textContent;
+             return document.querySelectorAll('.entry-content>.vm_column>p')[0].textContent.replace('BY','').trim();
             }catch{
               return null;
             }
@@ -159,9 +157,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-   //console.log(AllData_WithConetent)
-    await InsertData(AllData_WithConetent);
+     //console.log(AllData_WithConetent)
+     await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=Investing;
+module.exports=Conscious;
