@@ -32,8 +32,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 //cron.schedule('00 */1 * * *', () => {
-  const conscious = require('./sources/Conscious');
-  conscious();
+  const hollywoodnews = require('./sources/hollywood_news');
+  hollywoodnews();
 //});
 
 //cron.schedule('20 */1 * * *', () => {

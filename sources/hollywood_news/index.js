@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['life&style'];
+var Categories=['entertainment'];
 
-const Conscious = () =>{
+const hollywoodnews = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,9 +50,9 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.consciouslifestylemag.com');
+        await page.goto('https://www.hollywoodnews.com/');
        }catch{
-        await page.goto('https://www.consciouslifestylemag.com');
+        await page.goto('https://www.hollywoodnews.com/');
        // await page.waitForSelector(".section-theme-border>a>img");
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
@@ -62,9 +62,8 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('main>article>header>h3.entry-title>a');
-    var images =document.querySelectorAll('main>article>header>.clm-entry-image>a>img')
-    var links = document.querySelectorAll('main>article>header>h3.entry-title>a')
+    var titles = document.querySelectorAll('.latest-articles> h4>a');
+    var links = document.querySelectorAll('.latest-articles> h4>a');
        
         var data =[];
          for(let j=0;j<titles.length/2;j++){
@@ -74,11 +73,10 @@ for(let i=0;i<Categories.length;i++){
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"ConsciousLifeStyle",
-                       sourceLink:"https://www.consciouslifestylemag.com/",
-                       sourceLogo:"https://breathingtree.co.uk/wp-content/uploads/2018/09/Conscious-Lifestyle.jpg"
+                       source :"HollyWood News",
+                       sourceLink:"https://www.hollywoodnews.com",
+                       sourceLogo:"https://www.hollywoodnews.com/wp-content/themes/starmagazine/images/logo.jpg"
                       });
                    }
                }
@@ -120,9 +118,9 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
         
             try{
-            var first_text = document.querySelectorAll(".entry-content>.vm_column>p");
+            var first_text = document.querySelectorAll(".entry-content>p");
             var first_cont="";
-            for(let i=3;i<first_text.length;i++)
+            for(let i=0;i<first_text.length;i++)
                 {
                 first_cont=first_cont+"\n"+first_text[i].textContent;
                 }
@@ -134,10 +132,20 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-             return document.querySelectorAll('.entry-content>.vm_column>p')[0].textContent.replace('BY','').trim();
+             return document.querySelector('.entry-author>a').textContent.trim();
             }catch{
               return null;
             }
+        })
+
+
+        var images =await page.evaluate(()=>{
+         try{
+             return document.querySelector('.entry-content>p>img').src;
+         }catch{
+             return null;
+         }
+
         })
 
     
@@ -146,7 +154,7 @@ const GetContent = async(page,data)=>{
                 time : Date.now(),
                 title : item.title,
                 link : item.link,
-                images : item.images,
+                images : images,
                 Category:item.Category,
                 source :item.source,
                 sourceLink:item.sourceLink,
@@ -162,4 +170,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=Conscious;
+module.exports=hollywoodnews;

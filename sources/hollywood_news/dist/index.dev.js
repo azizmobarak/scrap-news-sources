@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['life&style'];
+var Categories = ['entertainment'];
 
-var Conscious = function Conscious() {
+var hollywoodnews = function hollywoodnews() {
   (function _callee() {
     var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -64,7 +64,7 @@ var Conscious = function Conscious() {
 
             _context.prev = 11;
             _context.next = 14;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.consciouslifestylemag.com'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.hollywoodnews.com/'));
 
           case 14:
             _context.next = 20;
@@ -74,14 +74,13 @@ var Conscious = function Conscious() {
             _context.prev = 16;
             _context.t0 = _context["catch"](11);
             _context.next = 20;
-            return regeneratorRuntime.awrap(page["goto"]('https://www.consciouslifestylemag.com'));
+            return regeneratorRuntime.awrap(page["goto"]('https://www.hollywoodnews.com/'));
 
           case 20:
             _context.next = 22;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('main>article>header>h3.entry-title>a');
-              var images = document.querySelectorAll('main>article>header>.clm-entry-image>a>img');
-              var links = document.querySelectorAll('main>article>header>h3.entry-title>a');
+              var titles = document.querySelectorAll('.latest-articles> h4>a');
+              var links = document.querySelectorAll('.latest-articles> h4>a');
               var data = [];
 
               for (var j = 0; j < titles.length / 2; j++) {
@@ -90,11 +89,10 @@ var Conscious = function Conscious() {
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "ConsciousLifeStyle",
-                    sourceLink: "https://www.consciouslifestylemag.com/",
-                    sourceLogo: "https://breathingtree.co.uk/wp-content/uploads/2018/09/Conscious-Lifestyle.jpg"
+                    source: "HollyWood News",
+                    sourceLink: "https://www.hollywoodnews.com",
+                    sourceLogo: "https://www.hollywoodnews.com/wp-content/themes/starmagazine/images/logo.jpg"
                   });
                 }
               }
@@ -154,7 +152,7 @@ var Conscious = function Conscious() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, author, images;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -164,7 +162,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 20;
             break;
           }
 
@@ -177,10 +175,10 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var first_text = document.querySelectorAll(".entry-content>.vm_column>p");
+              var first_text = document.querySelectorAll(".entry-content>p");
               var first_cont = "";
 
-              for (var _i = 3; _i < first_text.length; _i++) {
+              for (var _i = 0; _i < first_text.length; _i++) {
                 first_cont = first_cont + "\n" + first_text[_i].textContent;
               }
 
@@ -195,7 +193,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelectorAll('.entry-content>.vm_column>p')[0].textContent.replace('BY', '').trim();
+              return document.querySelector('.entry-author>a').textContent.trim();
             } catch (_unused4) {
               return null;
             }
@@ -203,13 +201,24 @@ var GetContent = function GetContent(page, data) {
 
         case 12:
           author = _context2.sent;
+          _context2.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.entry-content>p>img').src;
+            } catch (_unused5) {
+              return null;
+            }
+          }));
+
+        case 15:
+          images = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
               link: item.link,
-              images: item.images,
+              images: images,
               Category: item.Category,
               source: item.source,
               sourceLink: item.sourceLink,
@@ -219,16 +228,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
-          _context2.next = 19;
+        case 20:
+          _context2.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context2.stop();
       }
@@ -236,4 +245,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = Conscious;
+module.exports = hollywoodnews;
