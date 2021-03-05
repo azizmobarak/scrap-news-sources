@@ -38,12 +38,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-}); //cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var figaro = require('./sources/FR/FIGARO-politic');
 
-var figaro = require('./sources/FR/FIGARO-politic');
-
-figaro(); //});
-//cron.schedule('20 */1 * * *', () => {
+  figaro();
+}); //cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});

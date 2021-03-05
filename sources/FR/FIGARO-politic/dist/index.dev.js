@@ -55,7 +55,7 @@ var FIGARO = function FIGARO() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context3.next = 32;
+              _context3.next = 31;
               break;
             }
 
@@ -160,53 +160,53 @@ var FIGARO = function FIGARO() {
 
           case 26:
             PageData = _context3.sent;
-            console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 29:
+          case 28:
             i++;
             _context3.next = 9;
             break;
 
-          case 32:
-            _context3.next = 39;
+          case 31:
+            _context3.next = 38;
             break;
 
-          case 34:
-            _context3.prev = 34;
+          case 33:
+            _context3.prev = 33;
             _context3.t1 = _context3["catch"](7);
             console.log(_context3.t1);
-            _context3.next = 39;
+            _context3.next = 38;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 39:
-            _context3.prev = 39;
-            _context3.next = 42;
+          case 38:
+            _context3.prev = 38;
+            _context3.next = 41;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 42:
-            _context3.next = 49;
+          case 41:
+            _context3.next = 48;
             break;
 
-          case 44:
-            _context3.prev = 44;
-            _context3.t2 = _context3["catch"](39);
+          case 43:
+            _context3.prev = 43;
+            _context3.t2 = _context3["catch"](38);
             console.log(_context3.t2);
-            _context3.next = 49;
+            _context3.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 49:
-            _context3.next = 51;
+          case 48:
+            _context3.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 51:
+          case 50:
           case "end":
             return _context3.stop();
         }
       }
-    }, null, null, [[7, 34], [11, 16], [39, 44]]);
+    }, null, null, [[7, 33], [11, 16], [38, 43]]);
   })();
 };
 
@@ -221,7 +221,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context4.next = 18;
+            _context4.next = 17;
             break;
           }
 
@@ -231,8 +231,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          console.log(url);
-          _context4.next = 10;
+          _context4.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var first_text = document.querySelectorAll(".fig-body>.fig-paragraph");
@@ -248,9 +247,9 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context4.sent;
-          _context4.next = 13;
+          _context4.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('.fig-content-metas__author').textContent.trim();
@@ -259,7 +258,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 13:
+        case 12:
           author = _context4.sent;
 
           if (Content != null && Content != "") {
@@ -277,16 +276,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 15:
+        case 14:
           i++;
           _context4.next = 2;
           break;
 
-        case 18:
-          _context4.next = 20;
+        case 17:
+          _context4.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 19:
         case "end":
           return _context4.stop();
       }
