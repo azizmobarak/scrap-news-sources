@@ -40,7 +40,7 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('00 */1 * * *', function () {
-  var figaro = require('./sources/FR/FIGARO-politic');
+  var figaro = require('./sources/FR/FIGARO-economy');
 
   figaro();
 }); //cron.schedule('20 */1 * * *', () => {
