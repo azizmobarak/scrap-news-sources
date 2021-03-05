@@ -38,12 +38,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-});
-cron.schedule('20 */1 * * *', function () {
-  var skynews = require('./sources/sky_news');
-
-  skynews();
 }); //cron.schedule('20 */1 * * *', () => {
+
+var monde = require('./sources/FR/MONDE');
+
+monde(); //});
+//cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});
