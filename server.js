@@ -11,29 +11,31 @@ const {category} = require('./model/Category');
 con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true},(err,db)=>{
     if(err)console.log(err);
     else{
-        // var model = category('articles');
-        // model.find({status:null},(err,doc)=>{
-        // if(err)console.log(err)
-        // else{
-        //     // doc.map(item=>{
-        //     //    // console.log(item.status)
-        //     //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-        //     //         if(err) console.log(err)
-        //     //         else{
-        //     //             console.log(count)
-        //     //         }
-        //     //     });
-        //     // })
-        // }
-        // });
+      console.log('conn')
+        var model = category('articles');
+        model.find({},(err,doc)=>{
+        if(err)console.log(err)
+        else{
+         // console.log(doc.length)
+            // doc.map(item=>{
+            //    // console.log(item.status)
+            //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
+            //         if(err) console.log(err)
+            //         else{
+            //             console.log(count)
+            //         }
+            //     });
+            // })
+        }
+        });
      }
 });
 
 
 
 //cron.schedule('00 */1 * * *', () => {
-  const sbs = require('./sources/SBS');
-  sbs();
+   const skynews = require('./sources/sky_news');
+   skynews();
 //});
 
 //cron.schedule('20 */1 * * *', () => {

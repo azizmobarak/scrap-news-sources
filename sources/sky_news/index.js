@@ -34,10 +34,10 @@ const ninenews = () =>{
             '--disable-dev-shm-usage',
             '--shm-size=3gb',
         ],
-       });
+});
 
 
-       var page = await browser.newPage(); 
+var page = await browser.newPage(); 
 
  
 var AllData=[]; 
@@ -50,26 +50,24 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.sbs.com.au/news/topic/world');
-        await page.WaitForSelector('.media-image>a>picture>img:nth-of-type(6)')
+        await page.goto('https://news.sky.com/world');
+       // await page.WaitForSelector('.media-image>a>picture>img:nth-of-type(6)')
     //    try{
     //     await page.click('#_evidon-banner-acceptbutton');
     //    }catch(e){
     //    console.log(e)
     //    }
        }catch{
-        await page.goto('https://www.sbs.com.au/news/topic/world');
+        await page.goto('https://news.sky.com/world');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-
-
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.preview__headline');
-    var images = document.querySelectorAll('.media-image>a>picture>source')
-    var links = document.querySelectorAll('.preview__headline>a')
+    var titles = document.querySelectorAll('.sdc-site-tile__headline>a');
+    var images = document.querySelectorAll('.sdc-site-tile__image-wrap>picture>img')
+    var links = document.querySelectorAll('.sdc-site-tile__headline>a')
        
          
         var data =[];
@@ -80,11 +78,11 @@ var PageData = await page.evaluate((Category)=>{
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : typeof(images[j==0 ? j : j+2]) === "undefined" ? null : images[j].srcset,
+                       images : typeof(images[j==0 ? j : j+2]) === "undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"SBS News",
-                       sourceLink:"https://www.sbs.com.au",
-                       sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
+                       source :"Sky News",
+                       sourceLink:"https://news.sky.com/",
+                       sourceLogo:"https://3dhealthcaresolutions.co.uk/wp-content/uploads/2020/05/unnamed-4.jpg"
                       });
                    }
                }
@@ -124,13 +122,25 @@ const GetContent = async(page,data)=>{
         console.log(url)
     
         var Content = await page.evaluate(()=>{
-        
-               try{
-                return document.querySelector('.article__body').textContent.length>400 ? document.querySelector('.article__body').textContent.trim().substring(0,1050) : null;
-                }catch{
-                    return null;
-                }
+            try{
+                var text = document.querySelectorAll(".sdc-article-body>P");
+            var cont="";
+            for(let i=0;i<text.length;i++){
+             cont=cont+"\n"+text[i].textContent;
+            }
+            return cont;
+            }catch{
+                return null;
+            }
         });
+
+        var author = await page.evaluate(()=>{
+            try{
+               return document.querySelector(".sdc-article-author__byline").textContent.replace('By','').trim();
+            }catch{
+                return null;
+            }
+        })
 
     
     if(Content!=null && Content!=""){
@@ -143,7 +153,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : null,
+                author : author,
                 content:Content,
           });
        }
