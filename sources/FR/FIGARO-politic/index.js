@@ -23,7 +23,7 @@ puppeteer.use(puppeteer_agent());
 
 var Categories=['politic'];
 
-const MARKETWATCH = () =>{
+const FIGARO = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,35 +50,65 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.lemonde.fr/politique/');
+        await page.goto('https://www.lefigaro.fr/politique');
+       // await page.click('button.button__acceptAll');
+       // await page.waitFor(10000);
        }catch{
-        await page.goto('https://www.lemonde.fr/politique/');
+        await page.goto('https://www.lefigaro.fr/politique');
+       // await page.click('button.button__acceptAll');
+       // await page.waitForSelector('article.fig-profile>a>figure>div>img');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
-    
-         // get the data from the page
-    var PageData = await page.evaluate((Category)=>{
-               
+     
+    await page.evaluate(()=>{
 
-    var titles = document.querySelectorAll('section.teaser>a>h3');
-    var images =document.querySelectorAll('section.teaser>a>figure>picture>img')
-    var links = document.querySelectorAll('section.teaser>a')
+        var totalHeight = 0;
+            var distance = 100;
+            var timer = setInterval(async() => {
+                var scrollHeight = document.body.scrollHeight;
+               window.scrollBy(0, distance);
+                totalHeight += distance;
+
+                if(totalHeight >= 2000){
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, 100);
+    });
+
+     await page.waitFor(3000)
+
+         // get the data from the page
+    var PageData = await page.evaluate(async(Category)=>{
+
+
+    var titles = document.querySelectorAll('article.fig-profile>a>h2');
+    var images ="" // look inside next for boucle
+    var links = document.querySelectorAll('article.fig-profile>a')
        
          
         var data =[];
          for(let j=0;j<4;j++){
+             var img="";
+             if(j==0){
+                 images = document.querySelectorAll('.fig-profile__media>img');
+                 img =typeof(images[j])!="undefined" ? images[j].srcset : null;
+             }else{
+                 images= document.querySelectorAll('article.fig-profile>a>figure>div>img');
+                 img =typeof(images[j-1])!="undefined" ? images[j-1].srcset : null;
+             }
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
-                       images : typeof(images[j])==="undefined" ? null : images[j].src,
+                       images : img==null ? null : img.split(' ')[0],
                        Category:Category,
-                       source :"Le Monde",
-                       sourceLink:"https://www.lemonde.fr/",
-                       sourceLogo:"https://static1.ozap.com/companies/4/45/71/84/@/4440434-le-logo-du-journal-le-monde-media_diapo_image-1.jpg"
+                       source :"Le Figaro",
+                       sourceLink:"https://www.lefigaro.fr",
+                       sourceLogo:"https://images-na.ssl-images-amazon.com/images/I/41MSIU5OVUL.png"
                       });
                    }
                }
@@ -88,7 +118,8 @@ for(let i=0;i<Categories.length;i++){
                PageData.map(item=>{
                    AllData.push(item)
                })
-       }}catch{
+       }}catch(e){
+        console.log(e);
         await browser.close();
        }
 
@@ -115,13 +146,13 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-       // console.log(url)
+        console.log(url)
     
-        var Content = await page.evaluate(()=>{
+ var Content = await page.evaluate(()=>{
         
             try{
 
-             var first_text = document.querySelectorAll(".article__content p");
+             var first_text = document.querySelectorAll(".fig-body>.fig-paragraph");
             var first_cont="";
             for(let i=0;i<first_text.length;i++){
                 first_cont=first_cont+"\n"+first_text[i].textContent;
@@ -133,9 +164,9 @@ const GetContent = async(page,data)=>{
             }
         });
 
-        var author = await page.evaluate(()=>{
+ var author = await page.evaluate(()=>{
             try{
-             return document.querySelector('.article__author-link').textContent.trim();
+             return document.querySelector('.fig-content-metas__author').textContent.trim();
             }catch{
               return null;
             }
@@ -158,9 +189,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-    //console.log(AllData_WithConetent)
+   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=MARKETWATCH;
+module.exports=FIGARO;
