@@ -40,7 +40,7 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('00 */1 * * *', function () {
-  var Libration = require('./sources/FR/LIBRATION-politic');
+  var Libration = require('./sources/FR/LIBRATION-env');
 
   Libration();
 }); //cron.schedule('20 */1 * * *', () => {
