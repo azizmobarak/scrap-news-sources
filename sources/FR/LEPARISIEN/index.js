@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic'];
+var Categories=['environment','politic'];
 
-const LIBRATION = () =>{
+const LEPARISIAN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -46,14 +46,22 @@ try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
-        //get the right category by number
-        var Category = Categories[i]
-        //navigate to category sub route
-       try{
-        await page.goto('https://www.liberation.fr/politique/');
+
+    //get the right category by number
+    var Category = Categories[i]
+    //navigate to category sub route
+    var url="";
+    if(Category==="politic")  url = "https://www.leparisien.fr/politique/";
+    else{
+        if(Category==="environment") url = "https://www.leparisien.fr/environnement/";
+    }
+       
+    
+    try{
+        await page.goto(url);
        // await page.click('#close-icon');
        }catch{
-        await page.goto('https://www.liberation.fr/politique/');
+        await page.goto(url);
        // await page.click('#close-icon');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
@@ -75,41 +83,42 @@ for(let i=0;i<Categories.length;i++){
             }, 100);
     });
 
-     await page.waitFor(3000)
+     await page.waitFor(2000)
 
     
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('article a>h2');
-    var images = document.querySelectorAll('article picture>img');
-    var links = document.querySelectorAll('article div>div>a:nth-child(1)');
+    var titles = document.querySelectorAll('.story-preview>div .story-headline');
+    var images = document.querySelectorAll('.story-preview>a>div>img');
+    var links = document.querySelectorAll('.story-preview>a');
        
          
         var data =[];
-         for(let j=0;j<3;j++){
+         for(let j=0;j<5;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
-                       link : links[j==0 ? j : j+1].href,
+                       link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"Libération",
-                       sourceLink:"https://www.liberation.fr/politique",
-                       sourceLogo:"https://www.liberation.fr/pf/resources/images/liberation.png?d=10"
+                       source :"Leparisien",
+                       sourceLink:"https://www.leparisien.fr/",
+                       sourceLogo:"https://www.leparisien.fr/pf/resources/images/E-LOGO-LP-192x60@2x.png?d=306"
                       });
                    }
                }
                       return data;
-               },Category);
-              // console.log(PageData);
-               PageData.map(item=>{
-                   AllData.push(item)
-               })
-       }}catch{
+     },Category);
+            console.log(PageData);
+            PageData.map(item=>{
+            AllData.push(item)
+                    });
+       }}catch(e){
+        console.log(e)
         await browser.close();
        }
 
@@ -136,39 +145,26 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-        //console.log(url)
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('.article-body-wrapper p.article_link');
-             var first_text = document.querySelector('.margin-md-bottom>div:nth-child(3)').textContent;
-
+             var second_text = document.querySelectorAll('.article-section>section>p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
              }
-              return first_text+"\n"+scond_content;
+              return scond_content;
             }catch{
-                try{
-                    // second try to get all content
-                    var second_text = document.querySelectorAll('.article-body-wrapper p.article_link');
-                    var scond_content ="";
-                    for(let i=0;i<second_text.length;i++){
-                        scond_content = scond_content +"\n"+second_text[i].textContent;
-                    }
-                     return scond_content;
-                }catch{
-                    // the last try will return a null content
-                    return null;
-                }
+               return null;
             }
         });
 
         var author = await page.evaluate(()=>{
             try{
-             return document.querySelector('span.link_primary-color>span').textContent.trim();
+             return document.querySelector('.author>span').textContent.trim();
             }catch{
               return null;
             }
@@ -191,9 +187,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  //  console.log(AllData_WithConetent)
-    await InsertData(AllData_WithConetent);
+   console.log(AllData_WithConetent)
+  //  await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=LIBRATION;
+module.exports=LEPARISIAN;

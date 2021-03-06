@@ -70,10 +70,14 @@
 
 /images
 
-sources/FR/MONDE
+/sources/FR/MONDE
 
-sources/FR/FIGARO-politic
+/sources/FR/FIGARO-politic
 
-sources/FR/FIGARO-economy
+/sources/FR/FIGARO-economy
 
-#sources/FR/Libration-politic
+/sources/FR/LIBRATION-politic
+
+/sources/FR/LIBRATION-env
+
+#sources/FR/LEPARISIEN
