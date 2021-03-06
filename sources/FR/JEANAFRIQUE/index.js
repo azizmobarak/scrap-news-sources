@@ -6,6 +6,7 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const { category } = require('../../../model/Category');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,9 +22,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['opinion'];
+var Categories=['politic',"culture"];
 
-const QUOTIDIEN = () =>{
+const JEAN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,13 +50,19 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.lequotidien.com/opinions";
+    var url ="";
+
+    if(Category==="politic") url ="https://www.jeuneafrique.com/rubriques/politique/";
+    else{
+        if(Category==="culture") url="https://www.jeuneafrique.com/rubriques/culture/";
+    }
+
     try{
         await page.goto(url);
-       // await page.click('#close-icon');
+        var count=i;
+      if(count==0)  await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
-       // await page.click('#close-icon');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -83,19 +90,24 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('article h2');
-    var images = document.querySelectorAll('article img');
-    var links = document.querySelectorAll('article a');
+    var images = document.querySelectorAll('article a>img');
+    // inside boucle for
+    var links = "";
+    var titles = "";
        
          
         var data =[];
          for(let j=0;j<6;j++){
+
+             titles = j==0 ? document.querySelectorAll('article h1') : document.querySelectorAll('article h2');
+             links = j==0 ? document.querySelectorAll('article a') : document.querySelectorAll('article>a+a');
+             var index = j==0 ? j : j-1;
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
+              if(typeof(titles[index])!="undefined"){
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
+                       title : titles[index].textContent.trim(),
+                       link : links[index].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
                        source :"LeQuotidien",
@@ -106,7 +118,7 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-          //  console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -138,13 +150,13 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-      //  console.log(url)
+       // console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('article div>div>p');
+             var second_text = document.querySelectorAll('.ja-teads-inread p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -157,10 +169,15 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-                var authr = document.querySelector('article p>em').textContent.split(' ');
-             return authr[1]+" "+authr[2];
+                var authr =document.querySelector('.art-header-author>a').textContent.trim()
+             return authr;
             }catch{
-              return null;
+                try{
+                    var authr = document.querySelector('.box__description-title>span').textContent.trim();
+                    return authr;
+                }catch{
+                    return null;
+                }
             }
         });
 
@@ -181,9 +198,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-   //console.log(AllData_WithConetent)
-    await InsertData(AllData_WithConetent);
+  // console.log(AllData_WithConetent)
+   await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=QUOTIDIEN;
+module.exports=JEAN;
