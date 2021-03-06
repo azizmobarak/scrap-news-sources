@@ -23,7 +23,7 @@ puppeteer.use(puppeteer_agent());
 
 var Categories=['politic'];
 
-const FIGARO = () =>{
+const LIBRATION = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -50,18 +50,16 @@ for(let i=0;i<Categories.length;i++){
         var Category = Categories[i]
         //navigate to category sub route
        try{
-        await page.goto('https://www.lefigaro.fr/politique');
-       // await page.click('button.button__acceptAll');
-       // await page.waitFor(10000);
+        await page.goto('https://www.liberation.fr/politique/');
+       // await page.click('#close-icon');
        }catch{
-        await page.goto('https://www.lefigaro.fr/politique');
-       // await page.click('button.button__acceptAll');
-       // await page.waitForSelector('article.fig-profile>a>figure>div>img');
+        await page.goto('https://www.liberation.fr/politique/');
+       // await page.click('#close-icon');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
-     
-    await page.evaluate(()=>{
+
+      await page.evaluate(()=>{
 
         var totalHeight = 0;
             var distance = 100;
@@ -79,47 +77,39 @@ for(let i=0;i<Categories.length;i++){
 
      await page.waitFor(3000)
 
+    
          // get the data from the page
-    var PageData = await page.evaluate(async(Category)=>{
+    var PageData = await page.evaluate((Category)=>{
+               
 
-
-    var titles = document.querySelectorAll('article.fig-profile>a>h2');
-    var images ="" // look inside next for boucle
-    var links = document.querySelectorAll('article.fig-profile>a')
+    var titles = document.querySelectorAll('article a>h2');
+    var images = document.querySelectorAll('article picture>img');
+    var links = document.querySelectorAll('article div>div>a:nth-child(1)');
        
          
         var data =[];
-         for(let j=0;j<4;j++){
-             var img="";
-             if(j==0){
-                 images = document.querySelectorAll('.fig-profile__media>img');
-                 img =typeof(images[j])!="undefined" ? images[j].srcset : null;
-             }else{
-                 images= document.querySelectorAll('article.fig-profile>a>figure>div>img');
-                 img =typeof(images[j-1])!="undefined" ? images[j-1].srcset : null;
-             }
+         for(let j=0;j<3;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images : img==null ? null : img.split(' ')[0],
+                       link : links[j==0 ? j : j+1].href,
+                       images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"Le Figaro",
-                       sourceLink:"https://www.lefigaro.fr",
-                       sourceLogo:"https://images-na.ssl-images-amazon.com/images/I/41MSIU5OVUL.png"
+                       source :"Libération",
+                       sourceLink:"https://www.liberation.fr/politique",
+                       sourceLogo:"https://www.liberation.fr/pf/resources/images/liberation.png?d=10"
                       });
                    }
                }
                       return data;
                },Category);
-             //  console.log(PageData);
+               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                })
-       }}catch(e){
-        console.log(e);
+       }}catch{
         await browser.close();
        }
 
@@ -146,31 +136,43 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-       // console.log(url)
+        //console.log(url)
     
- var Content = await page.evaluate(()=>{
+        var Content = await page.evaluate(()=>{
         
             try{
+                // first try to get all content
+             var second_text = document.querySelectorAll('.article-body-wrapper p.article_link');
+             var first_text = document.querySelector('.margin-md-bottom>div:nth-child(3)').textContent;
 
-             var first_text = document.querySelectorAll(".fig-body>.fig-paragraph");
-            var first_cont="";
-            for(let i=0;i<first_text.length;i++){
-                first_cont=first_cont+"\n"+first_text[i].textContent;
-            }
-
-              return first_cont;
+             var scond_content ="";
+             for(let i=0;i<second_text.length;i++){
+                scond_content = scond_content +"\n"+second_text[i].textContent;
+             }
+              return first_text+"\n"+scond_content;
             }catch{
-                return null;
+                try{
+                    // second try to get all content
+                    var second_text = document.querySelectorAll('.article-body-wrapper p.article_link');
+                    var scond_content ="";
+                    for(let i=0;i<second_text.length;i++){
+                        scond_content = scond_content +"\n"+second_text[i].textContent;
+                    }
+                     return scond_content;
+                }catch{
+                    // the last try will return a null content
+                    return null;
+                }
             }
         });
 
- var author = await page.evaluate(()=>{
+        var author = await page.evaluate(()=>{
             try{
-             return document.querySelector('.fig-content-metas__author').textContent.trim();
+             return document.querySelector('span.link_primary-color>span').textContent.trim();
             }catch{
               return null;
             }
-        })
+        });
 
     
     if(Content!=null && Content!=""){
@@ -189,9 +191,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-   // console.log(AllData_WithConetent)
+  //  console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=FIGARO;
+module.exports=LIBRATION;
