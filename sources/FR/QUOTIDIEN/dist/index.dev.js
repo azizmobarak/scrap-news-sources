@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['environment', 'politic'];
+var Categories = ['opinion'];
 
-var LEPARISIAN = function LEPARISIAN() {
+var QUOTIDIEN = function QUOTIDIEN() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -62,26 +62,23 @@ var LEPARISIAN = function LEPARISIAN() {
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "";
-            if (Category === "politic") url = "https://www.leparisien.fr/politique/";else {
-              if (Category === "environment") url = "https://www.leparisien.fr/environnement/";
-            }
-            _context2.prev = 13;
-            _context2.next = 16;
+            url = "https://www.lequotidien.com/opinions";
+            _context2.prev = 12;
+            _context2.next = 15;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 16:
-            _context2.next = 22;
+          case 15:
+            _context2.next = 21;
             break;
 
-          case 18:
-            _context2.prev = 18;
-            _context2.t0 = _context2["catch"](13);
-            _context2.next = 22;
+          case 17:
+            _context2.prev = 17;
+            _context2.t0 = _context2["catch"](12);
+            _context2.next = 21;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 22:
-            _context2.next = 24;
+          case 21:
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -109,19 +106,19 @@ var LEPARISIAN = function LEPARISIAN() {
               }, 100);
             }));
 
-          case 24:
-            _context2.next = 26;
+          case 23:
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 26:
-            _context2.next = 28;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var titles = document.querySelectorAll('.story-preview>div .story-headline');
-              var images = document.querySelectorAll('.story-preview>a>div>img');
-              var links = document.querySelectorAll('.story-preview>a');
+              var titles = document.querySelectorAll('article h2');
+              var images = document.querySelectorAll('article img');
+              var links = document.querySelectorAll('article a');
               var data = [];
 
-              for (var j = 0; j < 5; j++) {
+              for (var j = 0; j < 6; j++) {
                 if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
@@ -129,9 +126,9 @@ var LEPARISIAN = function LEPARISIAN() {
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "Leparisien",
-                    sourceLink: "https://www.leparisien.fr/",
-                    sourceLogo: "https://www.leparisien.fr/pf/resources/images/E-LOGO-LP-192x60@2x.png?d=306"
+                    source: "LeQuotidien",
+                    sourceLink: "https://www.lequotidien.com",
+                    sourceLogo: "https://www.otlhotelsaguenay.ca/uploads/1/0/6/8/106825145/editor/le-quotidien-logo1_10.jpg"
                   });
                 }
               }
@@ -139,9 +136,9 @@ var LEPARISIAN = function LEPARISIAN() {
               return data;
             }, Category));
 
-          case 28:
+          case 27:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
@@ -187,7 +184,7 @@ var LEPARISIAN = function LEPARISIAN() {
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 35], [13, 18], [40, 45]]);
+    }, null, null, [[7, 35], [12, 17], [40, 45]]);
   })();
 };
 
@@ -202,7 +199,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 18;
             break;
           }
 
@@ -212,11 +209,12 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          _context3.next = 9;
+          console.log(url);
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.article-section>section>p');
+              var second_text = document.querySelectorAll('article div>div>p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -229,18 +227,19 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          _context3.next = 12;
+          _context3.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.author>span').textContent.trim();
+              var authr = document.querySelector('article p>em').textContent.split(' ');
+              return authr[1] + " " + authr[2];
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 12:
+        case 13:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -258,14 +257,13 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 18:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
         case 19:
         case "end":
@@ -275,4 +273,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = LEPARISIAN;
+module.exports = QUOTIDIEN;

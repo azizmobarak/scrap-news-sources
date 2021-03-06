@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['environment','politic'];
+var Categories=['opinion'];
 
-const LEPARISIAN = () =>{
+const QUOTIDIEN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -46,17 +46,10 @@ try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
-
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="";
-    if(Category==="politic")  url = "https://www.leparisien.fr/politique/";
-    else{
-        if(Category==="environment") url = "https://www.leparisien.fr/environnement/";
-    }
-       
-    
+    var url ="https://www.lequotidien.com/opinions";
     try{
         await page.goto(url);
        // await page.click('#close-icon');
@@ -90,13 +83,13 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('.story-preview>div .story-headline');
-    var images = document.querySelectorAll('.story-preview>a>div>img');
-    var links = document.querySelectorAll('.story-preview>a');
+    var titles = document.querySelectorAll('article h2');
+    var images = document.querySelectorAll('article img');
+    var links = document.querySelectorAll('article a');
        
          
         var data =[];
-         for(let j=0;j<5;j++){
+         for(let j=0;j<6;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
@@ -105,15 +98,15 @@ for(let i=0;i<Categories.length;i++){
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"Leparisien",
-                       sourceLink:"https://www.leparisien.fr/",
-                       sourceLogo:"https://www.leparisien.fr/pf/resources/images/E-LOGO-LP-192x60@2x.png?d=306"
+                       source :"LeQuotidien",
+                       sourceLink:"https://www.lequotidien.com",
+                       sourceLogo:"https://www.otlhotelsaguenay.ca/uploads/1/0/6/8/106825145/editor/le-quotidien-logo1_10.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-          //  console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -145,13 +138,13 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-       // console.log(url)
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('.article-section>section>p');
+             var second_text = document.querySelectorAll('article div>div>p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -164,7 +157,8 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-             return document.querySelector('.author>span').textContent.trim();
+                var authr = document.querySelector('article p>em').textContent.split(' ');
+             return authr[1]+" "+authr[2];
             }catch{
               return null;
             }
@@ -187,9 +181,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  // console.log(AllData_WithConetent)
-    await InsertData(AllData_WithConetent);
+   console.log(AllData_WithConetent)
+   // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=LEPARISIAN;
+module.exports=QUOTIDIEN;
