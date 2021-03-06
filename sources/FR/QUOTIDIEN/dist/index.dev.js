@@ -55,7 +55,7 @@ var QUOTIDIEN = function QUOTIDIEN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 33;
+              _context2.next = 32;
               break;
             }
 
@@ -138,53 +138,53 @@ var QUOTIDIEN = function QUOTIDIEN() {
 
           case 27:
             PageData = _context2.sent;
-            console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 30:
+          case 29:
             i++;
             _context2.next = 9;
             break;
 
-          case 33:
-            _context2.next = 40;
+          case 32:
+            _context2.next = 39;
             break;
 
-          case 35:
-            _context2.prev = 35;
+          case 34:
+            _context2.prev = 34;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 40;
+            _context2.next = 39;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 40:
-            _context2.prev = 40;
-            _context2.next = 43;
+          case 39:
+            _context2.prev = 39;
+            _context2.next = 42;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 43:
-            _context2.next = 50;
+          case 42:
+            _context2.next = 49;
             break;
 
-          case 45:
-            _context2.prev = 45;
-            _context2.t2 = _context2["catch"](40);
+          case 44:
+            _context2.prev = 44;
+            _context2.t2 = _context2["catch"](39);
             console.log(_context2.t2);
-            _context2.next = 50;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context2.next = 52;
+          case 49:
+            _context2.next = 51;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 51:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 35], [12, 17], [40, 45]]);
+    }, null, null, [[7, 34], [12, 17], [39, 44]]);
   })();
 };
 
@@ -199,7 +199,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 18;
+            _context3.next = 17;
             break;
           }
 
@@ -209,8 +209,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          console.log(url);
-          _context3.next = 10;
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -227,9 +226,9 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context3.sent;
-          _context3.next = 13;
+          _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var authr = document.querySelector('article p>em').textContent.split(' ');
@@ -239,7 +238,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 13:
+        case 12:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -257,13 +256,14 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 15:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 18:
-          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
+        case 17:
+          _context3.next = 19;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
         case 19:
         case "end":
