@@ -58,7 +58,7 @@ var JEAN = function JEAN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 38;
+              _context2.next = 37;
               break;
             }
 
@@ -160,53 +160,53 @@ var JEAN = function JEAN() {
 
           case 32:
             PageData = _context2.sent;
-            console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 35:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 38:
-            _context2.next = 45;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 40:
-            _context2.prev = 40;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 45;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
-            _context2.prev = 45;
-            _context2.next = 48;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 48:
-            _context2.next = 55;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 50:
-            _context2.prev = 50;
-            _context2.t2 = _context2["catch"](45);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 55;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
-            _context2.next = 57;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 40], [13, 22], [45, 50]]);
+    }, null, null, [[7, 39], [13, 22], [44, 49]]);
   })();
 };
 
