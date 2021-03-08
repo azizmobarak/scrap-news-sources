@@ -1,4 +1,3 @@
-//https://www.20minutes.fr/arts-stars/
 'use strict';
 
 var puppeteer = require('puppeteer-extra');
@@ -28,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['entertainment'];
+var Categories = ['politic', 'international', 'economy'];
 
-var JEAN = function JEAN() {
+var OBSERVATEUR = function OBSERVATEUR() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -56,30 +55,36 @@ var JEAN = function JEAN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 33;
+              _context2.next = 37;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.20minutes.fr/arts-stars/";
-            _context2.prev = 12;
-            _context2.next = 15;
+            url = "https://www.nouvelobs.com/politique/";
+            if (Category === "international") url = "https://www.nouvelobs.com/monde/";
+            if (Category === "economy") url = "https://www.nouvelobs.com/economie/";
+            _context2.prev = 14;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
-
-          case 15:
-            _context2.next = 21;
-            break;
 
           case 17:
-            _context2.prev = 17;
-            _context2.t0 = _context2["catch"](12);
-            _context2.next = 21;
-            return regeneratorRuntime.awrap(page["goto"](url));
+            _context2.next = 19;
+            return regeneratorRuntime.awrap(page.click('.iubenda-cs-accept-btn'));
+
+          case 19:
+            _context2.next = 25;
+            break;
 
           case 21:
-            _context2.next = 23;
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 25;
+            return regeneratorRuntime.awrap(page["goto"](url));
+
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -107,29 +112,30 @@ var JEAN = function JEAN() {
               }, 100);
             }));
 
-          case 23:
-            _context2.next = 25;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 25:
-            _context2.next = 27;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article figure.media>div>img');
-              var links = document.querySelectorAll('article>a');
-              var titles = document.querySelectorAll('article .teaser h2');
+              var article = document.querySelectorAll('article');
+              var images = "source";
+              var links = "a";
+              var titles = "h2";
               var data = [];
 
-              for (var j = 0; j < 6; j++) {
-                if (typeof titles[j] != "undefined") {
+              for (var j = 0; j < 5; j++) {
+                if (typeof article[j].querySelector(titles) != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
-                    link: links[j].href,
-                    images: typeof images[j] === "undefined" ? null : images[j].src,
+                    title: article[j].querySelector(titles).textContent,
+                    link: article[j].querySelector(links).href,
+                    images: typeof article[j].querySelector(images) === "undefined" ? null : j != 0 ? article[j].querySelector(images).srcset : article[j].querySelector("img").src,
                     Category: Category,
-                    source: "20minutes.fr",
-                    sourceLink: "https://www.20minutes.fr/",
-                    sourceLogo: "https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
+                    source: "Le Nouvel Observateur",
+                    sourceLink: "https://www.nouvelobs.com/",
+                    sourceLogo: "https://www.nouvelobs.com/icons/lobs/lobs-pwa-192.png"
                   });
                 }
               }
@@ -137,55 +143,55 @@ var JEAN = function JEAN() {
               return data;
             }, Category));
 
-          case 27:
+          case 31:
             PageData = _context2.sent;
             console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 30:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 33:
-            _context2.next = 40;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 35:
-            _context2.prev = 35;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 40;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 40:
-            _context2.prev = 40;
-            _context2.next = 43;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 43:
-            _context2.next = 50;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 45:
-            _context2.prev = 45;
-            _context2.t2 = _context2["catch"](40);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 50;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context2.next = 52;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 35], [12, 17], [40, 45]]);
+    }, null, null, [[7, 39], [14, 21], [44, 49]]);
   })();
 };
 
@@ -200,21 +206,19 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 16;
             break;
           }
 
           item = data[i];
-          url = item.link;
-          _context3.next = 7;
-          return regeneratorRuntime.awrap(page["goto"](url));
+          url = item.link; //await page.goto(url);
 
-        case 7:
-          _context3.next = 9;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.content>p');
+              var second_text = document.querySelectorAll('.ObsArticle-body p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -227,24 +231,19 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 8:
           Content = _context3.sent;
-          _context3.next = 12;
+          _context3.next = 11;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var authr = document.querySelector('.author-name').textContent.trim();
+              var authr = document.querySelector('.article__footer-author>a').textContent.trim();
               return authr;
             } catch (_unused3) {
-              try {
-                var authr = document.querySelector('.author-name').textContent.trim();
-                return authr;
-              } catch (_unused4) {
-                return null;
-              }
+              return null;
             }
           }));
 
-        case 12:
+        case 11:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -262,16 +261,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 13:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 16:
+          _context3.next = 18;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 18:
         case "end":
           return _context3.stop();
       }
@@ -279,4 +278,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = JEAN;
+module.exports = OBSERVATEUR;

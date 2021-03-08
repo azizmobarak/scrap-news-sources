@@ -34,8 +34,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 //cron.schedule('00 */1 * * *', () => {
-   const minutes = require('./sources/FR/20MINUTES');
-   minutes();
+   const observateur = require('./sources/FR/OBSERVATEUR');
+   observateur();
 //});
 
 //cron.schedule('20 */1 * * *', () => {

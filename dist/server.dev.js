@@ -40,9 +40,9 @@ con.connect(process.env.DATABASE, {
   }
 }); //cron.schedule('00 */1 * * *', () => {
 
-var minutes = require('./sources/FR/20MINUTES');
+var observateur = require('./sources/FR/OBSERVATEUR');
 
-minutes(); //});
+observateur(); //});
 //cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();

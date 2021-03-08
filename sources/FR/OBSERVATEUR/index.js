@@ -1,6 +1,3 @@
-//https://www.20minutes.fr/arts-stars/
-
-
 'use strict';
 
 const puppeteer  = require('puppeteer-extra');
@@ -24,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['entertainment'];
+var Categories=['politic','international','economy'];
 
-const JEAN = () =>{
+const OBSERVATEUR = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -52,10 +49,14 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.20minutes.fr/arts-stars/";
+    var url ="https://www.nouvelobs.com/politique/";
+
+    if(Category==="international") url = "https://www.nouvelobs.com/monde/";
+    if(Category==="economy") url="https://www.nouvelobs.com/economie/";
 
     try{
         await page.goto(url);
+        await page.click('.iubenda-cs-accept-btn')
        }catch{
         await page.goto(url);
        }
@@ -84,32 +85,31 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-
-var images = document.querySelectorAll('article figure.media>div>img');
-var links = document.querySelectorAll('article>a');
-var titles = document.querySelectorAll('article .teaser h2');
+    var article=document.querySelectorAll('article');
+    var images = "source";
+    var links = "a";
+    var titles = "h2";
        
          
         var data =[];
-         for(let j=0;j<6;j++){
-
+         for(let j=0;j<5;j++){
            
-              if(typeof(titles[j])!="undefined"){
+              if(typeof(article[j].querySelector(titles))!="undefined"){
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images : typeof(images[j])==="undefined" ? null : images[j].src,
+                       title : article[j].querySelector(titles).textContent,
+                       link : article[j].querySelector(links).href,
+                       images : typeof(article[j].querySelector(images))==="undefined" ? null : (j!=0 ? article[j].querySelector(images).srcset : article[j].querySelector("img").src ),
                        Category:Category,
-                       source :"20minutes.fr",
-                       sourceLink:"https://www.20minutes.fr/",
-                       sourceLogo:"https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
+                       source :"Le Nouvel Observateur",
+                       sourceLink:"https://www.nouvelobs.com/",
+                       sourceLogo:"https://www.nouvelobs.com/icons/lobs/lobs-pwa-192.png"
                       });
                    }
                }
                       return data;
      },Category);
-            console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -119,7 +119,7 @@ var titles = document.querySelectorAll('article .teaser h2');
        }
 
        try{
-          await GetContent(page,AllData);
+        await GetContent(page,AllData);
        }catch(e){
         console.log(e);
         await browser.close();
@@ -140,14 +140,14 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        await page.goto(url);
-       // console.log(url)
+        //await page.goto(url);
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('.content>p');
+             var second_text = document.querySelectorAll('.ObsArticle-body p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -160,15 +160,10 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-                var authr =document.querySelector('.author-name').textContent.trim()
+                var authr =document.querySelector('.article__footer-author>a').textContent.trim()
              return authr;
             }catch{
-                try{
-                    var authr = document.querySelector('.author-name').textContent.trim();
-                    return authr;
-                }catch{
-                    return null;
-                }
+               return null;
             }
         });
 
@@ -190,8 +185,8 @@ const GetContent = async(page,data)=>{
     
     }
   // console.log(AllData_WithConetent)
-   await InsertData(AllData_WithConetent);
+  await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=JEAN;
+module.exports=OBSERVATEUR;
