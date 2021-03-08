@@ -1,3 +1,4 @@
+//https://www.20minutes.fr/arts-stars/
 'use strict';
 
 var puppeteer = require('puppeteer-extra');
@@ -11,10 +12,7 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData;
-
-var _require2 = require('../../../model/Category'),
-    category = _require2.category; //block ads
+    InsertData = _require.InsertData; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -30,18 +28,18 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', "culture"];
+var Categories = ['entertainment'];
 
 var JEAN = function JEAN() {
   (function _callee2() {
-    var browser, page, AllData, i, Category, url, count, PageData;
+    var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
             return regeneratorRuntime.awrap(puppeteer.launch({
-              headless: true,
+              headless: false,
               args: ['--enable-features=NetworkService', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--shm-size=3gb']
             }));
 
@@ -58,44 +56,30 @@ var JEAN = function JEAN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 37;
+              _context2.next = 33;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "";
-            if (Category === "politic") url = "https://www.jeuneafrique.com/rubriques/politique/";else {
-              if (Category === "culture") url = "https://www.jeuneafrique.com/rubriques/culture/";
-            }
-            _context2.prev = 13;
-            _context2.next = 16;
+            url = "https://www.20minutes.fr/arts-stars/";
+            _context2.prev = 12;
+            _context2.next = 15;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 16:
-            count = i;
-
-            if (!(count == 0)) {
-              _context2.next = 20;
-              break;
-            }
-
-            _context2.next = 20;
-            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
-
-          case 20:
-            _context2.next = 26;
+          case 15:
+            _context2.next = 21;
             break;
 
-          case 22:
-            _context2.prev = 22;
-            _context2.t0 = _context2["catch"](13);
-            _context2.next = 26;
+          case 17:
+            _context2.prev = 17;
+            _context2.t0 = _context2["catch"](12);
+            _context2.next = 21;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 26:
-            _context2.next = 28;
+          case 21:
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -123,29 +107,24 @@ var JEAN = function JEAN() {
               }, 100);
             }));
 
-          case 28:
-            _context2.next = 30;
+          case 23:
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 30:
-            _context2.next = 32;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article a>img'); // inside boucle for
-
-              var links = "";
-              var titles = "";
+              var images = document.querySelectorAll('article figure.media>div>img');
+              var links = document.querySelectorAll('article>a');
+              var titles = document.querySelectorAll('article .teaser h2');
               var data = [];
 
               for (var j = 0; j < 6; j++) {
-                titles = j == 0 ? document.querySelectorAll('article h1') : document.querySelectorAll('article h2');
-                links = j == 0 ? document.querySelectorAll('article a') : document.querySelectorAll('article>a+a');
-                var index = j == 0 ? j : j - 1;
-
-                if (typeof titles[index] != "undefined") {
+                if (typeof titles[j] != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: titles[index].textContent.trim(),
-                    link: links[index].href,
+                    title: titles[j].textContent.trim(),
+                    link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
                     source: "LeQuotidien",
@@ -158,55 +137,55 @@ var JEAN = function JEAN() {
               return data;
             }, Category));
 
-          case 32:
+          case 27:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 34:
+          case 30:
             i++;
             _context2.next = 9;
             break;
 
-          case 37:
-            _context2.next = 44;
+          case 33:
+            _context2.next = 40;
             break;
 
-          case 39:
-            _context2.prev = 39;
+          case 35:
+            _context2.prev = 35;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 44;
+            _context2.next = 40;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 44:
-            _context2.prev = 44;
-            _context2.next = 47;
+          case 40:
+            _context2.prev = 40;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 47:
-            _context2.next = 54;
+          case 43:
+            _context2.next = 50;
             break;
 
-          case 49:
-            _context2.prev = 49;
-            _context2.t2 = _context2["catch"](44);
+          case 45:
+            _context2.prev = 45;
+            _context2.t2 = _context2["catch"](40);
             console.log(_context2.t2);
-            _context2.next = 54;
+            _context2.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
-            _context2.next = 56;
+          case 50:
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 56:
+          case 52:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 39], [13, 22], [44, 49]]);
+    }, null, null, [[7, 35], [12, 17], [40, 45]]);
   })();
 };
 
@@ -235,7 +214,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.ja-teads-inread p');
+              var second_text = document.querySelectorAll('.content>p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -253,11 +232,11 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var authr = document.querySelector('.art-header-author>a').textContent.trim();
+              var authr = document.querySelector('.author-name').textContent.trim();
               return authr;
             } catch (_unused3) {
               try {
-                var authr = document.querySelector('.box__description-title>span').textContent.trim();
+                var authr = document.querySelector('.author-name').textContent.trim();
                 return authr;
               } catch (_unused4) {
                 return null;

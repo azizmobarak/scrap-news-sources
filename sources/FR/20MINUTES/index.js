@@ -1,3 +1,6 @@
+//https://www.20minutes.fr/arts-stars/
+
+
 'use strict';
 
 const puppeteer  = require('puppeteer-extra');
@@ -6,7 +9,6 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
-const { category } = require('../../../model/Category');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -22,12 +24,12 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic',"culture"];
+var Categories=['entertainment'];
 
 const JEAN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -50,17 +52,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="";
-
-    if(Category==="politic") url ="https://www.jeuneafrique.com/rubriques/politique/";
-    else{
-        if(Category==="culture") url="https://www.jeuneafrique.com/rubriques/culture/";
-    }
+    var url ="https://www.20minutes.fr/arts-stars/";
 
     try{
         await page.goto(url);
-        var count=i;
-      if(count==0)  await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
        }
@@ -90,24 +85,20 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
 
-    var images = document.querySelectorAll('article a>img');
-    // inside boucle for
-    var links = "";
-    var titles = "";
+var images = document.querySelectorAll('article figure.media>div>img');
+var links = document.querySelectorAll('article>a');
+var titles = document.querySelectorAll('article .teaser h2');
        
          
         var data =[];
          for(let j=0;j<6;j++){
 
-             titles = j==0 ? document.querySelectorAll('article h1') : document.querySelectorAll('article h2');
-             links = j==0 ? document.querySelectorAll('article a') : document.querySelectorAll('article>a+a');
-             var index = j==0 ? j : j-1;
            
-              if(typeof(titles[index])!="undefined"){
+              if(typeof(titles[j])!="undefined"){
                    data.push({
                        time : Date.now(),
-                       title : titles[index].textContent.trim(),
-                       link : links[index].href,
+                       title : titles[j].textContent.trim(),
+                       link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
                        source :"LeQuotidien",
@@ -118,7 +109,7 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-          // console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -128,7 +119,7 @@ for(let i=0;i<Categories.length;i++){
        }
 
        try{
-        await GetContent(page,AllData);
+          await GetContent(page,AllData);
        }catch(e){
         console.log(e);
         await browser.close();
@@ -156,7 +147,7 @@ const GetContent = async(page,data)=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('.ja-teads-inread p');
+             var second_text = document.querySelectorAll('.content>p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -169,11 +160,11 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-                var authr =document.querySelector('.art-header-author>a').textContent.trim()
+                var authr =document.querySelector('.author-name').textContent.trim()
              return authr;
             }catch{
                 try{
-                    var authr = document.querySelector('.box__description-title>span').textContent.trim();
+                    var authr = document.querySelector('.author-name').textContent.trim();
                     return authr;
                 }catch{
                     return null;

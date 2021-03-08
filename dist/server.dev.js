@@ -38,12 +38,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-});
-cron.schedule('00 */1 * * *', function () {
-  var jean = require('./sources/FR/JEANAFRIQUE');
+}); //cron.schedule('00 */1 * * *', () => {
 
-  jean();
-}); //cron.schedule('20 */1 * * *', () => {
+var minutes = require('./sources/FR/20MINUTES');
+
+minutes(); //});
+//cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});
