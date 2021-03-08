@@ -101,9 +101,9 @@ var titles = document.querySelectorAll('article .teaser h2');
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"LeQuotidien",
-                       sourceLink:"https://www.lequotidien.com",
-                       sourceLogo:"https://www.otlhotelsaguenay.ca/uploads/1/0/6/8/106825145/editor/le-quotidien-logo1_10.jpg"
+                       source :"20minutes.fr",
+                       sourceLink:"https://www.20minutes.fr/",
+                       sourceLogo:"https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
                       });
                    }
                }
