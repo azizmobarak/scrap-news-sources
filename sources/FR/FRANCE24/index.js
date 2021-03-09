@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['international','economy','food','life&style'];
+var Categories=['france','africa','usa'];
 
-const WATSON = () =>{
+const FRANCE24 = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,11 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.watson.ch/fr/International/";
+    var url ="https://www.france24.com/fr/france/";
 
-    if(Category==="economy") url="https://www.watson.ch/fr/Economie/";
-    if(Category==="food") url="https://www.watson.ch/fr/Food/";
-    if(Category==="life&style") url="https://www.watson.ch/fr/Divertissement/";
+    if(Category==="africa") url="https://www.france24.com/fr/afrique/";
+    if(Category==="usa") url="https://www.france24.com/fr/am%C3%A9riques/";
 
     try{
         await page.goto(url);
@@ -86,9 +85,9 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-    var images = document.querySelectorAll('.storyimage');
-    var links = document.querySelectorAll('.teaserlink');
-    var titles = document.querySelectorAll('.text>h2');
+    var images = document.querySelectorAll('.m-item-list-article img');
+    var links = document.querySelectorAll('.m-item-list-article a');
+    var titles = document.querySelectorAll('.m-item-list-article p');
        
          
         var data =[];
@@ -98,18 +97,18 @@ for(let i=0;i<Categories.length;i++){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent.trim(),
-                       images : typeof(images[j])!="undefined" ? "https://"+images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('cdn'),images[j].style.backgroundImage.indexOf('")')) : null,
+                       images : typeof(images[j])!="undefined" ? images[j].src : null,
                        link : typeof(links[j])==="undefined" ? null : links[j].href ,
                        Category:Category,
-                       source :"Watson",
-                       sourceLink:"https://www.watson.ch/",
-                       sourceLogo:"https://www.watson.ch/media/img/main/logos/logo_watson.png"
+                       source :"France 24",
+                       sourceLink:"https://www.france24.com",
+                       sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/FRANCE_24_logo.svg/768px-FRANCE_24_logo.svg.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -140,14 +139,14 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
         
             try{
             // first try to get all content
-             var second_text = document.querySelectorAll('.story>p');
+             var second_text = document.querySelectorAll('.t-content__body p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -157,14 +156,6 @@ const GetContent = async(page,data)=>{
                return null;
             }
         });
-
-        var author = await page.evaluate(()=>{
-            try{
-            return document.querySelector('.card>h6>a').textContent;
-            }catch{
-             return null;
-            }
-        })
 
      
 
@@ -179,15 +170,15 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : author,
+                author : null,
                 content:Content
           });
        }
     
     }
- // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+  console.log(AllData_WithConetent)
+ // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=WATSON;
+module.exports=FRANCE24;

@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['international', 'economy', 'food', 'life&style'];
+var Categories = ['france', 'africa', 'usa'];
 
-var WATSON = function WATSON() {
+var FRANCE24 = function FRANCE24() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -62,26 +62,25 @@ var WATSON = function WATSON() {
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.watson.ch/fr/International/";
-            if (Category === "economy") url = "https://www.watson.ch/fr/Economie/";
-            if (Category === "food") url = "https://www.watson.ch/fr/Food/";
-            if (Category === "life&style") url = "https://www.watson.ch/fr/Divertissement/";
-            _context2.prev = 15;
-            _context2.next = 18;
+            url = "https://www.france24.com/fr/france/";
+            if (Category === "africa") url = "https://www.france24.com/fr/afrique/";
+            if (Category === "usa") url = "https://www.france24.com/fr/am%C3%A9riques/";
+            _context2.prev = 14;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 18:
-            _context2.next = 24;
+          case 17:
+            _context2.next = 23;
             break;
 
-          case 20:
-            _context2.prev = 20;
-            _context2.t0 = _context2["catch"](15);
-            _context2.next = 24;
+          case 19:
+            _context2.prev = 19;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 24:
-            _context2.next = 26;
+          case 23:
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -109,16 +108,16 @@ var WATSON = function WATSON() {
               }, 100);
             }));
 
-          case 26:
-            _context2.next = 28;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 28:
-            _context2.next = 30;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('.storyimage');
-              var links = document.querySelectorAll('.teaserlink');
-              var titles = document.querySelectorAll('.text>h2');
+              var images = document.querySelectorAll('.m-item-list-article img');
+              var links = document.querySelectorAll('.m-item-list-article a');
+              var titles = document.querySelectorAll('.m-item-list-article p');
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -126,12 +125,12 @@ var WATSON = function WATSON() {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
-                    images: typeof images[j] != "undefined" ? "https://" + images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('cdn'), images[j].style.backgroundImage.indexOf('")')) : null,
+                    images: typeof images[j] != "undefined" ? images[j].src : null,
                     link: typeof links[j] === "undefined" ? null : links[j].href,
                     Category: Category,
-                    source: "Watson",
-                    sourceLink: "https://www.watson.ch/",
-                    sourceLogo: "https://www.watson.ch/media/img/main/logos/logo_watson.png"
+                    source: "France 24",
+                    sourceLink: "https://www.france24.com",
+                    sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/FRANCE_24_logo.svg/768px-FRANCE_24_logo.svg.png"
                   });
                 }
               }
@@ -139,9 +138,9 @@ var WATSON = function WATSON() {
               return data;
             }, Category));
 
-          case 30:
+          case 29:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
@@ -187,12 +186,12 @@ var WATSON = function WATSON() {
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 37], [15, 20], [42, 47]]);
+    }, null, null, [[7, 37], [14, 19], [42, 47]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -202,22 +201,22 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 15;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.story>p');
+              var second_text = document.querySelectorAll('.t-content__body p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -230,19 +229,8 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          _context3.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.card>h6>a').textContent;
-            } catch (_unused3) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -254,21 +242,20 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: author,
+              author: null,
               content: Content
             });
           }
 
-        case 14:
+        case 12:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 15:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
-        case 19:
+        case 16:
         case "end":
           return _context3.stop();
       }
@@ -276,4 +263,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = WATSON;
+module.exports = FRANCE24;
