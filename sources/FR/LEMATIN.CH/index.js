@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','international','science','technology'];
+var Categories=['sport','technology'];
 
-const LEPOINT = () =>{
+const LEMATIN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,11 +49,9 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.lepoint.fr/politique/";
+    var url ="https://www.lematin.ch/sports";
 
-    if(Category==="international") url ="https://www.lepoint.fr/monde/";
-    if(Category==="science") url="https://www.lepoint.fr/sciences-nature/";
-    if(Category==="technology") url="https://www.lepoint.fr/high-tech-internet/";
+    if(Category==="technology") url="https://www.lematin.ch/hightech";
 
     try{
         await page.goto(url);
@@ -88,8 +86,8 @@ for(let i=0;i<Categories.length;i++){
                
     var article=document.querySelectorAll('article');
     var images = "img";
-    var links = "figure>a";
-    var titles = "h2";
+    var links = "a";
+    var titles = "h1";
        
          
         var data =[];
@@ -102,15 +100,15 @@ for(let i=0;i<Categories.length;i++){
                        link : j==0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
                        images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
                        Category:Category,
-                       source :"Le Point",
-                       sourceLink:"https://www.lepoint.fr/",
-                       sourceLogo:"https://www.lebal.paris/wp-content/uploads/2018/07/18117-1.jpg"
+                       source :"LeMatin.ch",
+                       sourceLink:"https://www.lematin.ch/",
+                       sourceLogo:"https://publishing.goldbach.com/assets/images/5/lematin-ch-logo-d7d2e4e5.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -142,13 +140,13 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-         console.log(url)
+       //  console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('.ArticleBody p');
+             var second_text = document.querySelectorAll('article>section p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -159,14 +157,7 @@ const GetContent = async(page,data)=>{
             }
         });
 
-        var author = await page.evaluate(()=>{
-            try{
-                var authr =document.querySelector('.SigatureAuthorNames>span>a').textContent.trim()
-             return authr;
-            }catch{
-               return null;
-            }
-        });
+     
 
     
     if(Content!=null && Content!=""){
@@ -179,15 +170,15 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : author,
+                author : null,
                 content:Content
           });
        }
     
     }
-  console.log(AllData_WithConetent)
-  //await InsertData(AllData_WithConetent);
+ // console.log(AllData_WithConetent)
+  await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=LEPOINT;
+module.exports=LEMATIN;

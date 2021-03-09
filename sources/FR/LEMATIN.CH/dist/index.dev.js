@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', 'international', 'science', 'technology'];
+var Categories = ['sport', 'technology'];
 
-var LEPOINT = function LEPOINT() {
+var LEMATIN = function LEMATIN() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,33 +55,31 @@ var LEPOINT = function LEPOINT() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 35;
+              _context2.next = 34;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.lepoint.fr/politique/";
-            if (Category === "international") url = "https://www.lepoint.fr/monde/";
-            if (Category === "science") url = "https://www.lepoint.fr/sciences-nature/";
-            if (Category === "technology") url = "https://www.lepoint.fr/high-tech-internet/";
-            _context2.prev = 15;
-            _context2.next = 18;
+            url = "https://www.lematin.ch/sports";
+            if (Category === "technology") url = "https://www.lematin.ch/hightech";
+            _context2.prev = 13;
+            _context2.next = 16;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 18:
-            _context2.next = 24;
+          case 16:
+            _context2.next = 22;
             break;
 
-          case 20:
-            _context2.prev = 20;
-            _context2.t0 = _context2["catch"](15);
-            _context2.next = 24;
+          case 18:
+            _context2.prev = 18;
+            _context2.t0 = _context2["catch"](13);
+            _context2.next = 22;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 24:
-            _context2.next = 26;
+          case 22:
+            _context2.next = 24;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -109,17 +107,17 @@ var LEPOINT = function LEPOINT() {
               }, 100);
             }));
 
-          case 26:
-            _context2.next = 28;
+          case 24:
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 28:
-            _context2.next = 30;
+          case 26:
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var article = document.querySelectorAll('article');
               var images = "img";
-              var links = "figure>a";
-              var titles = "h2";
+              var links = "a";
+              var titles = "h1";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -130,9 +128,9 @@ var LEPOINT = function LEPOINT() {
                     link: j == 0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
                     images: typeof article[j].querySelector(images) === "undefined" ? null : article[j].querySelector(images).src,
                     Category: Category,
-                    source: "Le Point",
-                    sourceLink: "https://www.lepoint.fr/",
-                    sourceLogo: "https://www.lebal.paris/wp-content/uploads/2018/07/18117-1.jpg"
+                    source: "LeMatin.ch",
+                    sourceLink: "https://www.lematin.ch/",
+                    sourceLogo: "https://publishing.goldbach.com/assets/images/5/lematin-ch-logo-d7d2e4e5.png"
                   });
                 }
               }
@@ -140,60 +138,60 @@ var LEPOINT = function LEPOINT() {
               return data;
             }, Category));
 
-          case 30:
+          case 28:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 32:
+          case 31:
             i++;
             _context2.next = 9;
             break;
 
-          case 35:
-            _context2.next = 42;
+          case 34:
+            _context2.next = 41;
             break;
 
-          case 37:
-            _context2.prev = 37;
+          case 36:
+            _context2.prev = 36;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 42;
+            _context2.next = 41;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 42:
-            _context2.prev = 42;
-            _context2.next = 45;
+          case 41:
+            _context2.prev = 41;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 45:
-            _context2.next = 52;
+          case 44:
+            _context2.next = 51;
             break;
 
-          case 47:
-            _context2.prev = 47;
-            _context2.t2 = _context2["catch"](42);
+          case 46:
+            _context2.prev = 46;
+            _context2.t2 = _context2["catch"](41);
             console.log(_context2.t2);
-            _context2.next = 52;
+            _context2.next = 51;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
-            _context2.next = 54;
+          case 51:
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
+          case 53:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 37], [15, 20], [42, 47]]);
+    }, null, null, [[7, 36], [13, 18], [41, 46]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -203,7 +201,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 18;
+            _context3.next = 14;
             break;
           }
 
@@ -213,12 +211,11 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          console.log(url);
-          _context3.next = 10;
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.ArticleBody p');
+              var second_text = document.querySelectorAll('article>section p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -231,20 +228,8 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context3.sent;
-          _context3.next = 13;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              var authr = document.querySelector('.SigatureAuthorNames>span>a').textContent.trim();
-              return authr;
-            } catch (_unused3) {
-              return null;
-            }
-          }));
-
-        case 13:
-          author = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -256,20 +241,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: author,
+              author: null,
               content: Content
             });
           }
 
-        case 15:
+        case 11:
           i++;
           _context3.next = 2;
           break;
 
-        case 18:
-          console.log(AllData_WithConetent); //await InsertData(AllData_WithConetent);
+        case 14:
+          _context3.next = 16;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 16:
         case "end":
           return _context3.stop();
       }
@@ -277,4 +263,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = LEPOINT;
+module.exports = LEMATIN;
