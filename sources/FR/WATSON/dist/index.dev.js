@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['sport', 'technology'];
+var Categories = ['international', 'economy', 'food', 'life&style'];
 
-var LEMATIN = function LEMATIN() {
+var WATSON = function WATSON() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,31 +55,33 @@ var LEMATIN = function LEMATIN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 33;
+              _context2.next = 36;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.lematin.ch/sports";
-            if (Category === "technology") url = "https://www.lematin.ch/hightech";
-            _context2.prev = 13;
-            _context2.next = 16;
+            url = "https://www.watson.ch/fr/International/";
+            if (Category === "economy") url = "https://www.watson.ch/fr/Economie/";
+            if (Category === "food") url = "https://www.watson.ch/fr/Food/";
+            if (Category === "life&style") url = "https://www.watson.ch/fr/Divertissement/";
+            _context2.prev = 15;
+            _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
-
-          case 16:
-            _context2.next = 22;
-            break;
 
           case 18:
-            _context2.prev = 18;
-            _context2.t0 = _context2["catch"](13);
-            _context2.next = 22;
+            _context2.next = 24;
+            break;
+
+          case 20:
+            _context2.prev = 20;
+            _context2.t0 = _context2["catch"](15);
+            _context2.next = 24;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 22:
-            _context2.next = 24;
+          case 24:
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -107,30 +109,29 @@ var LEMATIN = function LEMATIN() {
               }, 100);
             }));
 
-          case 24:
-            _context2.next = 26;
-            return regeneratorRuntime.awrap(page.waitFor(2000));
-
           case 26:
             _context2.next = 28;
+            return regeneratorRuntime.awrap(page.waitFor(2000));
+
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var article = document.querySelectorAll('article');
-              var images = "img";
-              var links = "a";
-              var titles = "h1";
+              var images = document.querySelectorAll('.storyimage');
+              var links = document.querySelectorAll('.teaserlink');
+              var titles = document.querySelectorAll('.text>h2');
               var data = [];
 
               for (var j = 0; j < 5; j++) {
-                if (typeof article[j].querySelector(titles) != "undefined" && article[j].querySelector(links) != null) {
+                if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
                   data.push({
                     time: Date.now(),
-                    title: article[j].querySelector(titles).textContent.trim(),
-                    link: j == 0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
-                    images: typeof article[j].querySelector(images) === "undefined" ? null : article[j].querySelector(images).src,
+                    title: titles[j].textContent.trim(),
+                    images: typeof images[j] != "undefined" ? "https://" + images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('cdn'), images[j].style.backgroundImage.indexOf('")')) : null,
+                    link: typeof links[j] === "undefined" ? null : links[j].href,
                     Category: Category,
-                    source: "LeMatin.ch",
-                    sourceLink: "https://www.lematin.ch/",
-                    sourceLogo: "https://publishing.goldbach.com/assets/images/5/lematin-ch-logo-d7d2e4e5.png"
+                    source: "Watson",
+                    sourceLink: "https://www.watson.ch/",
+                    sourceLogo: "https://www.watson.ch/media/img/main/logos/logo_watson.png"
                   });
                 }
               }
@@ -138,60 +139,60 @@ var LEMATIN = function LEMATIN() {
               return data;
             }, Category));
 
-          case 28:
+          case 30:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 30:
+          case 33:
             i++;
             _context2.next = 9;
             break;
 
-          case 33:
-            _context2.next = 40;
+          case 36:
+            _context2.next = 43;
             break;
 
-          case 35:
-            _context2.prev = 35;
+          case 38:
+            _context2.prev = 38;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 40;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 40:
-            _context2.prev = 40;
             _context2.next = 43;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
+            return regeneratorRuntime.awrap(browser.close());
 
           case 43:
-            _context2.next = 50;
+            _context2.prev = 43;
+            _context2.next = 46;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
+
+          case 46:
+            _context2.next = 53;
             break;
 
-          case 45:
-            _context2.prev = 45;
-            _context2.t2 = _context2["catch"](40);
+          case 48:
+            _context2.prev = 48;
+            _context2.t2 = _context2["catch"](43);
             console.log(_context2.t2);
-            _context2.next = 50;
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context2.next = 52;
+          case 53:
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 35], [13, 18], [40, 45]]);
+    }, null, null, [[7, 38], [15, 20], [43, 48]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -201,12 +202,13 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 17;
             break;
           }
 
           item = data[i];
-          url = item.link;
+          url = item.link; // console.log(url)
+
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
@@ -215,7 +217,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('article>section p');
+              var second_text = document.querySelectorAll('.story>p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -230,6 +232,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.card>h6>a').textContent;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          author = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -241,21 +254,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: null,
+              author: author,
               content: Content
             });
           }
 
-        case 11:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
+        case 17:
+          _context3.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 19:
         case "end":
           return _context3.stop();
       }
@@ -263,4 +276,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = LEMATIN;
+module.exports = WATSON;

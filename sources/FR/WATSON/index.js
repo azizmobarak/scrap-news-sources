@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['sport','technology'];
+var Categories=['international','economy','food','life&style'];
 
-const LEMATIN = () =>{
+const WATSON = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,9 +49,11 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.lematin.ch/sports";
+    var url ="https://www.watson.ch/fr/International/";
 
-    if(Category==="technology") url="https://www.lematin.ch/hightech";
+    if(Category==="economy") url="https://www.watson.ch/fr/Economie/";
+    if(Category==="food") url="https://www.watson.ch/fr/Food/";
+    if(Category==="life&style") url="https://www.watson.ch/fr/Divertissement/";
 
     try{
         await page.goto(url);
@@ -84,31 +86,30 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-    var article=document.querySelectorAll('article');
-    var images = "img";
-    var links = "a";
-    var titles = "h1";
+    var images = document.querySelectorAll('.storyimage');
+    var links = document.querySelectorAll('.teaserlink');
+    var titles = document.querySelectorAll('.text>h2');
        
          
         var data =[];
          for(let j=0;j<5;j++){
            
-              if(typeof(article[j].querySelector(titles))!="undefined" && article[j].querySelector(links)!=null){
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
-                       title : article[j].querySelector(titles).textContent.trim(),
-                       link : j==0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
-                       images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
+                       title : titles[j].textContent.trim(),
+                       images : typeof(images[j])!="undefined" ? "https://"+images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('cdn'),images[j].style.backgroundImage.indexOf('")')) : null,
+                       link : typeof(links[j])==="undefined" ? null : links[j].href ,
                        Category:Category,
-                       source :"LeMatin.ch",
-                       sourceLink:"https://www.lematin.ch/",
-                       sourceLogo:"https://publishing.goldbach.com/assets/images/5/lematin-ch-logo-d7d2e4e5.png"
+                       source :"Watson",
+                       sourceLink:"https://www.watson.ch/",
+                       sourceLogo:"https://www.watson.ch/media/img/main/logos/logo_watson.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -118,7 +119,7 @@ for(let i=0;i<Categories.length;i++){
        }
 
        try{
-   await GetContent(page,AllData);
+       await GetContent(page,AllData);
        }catch(e){
         console.log(e);
         await browser.close();
@@ -139,14 +140,14 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
+       // console.log(url)
         await page.goto(url);
-       //  console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
-                // first try to get all content
-             var second_text = document.querySelectorAll('article>section p');
+            // first try to get all content
+             var second_text = document.querySelectorAll('.story>p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -156,6 +157,14 @@ const GetContent = async(page,data)=>{
                return null;
             }
         });
+
+        var author = await page.evaluate(()=>{
+            try{
+            return document.querySelector('.card>h6>a').textContent;
+            }catch{
+             return null;
+            }
+        })
 
      
 
@@ -170,7 +179,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : null,
+                author : author,
                 content:Content
           });
        }
@@ -181,4 +190,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=LEMATIN;
+module.exports=WATSON;

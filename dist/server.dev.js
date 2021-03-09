@@ -38,12 +38,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-});
-cron.schedule('00 */1 * * *', function () {
-  var matin = require('./sources/FR/LEMATIN.CH');
+}); //cron.schedule('00 */1 * * *', () => {
 
-  matin();
-}); //cron.schedule('20 */1 * * *', () => {
+var watson = require('./sources/FR/WATSON');
+
+watson(); //});
+//cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});
