@@ -55,7 +55,7 @@ var RFI = function RFI() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 41;
+              _context2.next = 40;
               break;
             }
 
@@ -158,52 +158,52 @@ var RFI = function RFI() {
 
           case 35:
             PageData = _context2.sent;
-            console.log(PageData);
+            //   console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 38:
+          case 37:
             i++;
             _context2.next = 9;
             break;
 
-          case 41:
-            _context2.next = 48;
+          case 40:
+            _context2.next = 47;
             break;
 
-          case 43:
-            _context2.prev = 43;
+          case 42:
+            _context2.prev = 42;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 48;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
-            _context2.prev = 48;
-            _context2.next = 51;
+          case 47:
+            _context2.prev = 47;
+            _context2.next = 50;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 51:
-            _context2.next = 57;
+          case 50:
+            _context2.next = 56;
             break;
 
-          case 53:
-            _context2.prev = 53;
-            _context2.t2 = _context2["catch"](48);
-            _context2.next = 57;
+          case 52:
+            _context2.prev = 52;
+            _context2.t2 = _context2["catch"](47);
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
-            _context2.next = 59;
+          case 56:
+            _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 59:
+          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 43], [14, 22], [48, 53]]);
+    }, null, null, [[7, 42], [14, 22], [47, 52]]);
   })();
 };
 
