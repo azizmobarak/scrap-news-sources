@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['france','africa','usa'];
+var Categories=['politic','economy','culture'];
 
-const FRANCE24 = () =>{
+const VRT = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.france24.com/fr/france/";
+    var url ="https://www.vrt.be/vrtnws/fr/rubriques/politique/";
 
-    if(Category==="africa") url="https://www.france24.com/fr/afrique/";
-    if(Category==="usa") url="https://www.france24.com/fr/am%C3%A9riques/";
+    if(Category==="economy") url="https://www.vrt.be/vrtnws/fr/rubriques/economie/";
+    if(Category==="culture") url="https://www.vrt.be/vrtnws/fr/rubriques/culture---media/";
 
     try{
         await page.goto(url);
@@ -83,16 +83,15 @@ for(let i=0;i<Categories.length;i++){
 
     
          // get the data from the page
-    var PageData = await page.evaluate((Category)=>{
+var PageData = await page.evaluate((Category)=>{
                
-    var images = document.querySelectorAll('.m-item-list-article img');
-    var links = document.querySelectorAll('.m-item-list-article a');
-    var titles = document.querySelectorAll('.m-item-list-article p');
+    var images = document.querySelectorAll('article img');
+    var links = document.querySelectorAll('.vrt-teaser-wrapper a');
+    var titles = document.querySelectorAll('article h2');
        
          
         var data =[];
          for(let j=0;j<5;j++){
-           
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
                        time : Date.now(),
@@ -100,15 +99,15 @@ for(let i=0;i<Categories.length;i++){
                        images : typeof(images[j])!="undefined" ? images[j].src : null,
                        link : typeof(links[j])==="undefined" ? null : links[j].href ,
                        Category:Category,
-                       source :"France 24",
-                       sourceLink:"https://www.france24.com",
-                       sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/FRANCE_24_logo.svg/768px-FRANCE_24_logo.svg.png"
+                       source :"VRT NEWS",
+                       sourceLink:"https://www.vrt.be",
+                       sourceLogo:"https://www.vrt.be/etc.clientlibs/vrtnieuws/clientlibs/clientlib-v2-site/resources/images/og_image.png"
                       });
                    }
                }
                       return data;
      },Category);
-     //      console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -120,7 +119,7 @@ for(let i=0;i<Categories.length;i++){
        try{
        await GetContent(page,AllData);
        }catch(e){
-        console.log(e);
+        // console.log(e);
         await browser.close();
        }
 
@@ -139,14 +138,14 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-   //     console.log(url)
+       // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
         
             try{
             // first try to get all content
-             var second_text = document.querySelectorAll('.t-content__body p');
+             var second_text = document.querySelectorAll('.article__par p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -157,7 +156,13 @@ const GetContent = async(page,data)=>{
             }
         });
 
-     
+     var author = await page.evaluate(()=>{
+         try{
+        return document.querySelector('.author-info__names').textContent.trim();
+         }catch{
+        return null;
+         }
+     })
 
     
     if(Content!=null && Content!=""){
@@ -170,15 +175,15 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : null,
+                author : author,
                 content:Content
           });
        }
     
     }
- // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+  console.log(AllData_WithConetent)
+ // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=FRANCE24;
+module.exports=VRT;
