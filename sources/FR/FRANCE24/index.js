@@ -108,7 +108,7 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-           console.log(PageData);
+     //      console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -139,7 +139,7 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        console.log(url)
+   //     console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -176,8 +176,8 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  console.log(AllData_WithConetent)
- // await InsertData(AllData_WithConetent);
+ // console.log(AllData_WithConetent)
+  await InsertData(AllData_WithConetent);
 }
 
 
