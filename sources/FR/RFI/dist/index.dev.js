@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', 'economy', 'culture'];
+var Categories = ['france', 'international', 'science'];
 
-var VRT = function VRT() {
+var RFI = function RFI() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,32 +55,50 @@ var VRT = function VRT() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 34;
+              _context2.next = 41;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.vrt.be/vrtnws/fr/rubriques/politique/";
-            if (Category === "economy") url = "https://www.vrt.be/vrtnws/fr/rubriques/economie/";
-            if (Category === "culture") url = "https://www.vrt.be/vrtnws/fr/rubriques/culture---media/";
+            url = "https://www.rfi.fr/en/france/";
+            if (Category === "international") url = "https://www.rfi.fr/en/international/";
+            if (Category === "science") url = "https://www.rfi.fr/en/science-technology/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
 
           case 17:
-            _context2.next = 23;
+            if (!(i == 0)) {
+              _context2.next = 20;
+              break;
+            }
+
+            _context2.next = 20;
+            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
+
+          case 20:
+            _context2.next = 29;
             break;
 
-          case 19:
-            _context2.prev = 19;
+          case 22:
+            _context2.prev = 22;
             _context2.t0 = _context2["catch"](14);
-            _context2.next = 23;
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 23:
-            _context2.next = 25;
+          case 26:
+            if (!(i == 0)) {
+              _context2.next = 29;
+              break;
+            }
+
+            _context2.next = 29;
+            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
+
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -108,16 +126,16 @@ var VRT = function VRT() {
               }, 100);
             }));
 
-          case 25:
-            _context2.next = 27;
-            return regeneratorRuntime.awrap(page.waitFor(2000));
+          case 31:
+            _context2.next = 33;
+            return regeneratorRuntime.awrap(page.waitFor(6000));
 
-          case 27:
-            _context2.next = 29;
+          case 33:
+            _context2.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article img');
-              var links = document.querySelectorAll('.vrt-teaser-wrapper a');
-              var titles = document.querySelectorAll('article h2');
+              var images = document.querySelectorAll('.article__figure-wrapper img');
+              var links = document.querySelectorAll('.m-item-list-article a');
+              var titles = document.querySelectorAll('.article__title');
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -128,9 +146,9 @@ var VRT = function VRT() {
                     images: typeof images[j] != "undefined" ? images[j].src : null,
                     link: typeof links[j] === "undefined" ? null : links[j].href,
                     Category: Category,
-                    source: "VRT NEWS",
-                    sourceLink: "https://www.vrt.be",
-                    sourceLogo: "https://www.vrt.be/etc.clientlibs/vrtnieuws/clientlibs/clientlib-v2-site/resources/images/og_image.png"
+                    source: "RFI NEWS",
+                    sourceLink: "https://www.rfi.fr",
+                    sourceLogo: "https://static.rfi.fr/meta_og_twcards/jsonld_publisher.png"
                   });
                 }
               }
@@ -138,54 +156,54 @@ var VRT = function VRT() {
               return data;
             }, Category));
 
-          case 29:
+          case 35:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 31:
+          case 38:
             i++;
             _context2.next = 9;
             break;
 
-          case 34:
-            _context2.next = 41;
+          case 41:
+            _context2.next = 48;
             break;
 
-          case 36:
-            _context2.prev = 36;
+          case 43:
+            _context2.prev = 43;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 41;
+            _context2.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 41:
-            _context2.prev = 41;
-            _context2.next = 44;
+          case 48:
+            _context2.prev = 48;
+            _context2.next = 51;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context2.next = 50;
+          case 51:
+            _context2.next = 57;
             break;
 
-          case 46:
-            _context2.prev = 46;
-            _context2.t2 = _context2["catch"](41);
-            _context2.next = 50;
+          case 53:
+            _context2.prev = 53;
+            _context2.t2 = _context2["catch"](48);
+            _context2.next = 57;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context2.next = 52;
+          case 57:
+            _context2.next = 59;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 59:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 36], [14, 19], [41, 46]]);
+    }, null, null, [[7, 43], [14, 22], [48, 53]]);
   })();
 };
 
@@ -215,7 +233,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.article__par p');
+              var second_text = document.querySelectorAll('.t-content__body p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length; _i++) {
@@ -233,7 +251,7 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.author-info__names').textContent.trim();
+              return document.querySelector('.m-from-author__name').textContent.trim();
             } catch (_unused3) {
               return null;
             }
@@ -274,4 +292,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = VRT;
+module.exports = RFI;

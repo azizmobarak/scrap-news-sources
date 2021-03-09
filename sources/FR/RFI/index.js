@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','economy','culture'];
+var Categories=['france','international','science'];
 
-const VRT = () =>{
+const RFI = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,17 +49,18 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.vrt.be/vrtnws/fr/rubriques/politique/";
+    var url ="https://www.rfi.fr/en/france/";
 
-    if(Category==="economy") url="https://www.vrt.be/vrtnws/fr/rubriques/economie/";
-    if(Category==="culture") url="https://www.vrt.be/vrtnws/fr/rubriques/culture---media/";
+    if(Category==="international") url="https://www.rfi.fr/en/international/";
+    if(Category==="science") url="https://www.rfi.fr/en/science-technology/";
 
     try{
         await page.goto(url);
-       // await page.click('.iubenda-cs-accept-btn')
+        if(i==0) await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
-       }
+        if(i==0) await page.click('#didomi-notice-agree-button');
+    }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
 
@@ -79,15 +80,15 @@ for(let i=0;i<Categories.length;i++){
             }, 100);
     });
 
-     await page.waitFor(2000)
+     await page.waitFor(6000)
 
     
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images = document.querySelectorAll('article img');
-    var links = document.querySelectorAll('.vrt-teaser-wrapper a');
-    var titles = document.querySelectorAll('article h2');
+    var images = document.querySelectorAll('.article__figure-wrapper img');
+    var links = document.querySelectorAll('.m-item-list-article a');
+    var titles = document.querySelectorAll('.article__title');
        
          
         var data =[];
@@ -99,15 +100,15 @@ var PageData = await page.evaluate((Category)=>{
                        images : typeof(images[j])!="undefined" ? images[j].src : null,
                        link : typeof(links[j])==="undefined" ? null : links[j].href ,
                        Category:Category,
-                       source :"VRT NEWS",
-                       sourceLink:"https://www.vrt.be",
-                       sourceLogo:"https://www.vrt.be/etc.clientlibs/vrtnieuws/clientlibs/clientlib-v2-site/resources/images/og_image.png"
+                       source :"RFI NEWS",
+                       sourceLink:"https://www.rfi.fr",
+                       sourceLogo:"https://static.rfi.fr/meta_og_twcards/jsonld_publisher.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -145,7 +146,7 @@ const GetContent = async(page,data)=>{
         
             try{
             // first try to get all content
-             var second_text = document.querySelectorAll('.article__par p');
+             var second_text = document.querySelectorAll('.t-content__body p');
              var scond_content ="";
              for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -158,7 +159,7 @@ const GetContent = async(page,data)=>{
 
      var author = await page.evaluate(()=>{
          try{
-        return document.querySelector('.author-info__names').textContent.trim();
+        return document.querySelector('.m-from-author__name').textContent.trim();
          }catch{
         return null;
          }
@@ -186,4 +187,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=VRT;
+module.exports=RFI;
