@@ -55,7 +55,7 @@ var VRT = function VRT() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 35;
+              _context2.next = 34;
               break;
             }
 
@@ -140,52 +140,52 @@ var VRT = function VRT() {
 
           case 29:
             PageData = _context2.sent;
-            console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 32:
+          case 31:
             i++;
             _context2.next = 9;
             break;
 
-          case 35:
-            _context2.next = 42;
+          case 34:
+            _context2.next = 41;
             break;
 
-          case 37:
-            _context2.prev = 37;
+          case 36:
+            _context2.prev = 36;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 42;
+            _context2.next = 41;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 42:
-            _context2.prev = 42;
-            _context2.next = 45;
+          case 41:
+            _context2.prev = 41;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 45:
-            _context2.next = 51;
+          case 44:
+            _context2.next = 50;
             break;
 
-          case 47:
-            _context2.prev = 47;
-            _context2.t2 = _context2["catch"](42);
-            _context2.next = 51;
+          case 46:
+            _context2.prev = 46;
+            _context2.t2 = _context2["catch"](41);
+            _context2.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 51:
-            _context2.next = 53;
+          case 50:
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
+          case 52:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 37], [14, 19], [42, 47]]);
+    }, null, null, [[7, 36], [14, 19], [41, 46]]);
   })();
 };
 
@@ -263,9 +263,10 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 17:
-          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
+          _context3.next = 19;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 18:
+        case 19:
         case "end":
           return _context3.stop();
       }
