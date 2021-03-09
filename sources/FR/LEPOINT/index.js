@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','international','education'];
+var Categories=['politic','international','science','technology'];
 
-const EXPRESS = () =>{
+const LEPOINT = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,11 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.lexpress.fr/actualite/politique/";
+    var url ="https://www.lepoint.fr/politique/";
 
-    if(Category==="international") url ="https://www.lexpress.fr/actualite/monde/";
-    if(Category==="education") url="https://www.lexpress.fr/education/";
+    if(Category==="international") url ="https://www.lepoint.fr/monde/";
+    if(Category==="science") url="https://www.lepoint.fr/sciences-nature/";
+    if(Category==="technology") url="https://www.lepoint.fr/high-tech-internet/";
 
     try{
         await page.goto(url);
@@ -86,30 +87,30 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
     var article=document.querySelectorAll('article');
-    var images = "picture>source+source";
-    var links = "h3>a";
-    var titles = "h3";
+    var images = "img";
+    var links = "figure>a";
+    var titles = "h2";
        
          
         var data =[];
          for(let j=0;j<5;j++){
            
-              if(typeof(article[j].querySelector(titles))!="undefined"){
+              if(typeof(article[j].querySelector(titles))!="undefined" && article[j].querySelector(links)!=null){
                    data.push({
                        time : Date.now(),
                        title : article[j].querySelector(titles).textContent.trim(),
-                       link : article[j].querySelector(links).href,
-                       images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).srcset ,
+                       link : j==0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
+                       images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
                        Category:Category,
-                       source :"L'Express",
-                       sourceLink:"https://www.lexpress.fr",
-                       sourceLogo:"https://blog.cityscan.fr/wp-content/uploads/2017/06/lexpress-logo.jpg"
+                       source :"Le Point",
+                       sourceLink:"https://www.lepoint.fr/",
+                       sourceLogo:"https://www.lebal.paris/wp-content/uploads/2018/07/18117-1.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -119,7 +120,7 @@ for(let i=0;i<Categories.length;i++){
        }
 
        try{
-        await GetContent(page,AllData);
+   await GetContent(page,AllData);
        }catch(e){
         console.log(e);
         await browser.close();
@@ -141,18 +142,18 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-        // console.log(url)
+         console.log(url)
     
         var Content = await page.evaluate(()=>{
         
             try{
                 // first try to get all content
-             var second_text = document.querySelectorAll('.article__item');
+             var second_text = document.querySelectorAll('.ArticleBody p');
              var scond_content ="";
-             for(let i=0;i<1;i++){
+             for(let i=0;i<second_text.length;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
              }
-              return scond_content.substring(0,600);
+              return scond_content;
             }catch{
                return null;
             }
@@ -160,7 +161,7 @@ const GetContent = async(page,data)=>{
 
         var author = await page.evaluate(()=>{
             try{
-                var authr =document.querySelector('.author__name>span').textContent.replace("Par","").trim()
+                var authr =document.querySelector('.SigatureAuthorNames>span>a').textContent.trim()
              return authr;
             }catch{
                return null;
@@ -184,9 +185,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+  console.log(AllData_WithConetent)
+  //await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=EXPRESS;
+module.exports=LEPOINT;

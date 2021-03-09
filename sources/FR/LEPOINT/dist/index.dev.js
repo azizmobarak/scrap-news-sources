@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', 'international', 'education'];
+var Categories = ['politic', 'international', 'science', 'technology'];
 
-var EXPRESS = function EXPRESS() {
+var LEPOINT = function LEPOINT() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,32 +55,33 @@ var EXPRESS = function EXPRESS() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 34;
+              _context2.next = 36;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.lexpress.fr/actualite/politique/";
-            if (Category === "international") url = "https://www.lexpress.fr/actualite/monde/";
-            if (Category === "education") url = "https://www.lexpress.fr/education/";
-            _context2.prev = 14;
-            _context2.next = 17;
+            url = "https://www.lepoint.fr/politique/";
+            if (Category === "international") url = "https://www.lepoint.fr/monde/";
+            if (Category === "science") url = "https://www.lepoint.fr/sciences-nature/";
+            if (Category === "technology") url = "https://www.lepoint.fr/high-tech-internet/";
+            _context2.prev = 15;
+            _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 17:
-            _context2.next = 23;
+          case 18:
+            _context2.next = 24;
             break;
 
-          case 19:
-            _context2.prev = 19;
-            _context2.t0 = _context2["catch"](14);
-            _context2.next = 23;
+          case 20:
+            _context2.prev = 20;
+            _context2.t0 = _context2["catch"](15);
+            _context2.next = 24;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 23:
-            _context2.next = 25;
+          case 24:
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -108,30 +109,30 @@ var EXPRESS = function EXPRESS() {
               }, 100);
             }));
 
-          case 25:
-            _context2.next = 27;
+          case 26:
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 27:
-            _context2.next = 29;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var article = document.querySelectorAll('article');
-              var images = "picture>source+source";
-              var links = "h3>a";
-              var titles = "h3";
+              var images = "img";
+              var links = "figure>a";
+              var titles = "h2";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
-                if (typeof article[j].querySelector(titles) != "undefined") {
+                if (typeof article[j].querySelector(titles) != "undefined" && article[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
                     title: article[j].querySelector(titles).textContent.trim(),
-                    link: article[j].querySelector(links).href,
-                    images: typeof article[j].querySelector(images) === "undefined" ? null : article[j].querySelector(images).srcset,
+                    link: j == 0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
+                    images: typeof article[j].querySelector(images) === "undefined" ? null : article[j].querySelector(images).src,
                     Category: Category,
-                    source: "L'Express",
-                    sourceLink: "https://www.lexpress.fr",
-                    sourceLogo: "https://blog.cityscan.fr/wp-content/uploads/2017/06/lexpress-logo.jpg"
+                    source: "Le Point",
+                    sourceLink: "https://www.lepoint.fr/",
+                    sourceLogo: "https://www.lebal.paris/wp-content/uploads/2018/07/18117-1.jpg"
                   });
                 }
               }
@@ -139,55 +140,55 @@ var EXPRESS = function EXPRESS() {
               return data;
             }, Category));
 
-          case 29:
+          case 30:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 31:
+          case 33:
             i++;
             _context2.next = 9;
             break;
 
-          case 34:
-            _context2.next = 41;
+          case 36:
+            _context2.next = 43;
             break;
 
-          case 36:
-            _context2.prev = 36;
+          case 38:
+            _context2.prev = 38;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 41;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 41:
-            _context2.prev = 41;
-            _context2.next = 44;
+          case 43:
+            _context2.prev = 43;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context2.next = 51;
+          case 46:
+            _context2.next = 53;
             break;
 
-          case 46:
-            _context2.prev = 46;
-            _context2.t2 = _context2["catch"](41);
+          case 48:
+            _context2.prev = 48;
+            _context2.t2 = _context2["catch"](43);
             console.log(_context2.t2);
-            _context2.next = 51;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 51:
             _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
           case 53:
+            _context2.next = 55;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 36], [14, 19], [41, 46]]);
+    }, null, null, [[7, 38], [15, 20], [43, 48]]);
   })();
 };
 
@@ -202,7 +203,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 18;
             break;
           }
 
@@ -212,36 +213,37 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          _context3.next = 9;
+          console.log(url);
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.article__item');
+              var second_text = document.querySelectorAll('.ArticleBody p');
               var scond_content = "";
 
-              for (var _i = 0; _i < 1; _i++) {
+              for (var _i = 0; _i < second_text.length; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 
-              return scond_content.substring(0, 600);
+              return scond_content;
             } catch (_unused2) {
               return null;
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          _context3.next = 12;
+          _context3.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var authr = document.querySelector('.author__name>span').textContent.replace("Par", "").trim();
+              var authr = document.querySelector('.SigatureAuthorNames>span>a').textContent.trim();
               return authr;
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 12:
+        case 13:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -259,14 +261,13 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 18:
+          console.log(AllData_WithConetent); //await InsertData(AllData_WithConetent);
 
         case 19:
         case "end":
@@ -276,4 +277,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = EXPRESS;
+module.exports = LEPOINT;
