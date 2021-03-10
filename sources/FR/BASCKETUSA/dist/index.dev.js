@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'politic', 'science', 'technology'];
+var Categories = ['basketball'];
 
-var ECHOS = function ECHOS() {
+var FOOTMERCATO = function FOOTMERCATO() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,51 +55,34 @@ var ECHOS = function ECHOS() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 41;
+              _context2.next = 35;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.lesechos.fr/economie-france";
-            if (Category === "politic") url = "https://www.lesechos.fr/politique-societe";
-            if (Category === "international") url = "https://www.lesechos.fr/monde";
-            if (Category === "technology") url = "https://www.lesechos.fr/tech-medias";
-            _context2.prev = 15;
-            _context2.next = 18;
+            url = "https://www.basketusa.com/";
+            _context2.prev = 12;
+            _context2.next = 15;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 18:
-            if (!(i == 0)) {
-              _context2.next = 21;
-              break;
-            }
+          case 15:
+            _context2.next = 17;
+            return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-            _context2.next = 21;
-            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
-
-          case 21:
-            _context2.next = 30;
+          case 17:
+            _context2.next = 23;
             break;
 
-          case 23:
-            _context2.prev = 23;
-            _context2.t0 = _context2["catch"](15);
-            _context2.next = 27;
+          case 19:
+            _context2.prev = 19;
+            _context2.t0 = _context2["catch"](12);
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 27:
-            if (!(i == 0)) {
-              _context2.next = 30;
-              break;
-            }
-
-            _context2.next = 30;
-            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
-
-          case 30:
-            _context2.next = 32;
+          case 23:
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -127,30 +110,29 @@ var ECHOS = function ECHOS() {
               }, 100);
             }));
 
-          case 32:
-            _context2.next = 34;
-            return regeneratorRuntime.awrap(page.waitFor(6000));
+          case 25:
+            _context2.next = 27;
+            return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 34:
-            _context2.next = 36;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var article = document.querySelectorAll('article');
-              var images = 'img';
-              var links = 'a';
-              var titles = 'h3';
+              var images = document.querySelectorAll('.home-top>div img');
+              var links = document.querySelectorAll('.home-top>div a');
+              var titles = document.querySelectorAll('.home-top>div h2');
               var data = [];
 
-              for (var j = 0; j < 6; j++) {
-                if (typeof article[j].querySelector(titles) != "undefined" && article[j].querySelector(links) != null) {
+              for (var j = 0; j < 5; j++) {
+                if (typeof titles[j] != "undefined" && links[j] != null) {
                   data.push({
                     time: Date.now(),
-                    title: article[j].querySelector(titles).textContent.trim(),
-                    link: article[j].querySelector(links).href,
-                    images: typeof article[j].querySelector(images) === "undefined" ? null : article[j].querySelector(images).src,
+                    title: titles[j].textContent.trim(),
+                    link: links[j].href,
+                    images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "LES ECHOS",
-                    sourceLink: "https://www.lesechos.fr",
-                    sourceLogo: "https://cdn.freebiesupply.com/logos/thumbs/2x/les-echos-logo.png"
+                    source: "Basketusa",
+                    sourceLink: "https://www.basketusa.com/",
+                    sourceLogo: "https://www.basketusa.com/wp-content/themes/theme_busa_2019/_img/logo_basketusa_2019.png"
                   });
                 }
               }
@@ -158,55 +140,55 @@ var ECHOS = function ECHOS() {
               return data;
             }, Category));
 
-          case 36:
+          case 29:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 38:
+          case 32:
             i++;
             _context2.next = 9;
             break;
 
-          case 41:
-            _context2.next = 48;
+          case 35:
+            _context2.next = 42;
             break;
 
-          case 43:
-            _context2.prev = 43;
+          case 37:
+            _context2.prev = 37;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 48;
+            _context2.next = 42;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
-            _context2.prev = 48;
-            _context2.next = 51;
+          case 42:
+            _context2.prev = 42;
+            _context2.next = 45;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 51:
-            _context2.next = 58;
+          case 45:
+            _context2.next = 52;
             break;
 
-          case 53:
-            _context2.prev = 53;
-            _context2.t2 = _context2["catch"](48);
+          case 47:
+            _context2.prev = 47;
+            _context2.t2 = _context2["catch"](42);
             console.log(_context2.t2);
-            _context2.next = 58;
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
-            _context2.next = 60;
+          case 52:
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 60:
+          case 54:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 43], [15, 23], [48, 53]]);
+    }, null, null, [[7, 37], [12, 19], [42, 47]]);
   })();
 };
 
@@ -221,25 +203,25 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 18;
             break;
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('main>section>div>div>div>div>div+div+div p');
+              var second_text = document.querySelectorAll('.content p');
               var scond_content = "";
 
-              for (var _i = 0; _i < 2; _i++) {
+              for (var _i = 0; _i < second_text.length; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 
@@ -249,18 +231,18 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          _context3.next = 12;
+          _context3.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('main>section>div>div>div>div>div a').textContent.trim();
+              return document.querySelector('.meta_autor').textContent.trim().replace("Par", '');
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 12:
+        case 13:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -278,14 +260,13 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 18:
+          console.log(AllData_WithConetent); //  await InsertData(AllData_WithConetent);
 
         case 19:
         case "end":
@@ -295,4 +276,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = ECHOS;
+module.exports = FOOTMERCATO;
