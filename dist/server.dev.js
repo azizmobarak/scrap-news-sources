@@ -25,25 +25,17 @@ con.connect(process.env.DATABASE, {
     console.log('conn');
     var model = category('articles');
     model.find({}, function (err, doc) {
-      if (err) console.log(err);else {// console.log(doc.length)
-        // doc.map(item=>{
-        //    // console.log(item.status)
-        //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-        //         if(err) console.log(err)
-        //         else{
-        //             console.log(count)
-        //         }
-        //     });
-        // })
+      if (err) console.log(err);else {
+        console.log('connected');
       }
     });
   }
-}); //cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var echos = require('./sources/FR/ECHOS');
 
-var echos = require('./sources/FR/ECHOS');
-
-echos(); //});
-//cron.schedule('20 */1 * * *', () => {
+  echos();
+}); //cron.schedule('20 */1 * * *', () => {
 // const CVT = require('./sources/CTV');
 // CVT();
 //});

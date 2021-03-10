@@ -16,16 +16,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
         model.find({},(err,doc)=>{
         if(err)console.log(err)
         else{
-         // console.log(doc.length)
-            // doc.map(item=>{
-            //    // console.log(item.status)
-            //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-            //         if(err) console.log(err)
-            //         else{
-            //             console.log(count)
-            //         }
-            //     });
-            // })
+        console.log('connected')
         }
         });
      }
@@ -33,10 +24,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-//cron.schedule('00 */1 * * *', () => {
+cron.schedule('00 */1 * * *', () => {
    const echos = require('./sources/FR/ECHOS');
    echos();
-//});
+});
 
 //cron.schedule('20 */1 * * *', () => {
   // const CVT = require('./sources/CTV');

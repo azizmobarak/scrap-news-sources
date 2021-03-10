@@ -55,7 +55,7 @@ var ECHOS = function ECHOS() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 42;
+              _context2.next = 41;
               break;
             }
 
@@ -160,53 +160,53 @@ var ECHOS = function ECHOS() {
 
           case 36:
             PageData = _context2.sent;
-            console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 39:
+          case 38:
             i++;
             _context2.next = 9;
             break;
 
-          case 42:
-            _context2.next = 49;
+          case 41:
+            _context2.next = 48;
             break;
 
-          case 44:
-            _context2.prev = 44;
+          case 43:
+            _context2.prev = 43;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 49;
+            _context2.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 49:
-            _context2.prev = 49;
-            _context2.next = 52;
+          case 48:
+            _context2.prev = 48;
+            _context2.next = 51;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 52:
-            _context2.next = 59;
+          case 51:
+            _context2.next = 58;
             break;
 
-          case 54:
-            _context2.prev = 54;
-            _context2.t2 = _context2["catch"](49);
+          case 53:
+            _context2.prev = 53;
+            _context2.t2 = _context2["catch"](48);
             console.log(_context2.t2);
-            _context2.next = 59;
+            _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 59:
-            _context2.next = 61;
+          case 58:
+            _context2.next = 60;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 61:
+          case 60:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 44], [15, 23], [49, 54]]);
+    }, null, null, [[7, 43], [15, 23], [48, 53]]);
   })();
 };
 
@@ -221,18 +221,18 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 18;
+            _context3.next = 17;
             break;
           }
 
           item = data[i];
-          url = item.link;
-          console.log(url);
-          _context3.next = 8;
+          url = item.link; //  console.log(url)
+
+          _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 8:
-          _context3.next = 10;
+        case 7:
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -249,9 +249,9 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context3.sent;
-          _context3.next = 13;
+          _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('main>section>div>div>div>div>div a').textContent.trim();
@@ -260,7 +260,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 13:
+        case 12:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -278,13 +278,14 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 15:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 18:
-          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
+        case 17:
+          _context3.next = 19;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
         case 19:
         case "end":
