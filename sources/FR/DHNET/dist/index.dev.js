@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['basketball'];
+var Categories = ['football', 'tennis', 'basketball'];
 
-var FOOTMERCATO = function FOOTMERCATO() {
+var DHNET = function DHNET() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,34 +55,36 @@ var FOOTMERCATO = function FOOTMERCATO() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 34;
+              _context2.next = 37;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.basketusa.com/";
-            _context2.prev = 12;
-            _context2.next = 15;
-            return regeneratorRuntime.awrap(page["goto"](url));
-
-          case 15:
+            url = "https://www.dhnet.be/sports/football";
+            if (Category === "tennis") url = "https://www.dhnet.be/sports/tennis";
+            if (Category === "basketball") url = "https://www.dhnet.be/sports/basket";
+            _context2.prev = 14;
             _context2.next = 17;
-            return regeneratorRuntime.awrap(page.waitForSelector('footer'));
+            return regeneratorRuntime.awrap(page["goto"](url));
 
           case 17:
-            _context2.next = 23;
-            break;
+            _context2.next = 19;
+            return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
           case 19:
-            _context2.prev = 19;
-            _context2.t0 = _context2["catch"](12);
-            _context2.next = 23;
+            _context2.next = 25;
+            break;
+
+          case 21:
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 23:
-            _context2.next = 25;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -110,16 +112,16 @@ var FOOTMERCATO = function FOOTMERCATO() {
               }, 100);
             }));
 
-          case 25:
-            _context2.next = 27;
-            return regeneratorRuntime.awrap(page.waitFor(3000));
-
           case 27:
             _context2.next = 29;
+            return regeneratorRuntime.awrap(page.waitFor(3000));
+
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('.home-top>div img');
-              var links = document.querySelectorAll('.home-top>div a');
-              var titles = document.querySelectorAll('.home-top>div h2');
+              var images = document.querySelectorAll('article img');
+              var links = document.querySelectorAll('article .teaser_link');
+              var titles = document.querySelectorAll('article h2.teaser_title');
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -130,9 +132,9 @@ var FOOTMERCATO = function FOOTMERCATO() {
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "Basketusa",
-                    sourceLink: "https://www.basketusa.com/",
-                    sourceLogo: "https://www.basketusa.com/wp-content/themes/theme_busa_2019/_img/logo_basketusa_2019.png"
+                    source: "DH NET",
+                    sourceLink: "https://www.dhnet.be",
+                    sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
                   });
                 }
               }
@@ -140,55 +142,55 @@ var FOOTMERCATO = function FOOTMERCATO() {
               return data;
             }, Category));
 
-          case 29:
+          case 31:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 31:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 34:
-            _context2.next = 41;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 36:
-            _context2.prev = 36;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 41;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 41:
-            _context2.prev = 41;
             _context2.next = 44;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
+            return regeneratorRuntime.awrap(browser.close());
 
           case 44:
-            _context2.next = 51;
+            _context2.prev = 44;
+            _context2.next = 47;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
+
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 46:
-            _context2.prev = 46;
-            _context2.t2 = _context2["catch"](41);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 51;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 51:
-            _context2.next = 53;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 36], [12, 19], [41, 46]]);
+    }, null, null, [[7, 39], [14, 21], [44, 49]]);
   })();
 };
 
@@ -203,46 +205,38 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 18;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              // first try to get all content
-              var second_text = document.querySelectorAll('.content p');
-              var scond_content = "";
-
-              for (var _i = 0; _i < second_text.length; _i++) {
-                scond_content = scond_content + "\n" + second_text[_i].textContent;
-              }
-
-              return scond_content;
+              return document.querySelector('.article-text').textContent;
             } catch (_unused2) {
               return null;
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          _context3.next = 12;
+          _context3.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.meta_autor').textContent.trim().replace("Par", '');
+              return document.querySelector('.author-name').textContent.trim();
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 12:
+        case 13:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -260,14 +254,13 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 18:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
         case 19:
         case "end":
@@ -277,4 +270,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = FOOTMERCATO;
+module.exports = DHNET;

@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['basketball'];
+var Categories=['football','tennis','basketball'];
 
-const FOOTMERCATO = () =>{
+const DHNET = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,8 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.basketusa.com/";
+    var url ="https://www.dhnet.be/sports/football";
 
+    if(Category==="tennis") url="https://www.dhnet.be/sports/tennis"
+    if(Category==="basketball") url="https://www.dhnet.be/sports/basket"
     
     try{
         await page.goto(url);
@@ -85,9 +87,9 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('.home-top>div img');
-    var links = document.querySelectorAll('.home-top>div a');
-    var titles = document.querySelectorAll('.home-top>div h2');
+    var images =document.querySelectorAll('article img');
+    var links = document.querySelectorAll('article .teaser_link');
+    var titles = document.querySelectorAll('article h2.teaser_title');
        
          
         var data =[];
@@ -100,15 +102,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
                     Category:Category,
-                    source :"Basketusa",
-                    sourceLink:"https://www.basketusa.com/",
-                    sourceLogo:"https://www.basketusa.com/wp-content/themes/theme_busa_2019/_img/logo_basketusa_2019.png"
+                    source :"DH NET",
+                    sourceLink:"https://www.dhnet.be",
+                    sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
                       });
                    }
                }
                       return data;
      },Category);
-           // console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -118,7 +120,7 @@ var PageData = await page.evaluate((Category)=>{
        }
 
        try{
-       await GetContent(page,AllData);
+         await GetContent(page,AllData);
        }catch(e){
          console.log(e);
         await browser.close();
@@ -139,19 +141,12 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
-        
             try{
-            // first try to get all content
-             var second_text = document.querySelectorAll('.content p');
-             var scond_content ="";
-             for(let i=0;i<second_text.length;i++){
-                scond_content = scond_content +"\n"+second_text[i].textContent;
-             }
-              return scond_content;
+              return document.querySelector('.article-text').textContent;
             }catch{
                return null;
             }
@@ -159,7 +154,7 @@ const GetContent = async(page,data)=>{
 
      var author = await page.evaluate(()=>{
          try{
-        return document.querySelector('.meta_autor').textContent.trim().replace("Par",'');
+        return document.querySelector('.author-name').textContent.trim();
          }catch{
         return null;
          }
@@ -182,9 +177,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
- // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+  console.log(AllData_WithConetent)
+ // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=FOOTMERCATO;
+module.exports=DHNET;

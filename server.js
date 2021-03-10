@@ -16,10 +16,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('00 */1 * * *', () => {
-   const BASCKETUSA = require('./sources/FR/BASCKETUSA');
-   BASCKETUSA();
-});
+//cron.schedule('00 */1 * * *', () => {
+   const DHNET = require('./sources/FR/DHNET');
+   DHNET();
+//});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
