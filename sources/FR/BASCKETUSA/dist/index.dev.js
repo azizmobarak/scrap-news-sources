@@ -55,7 +55,7 @@ var FOOTMERCATO = function FOOTMERCATO() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 35;
+              _context2.next = 34;
               break;
             }
 
@@ -142,53 +142,53 @@ var FOOTMERCATO = function FOOTMERCATO() {
 
           case 29:
             PageData = _context2.sent;
-            console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 32:
+          case 31:
             i++;
             _context2.next = 9;
             break;
 
-          case 35:
-            _context2.next = 42;
+          case 34:
+            _context2.next = 41;
             break;
 
-          case 37:
-            _context2.prev = 37;
+          case 36:
+            _context2.prev = 36;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 42;
+            _context2.next = 41;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 42:
-            _context2.prev = 42;
-            _context2.next = 45;
+          case 41:
+            _context2.prev = 41;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 45:
-            _context2.next = 52;
+          case 44:
+            _context2.next = 51;
             break;
 
-          case 47:
-            _context2.prev = 47;
-            _context2.t2 = _context2["catch"](42);
+          case 46:
+            _context2.prev = 46;
+            _context2.t2 = _context2["catch"](41);
             console.log(_context2.t2);
-            _context2.next = 52;
+            _context2.next = 51;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
-            _context2.next = 54;
+          case 51:
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
+          case 53:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 37], [12, 19], [42, 47]]);
+    }, null, null, [[7, 36], [12, 19], [41, 46]]);
   })();
 };
 
@@ -203,18 +203,18 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 18;
+            _context3.next = 17;
             break;
           }
 
           item = data[i];
-          url = item.link;
-          console.log(url);
-          _context3.next = 8;
+          url = item.link; // console.log(url)
+
+          _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 8:
-          _context3.next = 10;
+        case 7:
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -231,9 +231,9 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context3.sent;
-          _context3.next = 13;
+          _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('.meta_autor').textContent.trim().replace("Par", '');
@@ -242,7 +242,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 13:
+        case 12:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -260,13 +260,14 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 15:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 18:
-          console.log(AllData_WithConetent); //  await InsertData(AllData_WithConetent);
+        case 17:
+          _context3.next = 19;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
         case 19:
         case "end":

@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-}); //cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var BASCKETUSA = require('./sources/FR/BASCKETUSA');
 
-var BASCKETUSA = require('./sources/FR/BASCKETUSA');
-
-BASCKETUSA(); //});
-
+  BASCKETUSA();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
