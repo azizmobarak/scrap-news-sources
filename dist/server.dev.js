@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-}); //cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var DHNET = require('./sources/FR/DHNET');
 
-var DHNET = require('./sources/FR/DHNET');
-
-DHNET(); //});
-
+  DHNET();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
