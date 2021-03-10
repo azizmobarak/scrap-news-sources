@@ -33,10 +33,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-cron.schedule('00 */1 * * *', () => {
-   const RFI = require('./sources/FR/RFI');
-   RFI();
-});
+//cron.schedule('00 */1 * * *', () => {
+   const echos = require('./sources/FR/ECHOS');
+   echos();
+//});
 
 //cron.schedule('20 */1 * * *', () => {
   // const CVT = require('./sources/CTV');

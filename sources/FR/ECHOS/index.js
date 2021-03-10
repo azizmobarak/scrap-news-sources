@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['france','international','science'];
+var Categories=['economy','politic','science','technology'];
 
-const RFI = () =>{
+const ECHOS = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,11 +49,12 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.rfi.fr/en/france/";
+    var url ="https://www.lesechos.fr/economie-france";
 
-    if(Category==="international") url="https://www.rfi.fr/en/international/";
-    if(Category==="science") url="https://www.rfi.fr/en/science-technology/";
-
+    if(Category==="politic") url="https://www.lesechos.fr/politique-societe";
+    if(Category==="international") url="https://www.lesechos.fr/monde";
+    if(Category==="technology") url="https://www.lesechos.fr/tech-medias";
+    
     try{
         await page.goto(url);
         if(i==0) await page.click('#didomi-notice-agree-button');
@@ -86,29 +87,30 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images = document.querySelectorAll('.article__figure-wrapper img');
-    var links = document.querySelectorAll('.m-item-list-article a');
-    var titles = document.querySelectorAll('.article__title');
+    var article = document.querySelectorAll('article');
+    var images = 'img';
+    var links = 'a';
+    var titles = 'h3';
        
          
         var data =[];
-         for(let j=0;j<5;j++){
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
-                   data.push({
-                       time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       images : typeof(images[j])!="undefined" ? images[j].src : null,
-                       link : typeof(links[j])==="undefined" ? null : links[j].href ,
-                       Category:Category,
-                       source :"RFI NEWS",
-                       sourceLink:"https://www.rfi.fr",
-                       sourceLogo:"https://static.rfi.fr/meta_og_twcards/jsonld_publisher.png"
+         for(let j=0;j<6;j++){
+            if(typeof(article[j].querySelector(titles))!="undefined" && article[j].querySelector(links)!=null){
+                data.push({
+                    time : Date.now(),
+                    title : article[j].querySelector(titles).textContent.trim(),
+                    link : article[j].querySelector(links).href,
+                    images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
+                    Category:Category,
+                    source :"LES ECHOS",
+                    sourceLink:"https://www.lesechos.fr",
+                    sourceLogo:"https://cdn.freebiesupply.com/logos/thumbs/2x/les-echos-logo.png"
                       });
                    }
                }
                       return data;
      },Category);
-        //   console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -120,7 +122,7 @@ var PageData = await page.evaluate((Category)=>{
        try{
        await GetContent(page,AllData);
        }catch(e){
-        // console.log(e);
+         console.log(e);
         await browser.close();
        }
 
@@ -139,16 +141,16 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
         
             try{
             // first try to get all content
-             var second_text = document.querySelectorAll('.t-content__body p');
+             var second_text = document.querySelectorAll('main>section>div>div>div>div>div+div+div p');
              var scond_content ="";
-             for(let i=0;i<second_text.length;i++){
+             for(let i=0;i<2;i++){
                 scond_content = scond_content +"\n"+second_text[i].textContent;
              }
               return scond_content;
@@ -159,7 +161,7 @@ const GetContent = async(page,data)=>{
 
      var author = await page.evaluate(()=>{
          try{
-        return document.querySelector('.m-from-author__name').textContent.trim();
+        return document.querySelector('main>section>div>div>div>div>div a').textContent.trim();
          }catch{
         return null;
          }
@@ -182,9 +184,9 @@ const GetContent = async(page,data)=>{
        }
     
     }
- // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+  console.log(AllData_WithConetent)
+ // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=RFI;
+module.exports=ECHOS;
