@@ -16,9 +16,9 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('*/25 * * * *', () => {
-   const matin = require('./sources/FR/LEMATIN.MA');
-   matin();
+cron.schedule('00 */1 * * *', () => {
+   const franco = require('./sources/FR/FRANCO');
+   franco();
 });
 
 app.listen(PORT, ()=>{

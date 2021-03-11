@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['life&style', 'technology', 'international'];
+var Categories = ['opinion', 'science'];
 
-var LEMATIN = function LEMATIN() {
+var FRANCO = function FRANCO() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,36 +55,35 @@ var LEMATIN = function LEMATIN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 35;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://lematin.ma/journal/lifestyle/";
-            if (Category === "technology") url = "https://lematin.ma/journal/hi-tech/";
-            if (Category === "international") url = "https://lematin.ma/journal/monde/";
-            _context2.prev = 14;
-            _context2.next = 17;
+            url = "https://lefranco.ab.ca/category/opinions/";
+            if (Category === "science") url = "https://lefranco.ab.ca/category/science/";
+            _context2.prev = 13;
+            _context2.next = 16;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 17:
-            _context2.next = 19;
+          case 16:
+            _context2.next = 18;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 19:
-            _context2.next = 25;
+          case 18:
+            _context2.next = 24;
             break;
 
-          case 21:
-            _context2.prev = 21;
-            _context2.t0 = _context2["catch"](14);
-            _context2.next = 25;
+          case 20:
+            _context2.prev = 20;
+            _context2.t0 = _context2["catch"](13);
+            _context2.next = 24;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 25:
-            _context2.next = 27;
+          case 24:
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -112,29 +111,29 @@ var LEMATIN = function LEMATIN() {
               }, 100);
             }));
 
-          case 27:
-            _context2.next = 29;
+          case 26:
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 29:
-            _context2.next = 31;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('.card div>img');
-              var links = document.querySelectorAll('.card>a');
-              var titles = document.querySelectorAll('.card h4');
+              var images = document.querySelectorAll('article .penci-image-holder');
+              var links = document.querySelectorAll('article .penci-image-holder');
+              var titles = document.querySelectorAll('article h2');
               var data = [];
 
-              for (var j = 0; j < 2; j++) {
+              for (var j = 0; j < 6; j++) {
                 if (typeof titles[j] != "undefined" && links[j] != null) {
                   data.push({
                     time: Date.now(),
-                    title: titles[j >= 2 ? j++ : j].textContent.trim(),
+                    title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: typeof images[j] === "undefined" ? null : images[j].src,
+                    images: typeof images[j] === "undefined" ? null : images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('http'), images[j].style.backgroundImage.indexOf('")')),
                     Category: Category,
-                    source: "LE MATIN.ma",
-                    sourceLink: "https://www.lematin.ma",
-                    sourceLogo: "https://s1.lematin.ma/cdn/images/logo.png"
+                    source: "LE FRANCO",
+                    sourceLink: "https://lefranco.ab.ca/",
+                    sourceLogo: "https://lecdea.ca/wp-content/uploads/2020/10/Le-Franco-logo.png"
                   });
                 }
               }
@@ -142,55 +141,55 @@ var LEMATIN = function LEMATIN() {
               return data;
             }, Category));
 
-          case 31:
+          case 30:
             PageData = _context2.sent;
             //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 33:
+          case 32:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 35:
+            _context2.next = 42;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 37:
+            _context2.prev = 37;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 42;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 42:
+            _context2.prev = 42;
+            _context2.next = 45;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 45:
+            _context2.next = 52;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
+          case 47:
+            _context2.prev = 47;
+            _context2.t2 = _context2["catch"](42);
             console.log(_context2.t2);
-            _context2.next = 53;
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
-            _context2.next = 55;
+          case 52:
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
+          case 54:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [14, 21], [43, 48]]);
+    }, null, null, [[7, 37], [13, 20], [42, 47]]);
   })();
 };
 
@@ -210,7 +209,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; //console.log(url)
+          url = item.link; //  console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -220,14 +219,14 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.single-page .card-body p');
+              var second_text = document.querySelectorAll('article .entry-content>p');
               var scond_content = "";
 
-              for (var _i = 0; _i < second_text.length; _i++) {
+              for (var _i = 0; _i < 5; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 
-              return scond_content;
+              return scond_content + ".. .";
             } catch (_unused2) {
               return null;
             }
@@ -269,4 +268,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = LEMATIN;
+module.exports = FRANCO;

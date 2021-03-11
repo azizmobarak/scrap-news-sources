@@ -25,10 +25,10 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('*/25 * * * *', function () {
-  var matin = require('./sources/FR/LEMATIN.MA');
+cron.schedule('00 */1 * * *', function () {
+  var franco = require('./sources/FR/FRANCO');
 
-  matin();
+  franco();
 });
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);

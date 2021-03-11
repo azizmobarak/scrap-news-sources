@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['life&style','technology','international'];
+var Categories=['opinion','science'];
 
-const LEMATIN = () =>{
+const FRANCO = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,9 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://lematin.ma/journal/lifestyle/";
+    var url ="https://lefranco.ab.ca/category/opinions/";
 
-    if(Category==="technology") url="https://lematin.ma/journal/hi-tech/"
-    if(Category==="international") url="https://lematin.ma/journal/monde/"
+    if(Category==="science") url="https://lefranco.ab.ca/category/science/"
     
     try{
         await page.goto(url);
@@ -82,29 +81,28 @@ for(let i=0;i<Categories.length;i++){
     });
 
      await page.waitFor(3000)
-
     
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('.card div>img');
-    var links = document.querySelectorAll('.card>a');
-    var titles = document.querySelectorAll('.card h4');
+    var images =document.querySelectorAll('article .penci-image-holder');
+    var links = document.querySelectorAll('article .penci-image-holder');
+    var titles = document.querySelectorAll('article h2');
        
          
         var data =[];
 
-         for(let j=0;j<2;j++){
+         for(let j=0;j<6;j++){
             if(typeof(titles[j])!="undefined" && links[j]!=null){
                 data.push({
                     time : Date.now(),
-                    title : titles[j>=2 ? j++ : j].textContent.trim(),
+                    title : titles[j].textContent.trim(),
                     link : links[j].href,
-                    images : typeof(images[j])==="undefined" ? null : images[j].src,
+                    images : typeof(images[j])==="undefined" ? null : images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('http'),images[j].style.backgroundImage.indexOf('")')),
                     Category:Category,
-                    source :"LE MATIN.ma",
-                    sourceLink:"https://www.lematin.ma",
-                    sourceLogo:"https://s1.lematin.ma/cdn/images/logo.png"
+                    source :"LE FRANCO",
+                    sourceLink:"https://lefranco.ab.ca/",
+                    sourceLogo:"https://lecdea.ca/wp-content/uploads/2020/10/Le-Franco-logo.png"
                       });
                    }
                }
@@ -120,7 +118,7 @@ var PageData = await page.evaluate((Category)=>{
        }
 
        try{
-         await GetContent(page,AllData);
+     await GetContent(page,AllData);
        }catch(e){
          console.log(e);
         await browser.close();
@@ -141,18 +139,18 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        //console.log(url)
+      //  console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.single-page .card-body p');
+               var second_text = document.querySelectorAll('article .entry-content>p');
                var scond_content ="";
-               for(let i=0;i<second_text.length;i++){
+               for(let i=0;i<5;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
-                return scond_content;
+                return scond_content+".. .";
             }catch{
                return null;
             }
@@ -176,9 +174,9 @@ const GetContent = async(page,data)=>{
           });
        }
     }
- // console.log(AllData_WithConetent)
+//  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=LEMATIN;
+module.exports=FRANCO;
