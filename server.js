@@ -17,8 +17,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 cron.schedule('00 */1 * * *', () => {
-   const franco = require('./sources/FR/FRANCO');
-   franco();
+   const droit = require('./sources/FR/LEDROIT');
+   droit();
 });
 
 app.listen(PORT, ()=>{

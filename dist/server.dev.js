@@ -26,9 +26,9 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('00 */1 * * *', function () {
-  var franco = require('./sources/FR/FRANCO');
+  var droit = require('./sources/FR/LEDROIT');
 
-  franco();
+  droit();
 });
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);

@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['opinion', 'science'];
+var Categories = ['opinion', 'business', 'art&design'];
 
-var FRANCO = function FRANCO() {
+var DROIT = function DROIT() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,35 +55,36 @@ var FRANCO = function FRANCO() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 35;
+              _context2.next = 36;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://lefranco.ab.ca/category/opinions/";
-            if (Category === "science") url = "https://lefranco.ab.ca/category/science/";
-            _context2.prev = 13;
-            _context2.next = 16;
+            url = "https://www.ledroit.com/opinions";
+            if (Category === "business") url = "https://www.ledroit.com/magazine-affaires";
+            if (Category === "art&design") url = "https://www.ledroit.com/arts";
+            _context2.prev = 14;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 16:
-            _context2.next = 18;
+          case 17:
+            _context2.next = 19;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 18:
-            _context2.next = 24;
+          case 19:
+            _context2.next = 25;
             break;
 
-          case 20:
-            _context2.prev = 20;
-            _context2.t0 = _context2["catch"](13);
-            _context2.next = 24;
+          case 21:
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 24:
-            _context2.next = 26;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -111,29 +112,29 @@ var FRANCO = function FRANCO() {
               }, 100);
             }));
 
-          case 26:
-            _context2.next = 28;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 28:
-            _context2.next = 30;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article .penci-image-holder');
-              var links = document.querySelectorAll('article .penci-image-holder');
+              var images = document.querySelectorAll('article img');
+              var links = document.querySelectorAll('article a');
               var titles = document.querySelectorAll('article h2');
               var data = [];
 
-              for (var j = 0; j < 6; j++) {
+              for (var j = 0; j < 4; j++) {
                 if (typeof titles[j] != "undefined" && links[j] != null) {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: typeof images[j] === "undefined" ? null : images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('http'), images[j].style.backgroundImage.indexOf('")')),
+                    images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "LE FRANCO",
-                    sourceLink: "https://lefranco.ab.ca/",
-                    sourceLogo: "https://lecdea.ca/wp-content/uploads/2020/10/Le-Franco-logo.png"
+                    source: "LeDroit",
+                    sourceLink: "https://www.ledroit.com",
+                    sourceLogo: "https://pbs.twimg.com/profile_images/654148768321904640/UXFpGxwx_400x400.jpg"
                   });
                 }
               }
@@ -141,55 +142,55 @@ var FRANCO = function FRANCO() {
               return data;
             }, Category));
 
-          case 30:
+          case 31:
             PageData = _context2.sent;
             //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 32:
+          case 33:
             i++;
             _context2.next = 9;
             break;
 
-          case 35:
-            _context2.next = 42;
+          case 36:
+            _context2.next = 43;
             break;
 
-          case 37:
-            _context2.prev = 37;
+          case 38:
+            _context2.prev = 38;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 42;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 42:
-            _context2.prev = 42;
-            _context2.next = 45;
+          case 43:
+            _context2.prev = 43;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 45:
-            _context2.next = 52;
+          case 46:
+            _context2.next = 53;
             break;
 
-          case 47:
-            _context2.prev = 47;
-            _context2.t2 = _context2["catch"](42);
+          case 48:
+            _context2.prev = 48;
+            _context2.t2 = _context2["catch"](43);
             console.log(_context2.t2);
-            _context2.next = 52;
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
-            _context2.next = 54;
+          case 53:
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
+          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 37], [13, 20], [42, 47]]);
+    }, null, null, [[7, 38], [14, 21], [43, 48]]);
   })();
 };
 
@@ -204,22 +205,22 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 18;
             break;
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('article .entry-content>p');
+              var second_text = document.querySelectorAll('.chapter-paragraph__body p');
               var scond_content = "";
 
               for (var _i = 0; _i < 5; _i++) {
@@ -232,9 +233,19 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          author = null;
+          _context3.next = 13;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('._full-article-basic-author__info-name_1p1op1').textContent.trim();
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 13:
+          author = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -251,16 +262,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 12:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
+        case 18:
+          _context3.next = 20;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 17:
+        case 20:
         case "end":
           return _context3.stop();
       }
@@ -268,4 +279,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = FRANCO;
+module.exports = DROIT;

@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['opinion','science'];
+var Categories=['opinion','business','art&design'];
 
-const FRANCO = () =>{
+const DROIT = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,9 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://lefranco.ab.ca/category/opinions/";
+    var url ="https://www.ledroit.com/opinions";
 
-    if(Category==="science") url="https://lefranco.ab.ca/category/science/"
+    if(Category==="business") url="https://www.ledroit.com/magazine-affaires"
+    if(Category==="art&design") url="https://www.ledroit.com/arts"
     
     try{
         await page.goto(url);
@@ -85,30 +86,30 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('article .penci-image-holder');
-    var links = document.querySelectorAll('article .penci-image-holder');
-    var titles = document.querySelectorAll('article h2');
+    var images =document.querySelectorAll('article img');
+    var links = document.querySelectorAll('article a');
+    var titles =document.querySelectorAll('article h2');
        
          
         var data =[];
 
-         for(let j=0;j<6;j++){
+         for(let j=0;j<4;j++){
             if(typeof(titles[j])!="undefined" && links[j]!=null){
                 data.push({
                     time : Date.now(),
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
-                    images : typeof(images[j])==="undefined" ? null : images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('http'),images[j].style.backgroundImage.indexOf('")')),
+                    images : typeof(images[j])==="undefined" ? null : images[j].src,
                     Category:Category,
-                    source :"LE FRANCO",
-                    sourceLink:"https://lefranco.ab.ca/",
-                    sourceLogo:"https://lecdea.ca/wp-content/uploads/2020/10/Le-Franco-logo.png"
+                    source :"LeDroit",
+                    sourceLink:"https://www.ledroit.com",
+                    sourceLogo:"https://pbs.twimg.com/profile_images/654148768321904640/UXFpGxwx_400x400.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-          //  console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -118,7 +119,7 @@ var PageData = await page.evaluate((Category)=>{
        }
 
        try{
-     await GetContent(page,AllData);
+        await GetContent(page,AllData);
        }catch(e){
          console.log(e);
         await browser.close();
@@ -139,13 +140,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      //  console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('article .entry-content>p');
+               var second_text = document.querySelectorAll('.chapter-paragraph__body p');
                var scond_content ="";
                for(let i=0;i<5;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -156,7 +157,13 @@ const GetContent = async(page,data)=>{
             }
         });
 
-     var author = null;
+     var author = await page.evaluate(()=>{
+         try{
+           return document.querySelector('._full-article-basic-author__info-name_1p1op1').textContent.trim();
+         }catch{
+             return null;
+         }
+     }) ;
 
     
     if(Content!=null && Content!=""){
@@ -179,4 +186,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=FRANCO;
+module.exports=DROIT;
