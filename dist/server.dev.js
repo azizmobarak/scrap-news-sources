@@ -25,10 +25,10 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('00 */1 * * *', function () {
-  var DHNET = require('./sources/FR/DHNET');
+cron.schedule('*/25 * * * *', function () {
+  var matin = require('./sources/FR/LEMATIN.MA');
 
-  DHNET();
+  matin();
 });
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);

@@ -16,9 +16,9 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('00 */1 * * *', () => {
-   const DHNET = require('./sources/FR/DHNET');
-   DHNET();
+cron.schedule('*/25 * * * *', () => {
+   const matin = require('./sources/FR/LEMATIN.MA');
+   matin();
 });
 
 app.listen(PORT, ()=>{

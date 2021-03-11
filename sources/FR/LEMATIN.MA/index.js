@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['football','tennis','basketball'];
+var Categories=['life&style','technology','international'];
 
-const DHNET = () =>{
+const LEMATIN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.dhnet.be/sports/football";
+    var url ="https://lematin.ma/journal/lifestyle/";
 
-    if(Category==="tennis") url="https://www.dhnet.be/sports/tennis"
-    if(Category==="basketball") url="https://www.dhnet.be/sports/basket"
+    if(Category==="technology") url="https://lematin.ma/journal/hi-tech/"
+    if(Category==="international") url="https://lematin.ma/journal/monde/"
     
     try{
         await page.goto(url);
@@ -87,24 +87,24 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('article img');
-    var links = document.querySelectorAll('article .teaser_link');
-    var titles = document.querySelectorAll('article h2.teaser_title');
+    var images =document.querySelectorAll('.card div>img');
+    var links = document.querySelectorAll('.card>a');
+    var titles = document.querySelectorAll('.card h4');
        
          
         var data =[];
 
-         for(let j=0;j<5;j++){
+         for(let j=0;j<2;j++){
             if(typeof(titles[j])!="undefined" && links[j]!=null){
                 data.push({
                     time : Date.now(),
-                    title : titles[j].textContent.trim(),
+                    title : titles[j>=2 ? j++ : j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
                     Category:Category,
-                    source :"DH NET",
-                    sourceLink:"https://www.dhnet.be",
-                    sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
+                    source :"LE MATIN.ma",
+                    sourceLink:"https://www.lematin.ma",
+                    sourceLogo:"https://s1.lematin.ma/cdn/images/logo.png"
                       });
                    }
                }
@@ -141,24 +141,24 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
+        //console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
-              return document.querySelector('.article-text').textContent;
+               // first try to get all content
+               var second_text = document.querySelectorAll('.single-page .card-body p');
+               var scond_content ="";
+               for(let i=0;i<second_text.length;i++){
+                  scond_content = scond_content +"\n"+second_text[i].textContent;
+               }
+                return scond_content;
             }catch{
                return null;
             }
         });
 
-     var author = await page.evaluate(()=>{
-         try{
-        return document.querySelector('.author-name').textContent.trim();
-         }catch{
-        return null;
-         }
-     })
+     var author = null;
 
     
     if(Content!=null && Content!=""){
@@ -181,4 +181,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=DHNET;
+module.exports=LEMATIN;

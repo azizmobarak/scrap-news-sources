@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['football', 'tennis', 'basketball'];
+var Categories = ['life&style', 'technology', 'international'];
 
-var DHNET = function DHNET() {
+var LEMATIN = function LEMATIN() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -62,9 +62,9 @@ var DHNET = function DHNET() {
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.dhnet.be/sports/football";
-            if (Category === "tennis") url = "https://www.dhnet.be/sports/tennis";
-            if (Category === "basketball") url = "https://www.dhnet.be/sports/basket";
+            url = "https://lematin.ma/journal/lifestyle/";
+            if (Category === "technology") url = "https://lematin.ma/journal/hi-tech/";
+            if (Category === "international") url = "https://lematin.ma/journal/monde/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -119,22 +119,22 @@ var DHNET = function DHNET() {
           case 29:
             _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article img');
-              var links = document.querySelectorAll('article .teaser_link');
-              var titles = document.querySelectorAll('article h2.teaser_title');
+              var images = document.querySelectorAll('.card div>img');
+              var links = document.querySelectorAll('.card>a');
+              var titles = document.querySelectorAll('.card h4');
               var data = [];
 
-              for (var j = 0; j < 5; j++) {
+              for (var j = 0; j < 2; j++) {
                 if (typeof titles[j] != "undefined" && links[j] != null) {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
+                    title: titles[j >= 2 ? j++ : j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "DH NET",
-                    sourceLink: "https://www.dhnet.be",
-                    sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
+                    source: "LE MATIN.ma",
+                    sourceLink: "https://www.lematin.ma",
+                    sourceLogo: "https://s1.lematin.ma/cdn/images/logo.png"
                   });
                 }
               }
@@ -205,12 +205,12 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 15;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
+          url = item.link; //console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -219,7 +219,15 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.article-text').textContent;
+              // first try to get all content
+              var second_text = document.querySelectorAll('.single-page .card-body p');
+              var scond_content = "";
+
+              for (var _i = 0; _i < second_text.length; _i++) {
+                scond_content = scond_content + "\n" + second_text[_i].textContent;
+              }
+
+              return scond_content;
             } catch (_unused2) {
               return null;
             }
@@ -227,17 +235,7 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
-          _context3.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.author-name').textContent.trim();
-            } catch (_unused3) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context3.sent;
+          author = null;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -254,16 +252,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 12:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 15:
+          _context3.next = 17;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 17:
         case "end":
           return _context3.stop();
       }
@@ -271,4 +269,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = DHNET;
+module.exports = LEMATIN;
