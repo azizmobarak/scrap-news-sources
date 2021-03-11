@@ -23,7 +23,7 @@ puppeteer.use(puppeteer_agent());
 
 var Categories=['economy','international','politic'];
 
-const LESSOR = () =>{
+const NOTERVOIE = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -186,4 +186,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=LESSOR;
+module.exports=NOTERVOIE;

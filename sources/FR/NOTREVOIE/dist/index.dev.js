@@ -29,7 +29,7 @@ puppeteer.use(Recaptcha({
 puppeteer.use(puppeteer_agent());
 var Categories = ['economy', 'international', 'politic'];
 
-var LESSOR = function LESSOR() {
+var NOTERVOIE = function NOTERVOIE() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -279,4 +279,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = LESSOR;
+module.exports = NOTERVOIE;
