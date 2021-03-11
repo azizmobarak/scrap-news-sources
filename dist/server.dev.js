@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-});
-cron.schedule('00 */1 * * *', function () {
-  var droit = require('./sources/FR/LEDROIT');
+}); //cron.schedule('00 */1 * * *', () => {
 
-  droit();
-});
+var notrevoie = require('./sources/FR/NOTREVOIE');
+
+notrevoie(); //});
+
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

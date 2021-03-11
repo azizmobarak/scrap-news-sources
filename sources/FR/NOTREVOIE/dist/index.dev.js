@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['opinion', 'business', 'art&design'];
+var Categories = ['economy', 'international', 'politic'];
 
-var DROIT = function DROIT() {
+var LESSOR = function LESSOR() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -62,9 +62,9 @@ var DROIT = function DROIT() {
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.ledroit.com/opinions";
-            if (Category === "business") url = "https://www.ledroit.com/magazine-affaires";
-            if (Category === "art&design") url = "https://www.ledroit.com/arts";
+            url = "https://www.notrevoienews.com/category/economie/";
+            if (Category === "international") url = "https://www.notrevoienews.com/category/international/";
+            if (Category === "politic") url = "https://www.notrevoienews.com/category/politique/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -98,7 +98,7 @@ var DROIT = function DROIT() {
                         window.scrollBy(0, distance);
                         totalHeight += distance;
 
-                        if (totalHeight >= 2000) {
+                        if (totalHeight >= 1000) {
                           clearInterval(timer);
                           resolve();
                         }
@@ -119,8 +119,8 @@ var DROIT = function DROIT() {
           case 29:
             _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article img');
-              var links = document.querySelectorAll('article a');
+              var images = document.querySelectorAll('article .thumbnail-container');
+              var links = document.querySelectorAll('article .jeg_thumb>a');
               var titles = document.querySelectorAll('article h2');
               var data = [];
 
@@ -130,11 +130,11 @@ var DROIT = function DROIT() {
                     time: Date.now(),
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
-                    images: typeof images[j] === "undefined" ? null : images[j].src,
+                    images: typeof images[j] === "undefined" ? null : images[j].dataset.src,
                     Category: Category,
-                    source: "LeDroit",
-                    sourceLink: "https://www.ledroit.com",
-                    sourceLogo: "https://pbs.twimg.com/profile_images/654148768321904640/UXFpGxwx_400x400.jpg"
+                    source: "NotreVoie",
+                    sourceLink: "https://www.notrevoienews.com",
+                    sourceLogo: "https://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
                   });
                 }
               }
@@ -144,7 +144,7 @@ var DROIT = function DROIT() {
 
           case 31:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
@@ -205,46 +205,46 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 18;
+            _context3.next = 17;
             break;
           }
 
           item = data[i];
-          url = item.link;
-          console.log(url);
-          _context3.next = 8;
+          url = item.link; // console.log(url)
+
+          _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 8:
-          _context3.next = 10;
+        case 7:
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.chapter-paragraph__body p');
+              var second_text = document.querySelectorAll('.content-inner>p');
               var scond_content = "";
 
-              for (var _i = 0; _i < 5; _i++) {
+              for (var _i = 0; _i < second_text.length - 1; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 
-              return scond_content + ".. .";
+              return scond_content;
             } catch (_unused2) {
               return null;
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context3.sent;
-          _context3.next = 13;
+          _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('._full-article-basic-author__info-name_1p1op1').textContent.trim();
+              return document.querySelector('.jeg_meta_author>a').textContent.trim();
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 13:
+        case 12:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -262,16 +262,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 15:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 18:
-          _context3.next = 20;
+        case 17:
+          _context3.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 19:
         case "end":
           return _context3.stop();
       }
@@ -279,4 +279,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = DROIT;
+module.exports = LESSOR;

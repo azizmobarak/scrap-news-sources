@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['opinion','business','art&design'];
+var Categories=['economy','international','politic'];
 
-const DROIT = () =>{
+const LESSOR = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.ledroit.com/opinions";
+    var url ="https://www.notrevoienews.com/category/economie/";
 
-    if(Category==="business") url="https://www.ledroit.com/magazine-affaires"
-    if(Category==="art&design") url="https://www.ledroit.com/arts"
+    if(Category==="international") url="https://www.notrevoienews.com/category/international/"
+    if(Category==="politic") url="https://www.notrevoienews.com/category/politique/"
     
     try{
         await page.goto(url);
@@ -74,7 +74,7 @@ for(let i=0;i<Categories.length;i++){
                window.scrollBy(0, distance);
                 totalHeight += distance;
 
-                if(totalHeight >= 2000){
+                if(totalHeight >= 1000){
                     clearInterval(timer);
                     resolve();
                 }
@@ -86,8 +86,8 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('article img');
-    var links = document.querySelectorAll('article a');
+    var images =document.querySelectorAll('article .thumbnail-container');
+    var links = document.querySelectorAll('article .jeg_thumb>a');
     var titles =document.querySelectorAll('article h2');
        
          
@@ -99,17 +99,17 @@ var PageData = await page.evaluate((Category)=>{
                     time : Date.now(),
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
-                    images : typeof(images[j])==="undefined" ? null : images[j].src,
+                    images : typeof(images[j])==="undefined" ? null : images[j].dataset.src,
                     Category:Category,
-                    source :"LeDroit",
-                    sourceLink:"https://www.ledroit.com",
-                    sourceLogo:"https://pbs.twimg.com/profile_images/654148768321904640/UXFpGxwx_400x400.jpg"
+                    source :"NotreVoie",
+                    sourceLink:"https://www.notrevoienews.com",
+                    sourceLogo:"https://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+          // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -140,18 +140,18 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        console.log(url)
+       // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.chapter-paragraph__body p');
+               var second_text = document.querySelectorAll('.content-inner>p');
                var scond_content ="";
-               for(let i=0;i<5;i++){
+               for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
-                return scond_content+".. .";
+                return scond_content;
             }catch{
                return null;
             }
@@ -159,7 +159,7 @@ const GetContent = async(page,data)=>{
 
      var author = await page.evaluate(()=>{
          try{
-           return document.querySelector('._full-article-basic-author__info-name_1p1op1').textContent.trim();
+           return document.querySelector('.jeg_meta_author>a').textContent.trim();
          }catch{
              return null;
          }
@@ -186,4 +186,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=DROIT;
+module.exports=LESSOR;
