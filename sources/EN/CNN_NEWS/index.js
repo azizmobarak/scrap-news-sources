@@ -166,35 +166,19 @@ const GetContent = async(page,data)=>{
         Category = item.Category;
 
         // get the article content
-        var Content = await page.evaluate((Category)=>{
-
-           switch(Category){
-               case "travel":
-                    return document.querySelector('.Article__primary').innerText;
-                default :
-
-                    var classname ='.zn-body-text div';
-
-                    if(Category==="Life&Style"){
-                        classname="BasicArticle__main";
-                    }
-
-                    var text = document.querySelectorAll(classname);
-                    var textArray=[];
-       
-                    if(typeof text !="undefined" || text != null){
-
-                        for(let i=1;i<text.length;i++){
-                            textArray.push(text[i].textContent);
-                            textArray.push(' ');
-                              }
-
-                            return textArray.join('\n');
-                    }else{
-                        return null;
-                    }
-           }
-        },Category);
+        var Content = await page.evaluate(()=>{
+             try{
+                // first try to get all content
+                var second_text = document.querySelectorAll('.zn-body__paragraph');
+                var scond_content ="";
+                for(let i=0;i<second_text.length-1;i++){
+                   scond_content = scond_content +"\n"+second_text[i].textContent;
+                }
+                 return scond_content.trim()+".. .";
+             }catch{
+                return null;
+             }
+        });
 
         
 // check the author
