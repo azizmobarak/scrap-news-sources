@@ -91,7 +91,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 cron.schedule('30 * * * *', () => {
      //30
-  const CNN = require('./sources/CNN_News');
+  const CNN = require('./sources/CNN_NEWS');
   CNN();
 });
 
