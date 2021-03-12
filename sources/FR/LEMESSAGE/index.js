@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['football','rugby','basketball'];
+var Categories=['economy'];
 
-const LEPAY = () =>{
+const LEMESSAGE = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,7 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.le-pays.fr/theme/football/";
-
-    if(Category==="rugby") url="https://www.le-pays.fr/theme/rugby/"
-    if(Category==="basketball") url="https://www.le-pays.fr/theme/basket/"
+    var url ="https://www.lemessager.fr/economie";
     
     try{
         await page.goto(url);
@@ -86,36 +83,31 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('.c-photo img');
-    var links = document.querySelectorAll('.c-titre h2>a');
-    var titles =document.querySelectorAll('.c-titre h2');
+    var images =document.querySelectorAll('#gr-unes-titres img');
+    var links = document.querySelectorAll('#gr-unes-titres h4>a');
+    var titles =document.querySelectorAll('#gr-unes-titres h4');
        
          
         var data =[];
 
          for(let j=0;j<4;j++){
-             var index=0;
-             if(j>0) {
-                links = document.querySelectorAll('.c-titre h3>a');
-                titles =document.querySelectorAll('.c-titre h3');
-                index=j-1;
-               }
+
             if(typeof(titles[j])!="undefined" && links[j]!=null){
                 data.push({
                     time : Date.now(),
-                    title : titles[index].textContent.trim().replaceAll('\t',' ').substring(20,titles[index].textContent.trim().length).trim(),
-                    link : links[index].href,
+                    title : titles[j].textContent.trim(),
+                    link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
                     Category:Category,
-                    source :"LE PAYS",
-                    sourceLink:"https://www.le-pays.fr/",
-                    sourceLogo:"https://www.ffp.asso.fr/wp-content/uploads/2016/08/le-pays-roannais.jpgtps://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
+                    source :"Le Messager",
+                    sourceLink:"https://www.lemessager.fr",
+                    sourceLogo:"https://journal.lemessager.fr/medias/specifique_titre/mes/images/logo_square.png"
                       });
                    }
                }
                       return data;
      },Category);
-           console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -146,24 +138,30 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        console.log(url)
+  //      console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.contenu p');
+               var second_text = document.querySelectorAll('.gr-article-content p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
-                return scond_content;
+                return scond_content.trim();
             }catch{
                return null;
             }
         });
 
-     var author = null;
+     var author = await page.evaluate(()=>{
+         try{
+         return document.querySelector('.gr-meta-author>a').textContent.trim();
+         }catch{
+             return null;
+         }
+     });
 
     
     if(Content!=null && Content!=""){
@@ -181,9 +179,9 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-  console.log(AllData_WithConetent)
-//  await InsertData(AllData_WithConetent);
+//  console.log(AllData_WithConetent)
+  await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=LEPAY;
+module.exports=LEMESSAGE;
