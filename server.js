@@ -32,12 +32,6 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-
-cron.schedule('00 */1 * * *', () => {
-   const qtdn = require('./sources/FR/QUOTIDIEN');
-   qtdn();
-});
-
 //cron.schedule('20 */1 * * *', () => {
   // const CVT = require('./sources/CTV');
   // CVT();
@@ -95,12 +89,11 @@ cron.schedule('00 */1 * * *', () => {
 // //   CNET();
 // // });
 
-
-// // cron.schedule('30 * * * *', () => {
-// //     //30
-// //  const CNN = require('./sources/CNN');
-// //  CNN();
-// // });
+cron.schedule('30 * * * *', () => {
+     //30
+  const CNN = require('./sources/CNN_News');
+  CNN();
+});
 
 
 // cron.schedule('5 */1 * * *', () => {
