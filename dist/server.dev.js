@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-}); //cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var lemssager = require('./sources/FR/LEMESSAGE');
 
-var lemssager = require('./sources/FR/LEMESSAGE');
-
-lemssager(); //});
-
+  lemssager();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
