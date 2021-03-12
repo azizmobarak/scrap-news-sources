@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'international', 'politic'];
+var Categories = ['football', 'rugby', 'basketball'];
 
-var NOTERVOIE = function NOTERVOIE() {
+var LEPAY = function LEPAY() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,16 +55,16 @@ var NOTERVOIE = function NOTERVOIE() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 43;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.notrevoienews.com/category/economie/";
-            if (Category === "international") url = "https://www.notrevoienews.com/category/international/";
-            if (Category === "politic") url = "https://www.notrevoienews.com/category/politique/";
+            url = "https://www.le-pays.fr/theme/football/";
+            if (Category === "rugby") url = "https://www.le-pays.fr/theme/rugby/";
+            if (Category === "basketball") url = "https://www.le-pays.fr/theme/basket/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -74,17 +74,35 @@ var NOTERVOIE = function NOTERVOIE() {
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
           case 19:
-            _context2.next = 25;
+            if (!(i == 0)) {
+              _context2.next = 22;
+              break;
+            }
+
+            _context2.next = 22;
+            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
+
+          case 22:
+            _context2.next = 31;
             break;
 
-          case 21:
-            _context2.prev = 21;
+          case 24:
+            _context2.prev = 24;
             _context2.t0 = _context2["catch"](14);
-            _context2.next = 25;
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 25:
-            _context2.next = 27;
+          case 28:
+            if (!(i == 0)) {
+              _context2.next = 31;
+              break;
+            }
+
+            _context2.next = 31;
+            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
+
+          case 31:
+            _context2.next = 33;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -112,29 +130,37 @@ var NOTERVOIE = function NOTERVOIE() {
               }, 100);
             }));
 
-          case 27:
-            _context2.next = 29;
+          case 33:
+            _context2.next = 35;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 29:
-            _context2.next = 31;
+          case 35:
+            _context2.next = 37;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var images = document.querySelectorAll('article .thumbnail-container');
-              var links = document.querySelectorAll('article .jeg_thumb>a');
-              var titles = document.querySelectorAll('article h2');
+              var images = document.querySelectorAll('.c-photo img');
+              var links = document.querySelectorAll('.c-titre h2>a');
+              var titles = document.querySelectorAll('.c-titre h2');
               var data = [];
 
               for (var j = 0; j < 4; j++) {
+                var index = 0;
+
+                if (j > 0) {
+                  links = document.querySelectorAll('.c-titre h3>a');
+                  titles = document.querySelectorAll('.c-titre h3');
+                  index = j - 1;
+                }
+
                 if (typeof titles[j] != "undefined" && links[j] != null) {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
-                    link: links[j].href,
-                    images: typeof images[j] === "undefined" ? null : images[j].dataset.src,
+                    title: titles[index].textContent.trim().replaceAll('\t', ' ').substring(20, titles[index].textContent.trim().length).trim(),
+                    link: links[index].href,
+                    images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "NotreVoie",
-                    sourceLink: "https://www.notrevoienews.com",
-                    sourceLogo: "https://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
+                    source: "LE PAYS",
+                    sourceLink: "https://www.le-pays.fr/",
+                    sourceLogo: "https://www.ffp.asso.fr/wp-content/uploads/2016/08/le-pays-roannais.jpgtps://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
                   });
                 }
               }
@@ -142,55 +168,55 @@ var NOTERVOIE = function NOTERVOIE() {
               return data;
             }, Category));
 
-          case 31:
+          case 37:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 33:
+          case 40:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 43:
+            _context2.next = 50;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 45:
+            _context2.prev = 45;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 50:
+            _context2.prev = 50;
+            _context2.next = 53;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 53:
+            _context2.next = 60;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
-            console.log(_context2.t2);
-            _context2.next = 53;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 53:
-            _context2.next = 55;
-            return regeneratorRuntime.awrap(browser.close());
-
           case 55:
+            _context2.prev = 55;
+            _context2.t2 = _context2["catch"](50);
+            console.log(_context2.t2);
+            _context2.next = 60;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 60:
+            _context2.next = 62;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 62:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [14, 21], [43, 48]]);
+    }, null, null, [[7, 45], [14, 24], [50, 55]]);
   })();
 };
 
@@ -205,22 +231,22 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 16;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.content-inner>p');
+              var second_text = document.querySelectorAll('.contenu p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length - 1; _i++) {
@@ -233,26 +259,16 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
-          _context3.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.jeg_meta_author>a').textContent.trim();
-            } catch (_unused3) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context3.sent;
+          author = null;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
               link: item.link,
-              images: item.images,
+              images: item.images === "" ? null : item.images,
               Category: item.Category,
               source: item.source,
               sourceLink: item.sourceLink,
@@ -262,16 +278,15 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 13:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 16:
+          console.log(AllData_WithConetent); //  await InsertData(AllData_WithConetent);
 
-        case 19:
+        case 17:
         case "end":
           return _context3.stop();
       }
@@ -279,4 +294,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = NOTERVOIE;
+module.exports = LEPAY;

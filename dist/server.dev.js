@@ -26,9 +26,9 @@ con.connect(process.env.DATABASE, {
   }
 }); //cron.schedule('00 */1 * * *', () => {
 
-var notrevoie = require('./sources/FR/NOTREVOIE');
+var lepays = require('./sources/FR/LEPAYS');
 
-notrevoie(); //});
+lepays(); //});
 
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
