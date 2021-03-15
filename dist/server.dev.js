@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-}); // cron.schedule('05 */1 * * *', () => {
+});
+cron.schedule('15 */1 * * *', function () {
+  var elmondo = require('./sources/ES/ELMONDO');
 
-var elmondo = require('./sources/ES/ELMONDO');
-
-elmondo(); // });
-
+  elmondo();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
