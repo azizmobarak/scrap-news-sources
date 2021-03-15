@@ -16,10 +16,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('05 */1 * * *', () => {
-   const telquel = require('./sources/FR/TELQUEL');
-   telquel();
-});
+// cron.schedule('05 */1 * * *', () => {
+   const elpas = require('./sources/ES/ELPAS');
+   elpas();
+// });
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
