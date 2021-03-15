@@ -16,9 +16,9 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('00 */1 * * *', () => {
-   const lemssager = require('./sources/FR/LEMESSAGE');
-   lemssager();
+cron.schedule('05 */1 * * *', () => {
+   const telquel = require('./sources/FR/TELQUEL');
+   telquel();
 });
 
 app.listen(PORT, ()=>{

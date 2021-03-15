@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy'];
+var Categories=['politic','opinion','economy'];
 
-const LEMESSAGE = () =>{
+const TELQUEL = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,15 +49,16 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.lemessager.fr/economie";
+    var url ="https://telquel.ma/categorie/maroc/politique";
+    if(Category==="opinion") url="https://telquel.ma/categorie/opinions";
+    if(Category==="economy") url="https://telquel.ma/categorie/economie";
     
     try{
         await page.goto(url);
         await page.waitForSelector('footer')
-        if(i==0) await page.click('#didomi-notice-agree-button');
+        if(i==0) await page.click('#pn-show-terms');
        }catch{
         await page.goto(url);
-        if(i==0) await page.click('#didomi-notice-agree-button');
     }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -83,14 +84,14 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var images =document.querySelectorAll('#gr-unes-titres img');
-    var links = document.querySelectorAll('#gr-unes-titres h4>a');
-    var titles =document.querySelectorAll('#gr-unes-titres h4');
+    var images =document.querySelectorAll('.articles-list .article-image>img');
+    var links = document.querySelectorAll('.articles-list .article-image');
+    var titles =document.querySelectorAll('.articles-list h3');
        
          
         var data =[];
 
-         for(let j=0;j<4;j++){
+         for(let j=0;j<6;j++){
 
             if(typeof(titles[j])!="undefined" && links[j]!=null){
                 data.push({
@@ -99,15 +100,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
                     Category:Category,
-                    source :"Le Messager",
-                    sourceLink:"https://www.lemessager.fr",
-                    sourceLogo:"https://journal.lemessager.fr/medias/specifique_titre/mes/images/logo_square.png"
+                    source :"TelQuel.ma",
+                    sourceLink:"https://www.telquel.ma",
+                    sourceLogo:"https://cdn.dialy.net/png/telquel.png"
                       });
                    }
                }
                       return data;
      },Category);
-            console.log(PageData);
+        //    console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -138,26 +139,26 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-  //      console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
-               // first try to get all content
-               var second_text = document.querySelectorAll('.gr-article-content p');
-               var scond_content ="";
-               for(let i=0;i<second_text.length-1;i++){
-                  scond_content = scond_content +"\n"+second_text[i].textContent;
-               }
-                return scond_content.trim();
-            }catch{
-               return null;
-            }
+                // first try to get all content
+                var second_text = document.querySelectorAll('#article-container p');
+                var scond_content ="";
+                for(let i=0;i<second_text.length;i++){
+                   scond_content = scond_content +"\n"+second_text[i].textContent;
+                }
+                 return scond_content.trim();
+             }catch{
+                return null;
+             }
         });
 
      var author = await page.evaluate(()=>{
          try{
-         return document.querySelector('.gr-meta-author>a').textContent.trim();
+         return document.querySelector('.author').textContent.trim();
          }catch{
              return null;
          }
@@ -179,9 +180,9 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-//  console.log(AllData_WithConetent)
+// console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=LEMESSAGE;
+module.exports=TELQUEL;

@@ -25,10 +25,10 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('00 */1 * * *', function () {
-  var lemssager = require('./sources/FR/LEMESSAGE');
+cron.schedule('05 */1 * * *', function () {
+  var telquel = require('./sources/FR/TELQUEL');
 
-  lemssager();
+  telquel();
 });
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
