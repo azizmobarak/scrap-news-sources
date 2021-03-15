@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['international','opinion','spain'];
+var Categories=['economy','opinion','international','spain'];
 
-const ELPAS = () =>{
+const ELMONDO = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,10 +49,12 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://elpais.com/internacional/";
+    var url ="https://www.elmundo.es/economia.html";
 
-    if(Category==="opinion") url="https://elpais.com/tag/c/ac1a39ea27fc68d52e94d1751fc14765"
-    if(Category==="spain") url="https://elpais.com/espana/"
+    if(Category==="opinion") url="https://www.elmundo.es/opinion.html"
+    if(Category==="international") url="https://www.elmundo.es/internacional.html"
+    if(Category==="spain") url="https://www.elmundo.es/espana.html"
+    
     
     try{
         await page.goto(url);
@@ -88,38 +90,31 @@ var PageData = await page.evaluate((Category)=>{
                
     var articles = document.querySelectorAll('article');
     var images ="img"
-    var links = "article h2>a"
-    var titles ="article h2"
-    var authors =".author"
+    var links = ".ue-c-cover-content__link"
+    var titles ="h2"
+    var authors =".ue-c-cover-content__byline-name"
 
-    if(Category==="opinion"){
-        articles=document.querySelectorAll('.articulo__interior');
-        links = "figure .enlace";
-        titles="h2";
-        authors=".autor-nombre";
-    }
-       
          
         var data =[];
 
          for(let j=0;j<4;j++){
-            if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
+            if(articles[j].querySelector(titles)!=null && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    author:articles[j].querySelector(authors).textContent.trim(),
-                    source :"EL PAIS",
-                    sourceLink:"https://elpais.com",
-                    sourceLogo:"https://resources.audiense.com/hs-fs/hubfs/Resources%20Website%20(Migration)/El_Pais_logo_small.png?width=210&name=El_Pais_logo_small.png"
+                    author: articles[j].querySelector(authors)!=null ? articles[j].querySelector(authors).textContent.replace('Redacción:','').trim() : null,
+                    source :"ELMUNDO",
+                    sourceLink:"https://www.elmundo.es/",
+                    sourceLogo:"https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/102015/elmundo_0.png"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -151,20 +146,32 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
       // console.log(url)
-        await page.goto(url);
-    
-        var Content = await page.evaluate(()=>{
-            try{
-               // first try to get all content
-               var second_text = document.querySelectorAll('.article_body p');
+       await page.goto(url);
+ 
+
+
+    var Content = await page.evaluate(()=>{
+        try{
+              // I-first try to get all content 
+              var text = document.querySelectorAll('.ue-l-article__body p');
+              var scond_content ="";
+              for(let i=0;i<text.length;i++){
+                 scond_content = scond_content +"\n"+text[i].textContent;
+                }
+               return scond_content;
+         }catch{
+              try{
+                   // II-first try to get all content
+               var text = document.querySelectorAll('.ue-c-article--first-letter-highlighted');
                var scond_content ="";
-               for(let i=0;i<second_text.length-1;i++){
-                  scond_content = scond_content +"\n"+second_text[i].textContent;
-               }
+               for(let i=0;i<text.length;i++){
+                  scond_content = scond_content +"\n"+text[i].textContent;
+                 }
                 return scond_content;
-            }catch{
-               return null;
-            }
+                 }catch{
+                  return null;
+                 }
+           }
         });
 
     
@@ -183,9 +190,9 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-//  console.log(AllData_WithConetent)
+// console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=ELPAS;
+module.exports=ELMONDO;
