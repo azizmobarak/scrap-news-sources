@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy','opinion','international','spain'];
+var Categories=['spain','economy','culture'];
 
 const ELMONDO = () =>{
     (async()=>{
@@ -49,11 +49,10 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.elmundo.es/economia.html";
+    var url ="https://www.abc.es/espana/#vca=menu&vmc=abc-es&vso=portadilla.opinion&vli=opinion";
 
-    if(Category==="opinion") url="https://www.elmundo.es/opinion.html"
-    if(Category==="international") url="https://www.elmundo.es/internacional.html"
-    if(Category==="spain") url="https://www.elmundo.es/espana.html"
+    if(Category==="economy") url="https://www.abc.es/economia/#vca=menu&vmc=abc-es&vso=portadilla.espana&vli=espana"
+    if(Category==="culture") url="https://www.abc.es/cultura/#vca=menu&vmc=abc-es&vso=portadilla.economia&vli=economia"
     
     
     try{
@@ -83,16 +82,16 @@ for(let i=0;i<Categories.length;i++){
             }, 100);
     });
 
-     await page.waitFor(3000)
+     await page.waitFor(3000);
     
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
     var articles = document.querySelectorAll('article');
     var images ="img"
-    var links = ".ue-c-cover-content__link"
-    var titles ="h2"
-    var authors =".ue-c-cover-content__byline-name"
+    var links = "h3>a"
+    var titles ="h3"
+    var authors =".autor"
 
          
         var data =[];
@@ -106,15 +105,15 @@ var PageData = await page.evaluate((Category)=>{
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
                     author: articles[j].querySelector(authors)!=null ? articles[j].querySelector(authors).textContent.replace('Redacción:','').trim() : null,
-                    source :"ELMUNDO",
-                    sourceLink:"https://www.elmundo.es/",
-                    sourceLogo:"https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/102015/elmundo_0.png"
+                    source :"ABC",
+                    sourceLink:"https://www.abc.es",
+                    sourceLogo:"https://pbs.twimg.com/profile_images/660003544939012096/foGuoVBZ.png"
                       });
                    }
                }
                       return data;
      },Category);
-           console.log(PageData);
+          // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -153,24 +152,16 @@ const GetContent = async(page,data)=>{
     var Content = await page.evaluate(()=>{
         try{
               // I-first try to get all content 
-              var text = document.querySelectorAll('.ue-l-article__body p');
+              var text = document.querySelectorAll('.cuerpo-texto p');
               var scond_content ="";
               for(let i=0;i<text.length;i++){
+                if(text[i].textContent.length>50){
                  scond_content = scond_content +"\n"+text[i].textContent;
                 }
+              }
                return scond_content;
          }catch{
-              try{
-                   // II-first try to get all content
-               var text = document.querySelectorAll('.ue-c-article--first-letter-highlighted');
-               var scond_content ="";
-               for(let i=0;i<text.length;i++){
-                  scond_content = scond_content +"\n"+text[i].textContent;
-                 }
-                return scond_content;
-                 }catch{
                   return null;
-                 }
            }
         });
 

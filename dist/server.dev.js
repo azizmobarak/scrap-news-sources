@@ -25,10 +25,10 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('15 */1 * * *', function () {
-  var elmondo = require('./sources/ES/ELMONDO');
+cron.schedule('12 */1 * * *', function () {
+  var abc = require('./sources/ES/ABC');
 
-  elmondo();
+  abc();
 });
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);

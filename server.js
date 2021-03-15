@@ -16,9 +16,9 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('15 */1 * * *', () => {
-   const elmondo = require('./sources/ES/ELMONDO');
-   elmondo();
+cron.schedule('12 */1 * * *', () => {
+   const abc = require('./sources/ES/ABC');
+   abc();
 });
 
 app.listen(PORT, ()=>{
