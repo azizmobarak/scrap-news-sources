@@ -100,7 +100,7 @@ for(let i=0;i<Categories.length;i++){
                        link : j==0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
                        images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
                        Category:Category,
-                       source :"LeMatin.ch",
+                       source :"LeMatin.ch "+Category,
                        sourceLink:"https://www.lematin.ch/",
                        sourceLogo:"https://publishing.goldbach.com/assets/images/5/lematin-ch-logo-d7d2e4e5.png"
                       });
