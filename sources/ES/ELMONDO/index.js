@@ -106,7 +106,7 @@ var PageData = await page.evaluate((Category)=>{
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
                     author: articles[j].querySelector(authors)!=null ? articles[j].querySelector(authors).textContent.replace('Redacción:','').trim() : null,
-                    source :"ELMUNDO",
+                    source :"ELMUNDO "+Category,
                     sourceLink:"https://www.elmundo.es/",
                     sourceLogo:"https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/102015/elmundo_0.png"
                       });
