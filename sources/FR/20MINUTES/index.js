@@ -101,7 +101,7 @@ var titles = document.querySelectorAll('article .teaser h2');
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"20minutes.fr",
+                       source :"20minutes "+Category,
                        sourceLink:"https://www.20minutes.fr/",
                        sourceLogo:"https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
                       });
