@@ -40,6 +40,8 @@ const NEWYORKTIMES = () =>{
       
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -85,7 +87,7 @@ var PageData = await page.evaluate((Category)=>{
             break;
 
         case "food" :
-            cateogryName="food&drink"
+            cateogryName="food"
             break;
 
         case "style" :
@@ -95,6 +97,9 @@ var PageData = await page.evaluate((Category)=>{
         case 'realestate' :
              cateogryName="business";
            break;
+       case 'politics' :
+             categoryName="politic"
+             break;
 
         default :
            cateogryName=Category;
@@ -121,7 +126,7 @@ var PageData = await page.evaluate((Category)=>{
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category: cateogryName,
-                       source :"The NEW YORK TIMES",
+                       source :"NYT "+cateogryName,
                        sourceLink:"https://www.nytimes.com",
                        sourceLogo:"NYTIMES logo"
                          });
@@ -129,13 +134,16 @@ var PageData = await page.evaluate((Category)=>{
               }
                       return data;
                },Category);
-
-               PageData.map(item=>{
+                 console.log(PageData);
+                PageData.map(item=>{
                    AllData.push(item)
                });
-       }
+       }}catch{
+        await browser.close();
+         }
   
-     await GetContent(page,AllData);
+       try{await GetContent(page,AllData);}catch{await browser.close();}
+
      await browser.close();
     })();
 }

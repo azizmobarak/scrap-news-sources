@@ -122,7 +122,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // Gardian();
 // });
 
-cron.schedule('33 */1 * * *', () => {
+cron.schedule('20 */1 * * *', () => {
     //1h
 const NEWYORKTIMES = require("./sources/The_New_York_Times");
 NEWYORKTIMES();
