@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy','spain','international','life&style'];
+var Categories=['health','science','international','technology'];
 
-const LARAZON = () =>{
+const TELECINCO = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,16 +49,16 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.larazon.es/economia/";
+    var url ="https://www.telecinco.es/informativos/salud/";
 
-    if(Category==="international") url="https://www.larazon.es/internacional/"
-    if(Category==="spain") url="https://www.larazon.es/espana/"
-    if(Category==="life&style") url="https://www.larazon.es/lifestyle/"
+    if(Category==="international") url="https://www.telecinco.es/informativos/internacional/"
+    if(Category==="science") url="https://www.telecinco.es/informativos/ciencia/"
+    if(Category==="technology") url="https://www.telecinco.es/informativos/tecnologia/"
     
     try{
         await page.goto(url);
         await page.waitForSelector('footer')
-        if(i==0) await page.click('#didomi-notice-agree-button');
+     //   if(i==0) await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -88,10 +88,9 @@ for(let i=0;i<Categories.length;i++){
 var PageData = await page.evaluate((Category)=>{
                
     var articles = document.querySelectorAll('article');
-    var images ="img"
-    var links = "h3>a"
+    var images ="img.cards__image-24d0"
+    var links = "a"
     var titles ="h3"
-    var authors =".card__byline>ul>li"
 
     // if(Category==="opinion"){
     //     articles=document.querySelectorAll('.articulo__interior');
@@ -111,16 +110,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    author:articles[j].querySelector(authors).textContent.trim(),
-                    source :"LARAZON "+Category,
-                    sourceLink:"https://www.larazon.es",
-                    sourceLogo:"https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
+                    source :"TELECINCO "+Category,
+                    sourceLink:"https://www.telecinco.es",
+                    sourceLogo:"https://album.mediaset.es/file/10002/2017/11/17/telecinco_logo_500_-1_c0eb.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -157,7 +155,7 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.article__body-container p');
+               var second_text = document.querySelectorAll('article p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -179,7 +177,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : item.author,
+                author : null,
                 content:Content
           });
        }
@@ -189,4 +187,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=LARAZON;
+module.exports=TELECINCO;

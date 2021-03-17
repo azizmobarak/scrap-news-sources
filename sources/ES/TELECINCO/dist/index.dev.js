@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'spain', 'international', 'life&style'];
+var Categories = ['health', 'science', 'international', 'technology'];
 
-var LARAZON = function LARAZON() {
+var TELECINCO = function TELECINCO() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,17 +55,17 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 40;
+              _context2.next = 37;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.larazon.es/economia/";
-            if (Category === "international") url = "https://www.larazon.es/internacional/";
-            if (Category === "spain") url = "https://www.larazon.es/espana/";
-            if (Category === "life&style") url = "https://www.larazon.es/lifestyle/";
+            url = "https://www.telecinco.es/informativos/salud/";
+            if (Category === "international") url = "https://www.telecinco.es/informativos/internacional/";
+            if (Category === "science") url = "https://www.telecinco.es/informativos/ciencia/";
+            if (Category === "technology") url = "https://www.telecinco.es/informativos/tecnologia/";
             _context2.prev = 15;
             _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -75,26 +75,17 @@ var LARAZON = function LARAZON() {
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
           case 20:
-            if (!(i == 0)) {
-              _context2.next = 23;
-              break;
-            }
-
-            _context2.next = 23;
-            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
-
-          case 23:
-            _context2.next = 29;
+            _context2.next = 26;
             break;
 
-          case 25:
-            _context2.prev = 25;
+          case 22:
+            _context2.prev = 22;
             _context2.t0 = _context2["catch"](15);
-            _context2.next = 29;
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 29:
-            _context2.next = 31;
+          case 26:
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -122,18 +113,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 31:
-            _context2.next = 33;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 33:
-            _context2.next = 35;
+          case 30:
+            _context2.next = 32;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var articles = document.querySelectorAll('article');
-              var images = "img";
-              var links = "h3>a";
-              var titles = "h3";
-              var authors = ".card__byline>ul>li"; // if(Category==="opinion"){
+              var images = "img.cards__image-24d0";
+              var links = "a";
+              var titles = "h3"; // if(Category==="opinion"){
               //     articles=document.querySelectorAll('.articulo__interior');
               //     links = "figure .enlace";
               //     titles="h2";
@@ -150,10 +140,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    author: articles[j].querySelector(authors).textContent.trim(),
-                    source: "LARAZON " + Category,
-                    sourceLink: "https://www.larazon.es",
-                    sourceLogo: "https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
+                    source: "TELECINCO " + Category,
+                    sourceLink: "https://www.telecinco.es",
+                    sourceLogo: "https://album.mediaset.es/file/10002/2017/11/17/telecinco_logo_500_-1_c0eb.png"
                   });
                 }
               }
@@ -161,55 +150,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 35:
+          case 32:
             PageData = _context2.sent;
-            // console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 37:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 40:
-            _context2.next = 47;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 42:
-            _context2.prev = 42;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 47;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 47:
-            _context2.prev = 47;
-            _context2.next = 50;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 50:
-            _context2.next = 57;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 52:
-            _context2.prev = 52;
-            _context2.t2 = _context2["catch"](47);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 57;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
-            _context2.next = 59;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 59:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 42], [15, 25], [47, 52]]);
+    }, null, null, [[7, 39], [15, 22], [44, 49]]);
   })();
 };
 
@@ -239,7 +228,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.article__body-container p');
+              var second_text = document.querySelectorAll('article p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length - 1; _i++) {
@@ -265,7 +254,7 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: item.author,
+              author: null,
               content: Content
             });
           }
@@ -287,4 +276,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = LARAZON;
+module.exports = TELECINCO;

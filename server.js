@@ -16,8 +16,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('30 */1 * * *', () => {
-   const scrap = require('./sources/ES/LARAZON');
+cron.schedule('18 */1 * * *', () => {
+   const scrap = require('./sources/ES/TELECINCO');
    scrap();
 });
 

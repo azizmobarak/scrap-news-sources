@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('30 */1 * * *', function () {
-  var scrap = require('./sources/ES/LARAZON');
+cron.schedule('18 */1 * * *', function () {
+  var scrap = require('./sources/ES/TELECINCO');
 
   scrap();
 });
