@@ -16,8 +16,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
- cron.schedule('*/47 * * * *', () => {
-   const scrap = require('./sources/ES/WEBCONSULTAS');
+cron.schedule('17 */1 * * *', () => {
+   const scrap = require('./sources/ES/ELDEBER');
    scrap();
 });
 

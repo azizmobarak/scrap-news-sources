@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('*/47 * * * *', function () {
-  var scrap = require('./sources/ES/WEBCONSULTAS');
+cron.schedule('17 */1 * * *', function () {
+  var scrap = require('./sources/ES/ELDEBER');
 
   scrap();
 });

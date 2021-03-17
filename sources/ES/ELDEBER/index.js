@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['health'];
+var Categories=['health','economy'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -49,12 +49,14 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.webconsultas.com/";
+    var url="";
+    if(Category==="health") url="https://eldeber.com.bo/salud-y-bienestar"
+    if(Category==="economy") url="https://eldeber.com.bo/economia"
     
     try{
         await page.goto(url);
         await page.waitForSelector('footer')
-     //   if(i==0) await page.click('#didomi-notice-agree-button');
+        if(i==0) await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -83,31 +85,34 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.cpl-noticias__item');
-    var images ="source"
-    var links = "a"
-    var titles ="h2"
+    var articles = document.querySelectorAll('.region');
+    var images =".loadingImage";
+    var links = ".nota-link";
+    var titles ="h2";
        
          
         var data =[];
 
-         for(let j=0;j<3;j++){
+         for(let j=0;j<articles.length/2;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
+
+                var img = articles[j].querySelector(images).style.backgroundImage;
+
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
-                    images : articles[j].querySelector(images)==null ? null : "https://www.webconsultas.com"+articles[j].querySelector(images).srcset,
+                    images : articles[j].querySelector(images)==null ? null : img.substring(img.indexOf('("')+2,img.indexOf('")')),
                     Category:Category,
-                    source :"WebConsultas",
-                    sourceLink:"https://www.webconsultas.com/",
-                    sourceLogo:"http://www.diabeweb.com/uploads/ponencias/30/logo_30.jpg"
+                    source :"ELDEBER "+Category,
+                    sourceLink:"https://eldeber.com.bo",
+                    sourceLogo:"https://www.somare.com/wp-content/uploads/2020/02/logo-el-deber.png"
                       });
                    }
                }
                       return data;
      },Category);
-         //   console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -138,32 +143,25 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-     //  console.log(url)
+      //console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.panel-pane>div>div>p');
+               var second_text = document.querySelectorAll('article p');
                var scond_content ="";
-               for(let i=1;i<second_text.length-1;i++){
+               for(let i=0;i<second_text.length/2;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
-                return scond_content;
+                return scond_content+".. .";
             }catch{
                return null;
             }
         });
 
-        var author = await page.evaluate(()=>{
-            try{
-             return document.querySelector('.cfa-autor :nth-child(2)').textContent.trim();
-            }catch{
-                return null;
-            }
-        })
     
-    if(Content!=null && Content!=""){
+    if(Content!=null && Content!="" && Content.length>255){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -173,12 +171,12 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : author,
+                author : null,
                 content:Content
           });
        }
     }
- //console.log(AllData_WithConetent)
+// console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
