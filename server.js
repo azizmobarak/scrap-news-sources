@@ -16,10 +16,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('18 */1 * * *', () => {
-   const scrap = require('./sources/ES/TELECINCO');
+// cron.schedule('18 */1 * * *', () => {
+   const scrap = require('./sources/ES/EUROPAPRESS');
    scrap();
-});
+// });
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['health','science','international','technology'];
+var Categories=['espana','international'];
 
-const TELECINCO = () =>{
+const SCRAP = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,11 +49,9 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.telecinco.es/informativos/salud/";
+    var url ="https://www.europapress.es/nacional/";
 
-    if(Category==="international") url="https://www.telecinco.es/informativos/internacional/"
-    if(Category==="science") url="https://www.telecinco.es/informativos/ciencia/"
-    if(Category==="technology") url="https://www.telecinco.es/informativos/tecnologia/"
+    if(Category==="international") url="https://www.europapress.es/internacional/"
     
     try{
         await page.goto(url);
@@ -88,21 +86,14 @@ for(let i=0;i<Categories.length;i++){
 var PageData = await page.evaluate((Category)=>{
                
     var articles = document.querySelectorAll('article');
-    var images ="img.cards__image-24d0"
+    var images ="img"
     var links = "a"
-    var titles ="h3"
-
-    // if(Category==="opinion"){
-    //     articles=document.querySelectorAll('.articulo__interior');
-    //     links = "figure .enlace";
-    //     titles="h2";
-    //     authors=".autor-nombre";
-    // }
+    var titles ="h2"
        
          
         var data =[];
 
-         for(let j=0;j<8;j++){
+         for(let j=0;j<6;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
@@ -110,15 +101,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"TELECINCO "+Category,
-                    sourceLink:"https://www.telecinco.es",
-                    sourceLogo:"https://album.mediaset.es/file/10002/2017/11/17/telecinco_logo_500_-1_c0eb.png"
+                    source :"EuropaPress "+Category,
+                    sourceLink:"https://www.europapress.es",
+                    sourceLogo:"https://media.glassdoor.com/sqll/1032218/europa-press-squarelogo-1567608786653.png"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+          // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -149,13 +140,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      // console.log(url)
+     //  console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('article p');
+               var second_text = document.querySelectorAll('.NormalTextoNoticia>p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -187,4 +178,4 @@ const GetContent = async(page,data)=>{
 }
 
 
-module.exports=TELECINCO;
+module.exports=SCRAP;

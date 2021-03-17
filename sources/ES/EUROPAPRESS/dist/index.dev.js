@@ -27,9 +27,9 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['health', 'science', 'international', 'technology'];
+var Categories = ['espana', 'international'];
 
-var TELECINCO = function TELECINCO() {
+var SCRAP = function SCRAP() {
   (function _callee2() {
     var browser, page, AllData, i, Category, url, PageData;
     return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -55,37 +55,35 @@ var TELECINCO = function TELECINCO() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 37;
+              _context2.next = 35;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.telecinco.es/informativos/salud/";
-            if (Category === "international") url = "https://www.telecinco.es/informativos/internacional/";
-            if (Category === "science") url = "https://www.telecinco.es/informativos/ciencia/";
-            if (Category === "technology") url = "https://www.telecinco.es/informativos/tecnologia/";
-            _context2.prev = 15;
-            _context2.next = 18;
+            url = "https://www.europapress.es/nacional/";
+            if (Category === "international") url = "https://www.europapress.es/internacional/";
+            _context2.prev = 13;
+            _context2.next = 16;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 18:
-            _context2.next = 20;
+          case 16:
+            _context2.next = 18;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 20:
-            _context2.next = 26;
+          case 18:
+            _context2.next = 24;
             break;
 
-          case 22:
-            _context2.prev = 22;
-            _context2.t0 = _context2["catch"](15);
-            _context2.next = 26;
+          case 20:
+            _context2.prev = 20;
+            _context2.t0 = _context2["catch"](13);
+            _context2.next = 24;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 26:
-            _context2.next = 28;
+          case 24:
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -113,26 +111,20 @@ var TELECINCO = function TELECINCO() {
               }, 100);
             }));
 
-          case 28:
-            _context2.next = 30;
+          case 26:
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 30:
-            _context2.next = 32;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var articles = document.querySelectorAll('article');
-              var images = "img.cards__image-24d0";
+              var images = "img";
               var links = "a";
-              var titles = "h3"; // if(Category==="opinion"){
-              //     articles=document.querySelectorAll('.articulo__interior');
-              //     links = "figure .enlace";
-              //     titles="h2";
-              //     authors=".autor-nombre";
-              // }
-
+              var titles = "h2";
               var data = [];
 
-              for (var j = 0; j < 8; j++) {
+              for (var j = 0; j < 6; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -140,9 +132,9 @@ var TELECINCO = function TELECINCO() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "TELECINCO " + Category,
-                    sourceLink: "https://www.telecinco.es",
-                    sourceLogo: "https://album.mediaset.es/file/10002/2017/11/17/telecinco_logo_500_-1_c0eb.png"
+                    source: "EuropaPress " + Category,
+                    sourceLink: "https://www.europapress.es",
+                    sourceLogo: "https://media.glassdoor.com/sqll/1032218/europa-press-squarelogo-1567608786653.png"
                   });
                 }
               }
@@ -150,55 +142,55 @@ var TELECINCO = function TELECINCO() {
               return data;
             }, Category));
 
-          case 32:
+          case 30:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 34:
+          case 32:
             i++;
             _context2.next = 9;
             break;
 
-          case 37:
-            _context2.next = 44;
+          case 35:
+            _context2.next = 42;
             break;
 
-          case 39:
-            _context2.prev = 39;
+          case 37:
+            _context2.prev = 37;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 44;
+            _context2.next = 42;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 44:
-            _context2.prev = 44;
-            _context2.next = 47;
+          case 42:
+            _context2.prev = 42;
+            _context2.next = 45;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 47:
-            _context2.next = 54;
+          case 45:
+            _context2.next = 52;
             break;
 
-          case 49:
-            _context2.prev = 49;
-            _context2.t2 = _context2["catch"](44);
+          case 47:
+            _context2.prev = 47;
+            _context2.t2 = _context2["catch"](42);
             console.log(_context2.t2);
+            _context2.next = 52;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 52:
             _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
           case 54:
-            _context2.next = 56;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 39], [15, 22], [44, 49]]);
+    }, null, null, [[7, 37], [13, 20], [42, 47]]);
   })();
 };
 
@@ -218,7 +210,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
+          url = item.link; //  console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -228,7 +220,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('article p');
+              var second_text = document.querySelectorAll('.NormalTextoNoticia>p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length - 1; _i++) {
@@ -276,4 +268,4 @@ var GetContent = function GetContent(page, data) {
   });
 };
 
-module.exports = TELECINCO;
+module.exports = SCRAP;
