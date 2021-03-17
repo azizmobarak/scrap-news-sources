@@ -25,10 +25,10 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('12 */1 * * *', function () {
-  var abc = require('./sources/ES/ABC');
+cron.schedule('30 */1 * * *', function () {
+  var scrap = require('./sources/ES/LARAZON');
 
-  abc();
+  scrap();
 });
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);

@@ -21,9 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['spain','economy','culture'];
+var Categories=['economy','spain','international','life&style'];
 
-const ELMONDO = () =>{
+const LARAZON = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
         headless: true,
@@ -49,11 +49,11 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url ="https://www.abc.es/espana/#vca=menu&vmc=abc-es&vso=portadilla.opinion&vli=opinion";
+    var url ="https://www.larazon.es/economia/";
 
-    if(Category==="economy") url="https://www.abc.es/economia/#vca=menu&vmc=abc-es&vso=portadilla.espana&vli=espana"
-    if(Category==="culture") url="https://www.abc.es/cultura/#vca=menu&vmc=abc-es&vso=portadilla.economia&vli=economia"
-    
+    if(Category==="international") url="https://www.larazon.es/internacional/"
+    if(Category==="spain") url="https://www.larazon.es/espana/"
+    if(Category==="life&style") url="https://www.larazon.es/lifestyle/"
     
     try{
         await page.goto(url);
@@ -61,7 +61,7 @@ for(let i=0;i<Categories.length;i++){
         if(i==0) await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
-        if(i==0) await page.click('#didomi-notice-agree-button');
+       // if(i==0) await page.click('#didomi-notice-agree-button');
     }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
@@ -82,7 +82,7 @@ for(let i=0;i<Categories.length;i++){
             }, 100);
     });
 
-     await page.waitFor(3000);
+     await page.waitFor(3000)
     
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
@@ -91,29 +91,36 @@ var PageData = await page.evaluate((Category)=>{
     var images ="img"
     var links = "h3>a"
     var titles ="h3"
-    var authors =".autor"
+    var authors =".card__byline>ul>li"
 
+    // if(Category==="opinion"){
+    //     articles=document.querySelectorAll('.articulo__interior');
+    //     links = "figure .enlace";
+    //     titles="h2";
+    //     authors=".autor-nombre";
+    // }
+       
          
         var data =[];
 
-         for(let j=0;j<4;j++){
-            if(articles[j].querySelector(titles)!=null && articles[j].querySelector(links)!=null){
+         for(let j=0;j<8;j++){
+            if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    author: articles[j].querySelector(authors)!=null ? articles[j].querySelector(authors).textContent.replace('Redacción:','').trim() : null,
-                    source :"ABC",
-                    sourceLink:"https://www.abc.es",
-                    sourceLogo:"https://pbs.twimg.com/profile_images/660003544939012096/foGuoVBZ.png"
+                    author:articles[j].querySelector(authors).textContent.trim(),
+                    source :"LARAZON "+Category,
+                    sourceLink:"https://www.larazon.es",
+                    sourceLogo:"https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -144,25 +151,21 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      // console.log(url)
-       await page.goto(url);
- 
-
-
-    var Content = await page.evaluate(()=>{
-        try{
-              // I-first try to get all content 
-              var text = document.querySelectorAll('.cuerpo-texto p');
-              var scond_content ="";
-              for(let i=0;i<text.length;i++){
-                if(text[i].textContent.length>50){
-                 scond_content = scond_content +"\n"+text[i].textContent;
-                }
-              }
-               return scond_content;
-         }catch{
-                  return null;
-           }
+       console.log(url)
+        await page.goto(url);
+    
+        var Content = await page.evaluate(()=>{
+            try{
+               // first try to get all content
+               var second_text = document.querySelectorAll('.article__body-container p');
+               var scond_content ="";
+               for(let i=0;i<second_text.length-1;i++){
+                  scond_content = scond_content +"\n"+second_text[i].textContent;
+               }
+                return scond_content;
+            }catch{
+               return null;
+            }
         });
 
     
@@ -181,9 +184,9 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-// console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+ console.log(AllData_WithConetent)
+ // await InsertData(AllData_WithConetent);
 }
 
 
-module.exports=ELMONDO;
+module.exports=LARAZON;

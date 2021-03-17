@@ -16,9 +16,9 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('12 */1 * * *', () => {
-   const abc = require('./sources/ES/ABC');
-   abc();
+cron.schedule('30 */1 * * *', () => {
+   const scrap = require('./sources/ES/LARAZON');
+   scrap();
 });
 
 app.listen(PORT, ()=>{
