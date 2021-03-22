@@ -45,7 +45,6 @@ var second_categorie ="argentina"
                    }
                });
             }else{
-               if(articledetails.categoryName!="spain" || articledetails.categoryName!="international"){
                 articledetails.categoryName=second_categorie;
                 var newModel = new Model(articledetails);
                 newModel.save((err,doc)=>{
@@ -54,7 +53,6 @@ var second_categorie ="argentina"
                      console.log("insert 2")
                      }
                  });
-               }
                }
             }
              }

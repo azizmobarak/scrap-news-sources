@@ -46,15 +46,13 @@ var InsertData = function InsertData(data) {
                         }
                       });
                     } else {
-                      if (articledetails.categoryName != "spain" || articledetails.categoryName != "international") {
-                        articledetails.categoryName = second_categorie;
-                        var newModel = new Model(articledetails);
-                        newModel.save(function (err, doc) {
-                          if (err) console.log(err);else {
-                            console.log("insert 2");
-                          }
-                        });
-                      }
+                      articledetails.categoryName = second_categorie;
+                      var newModel = new Model(articledetails);
+                      newModel.save(function (err, doc) {
+                        if (err) console.log(err);else {
+                          console.log("insert 2");
+                        }
+                      });
                     }
                   }
                 }
