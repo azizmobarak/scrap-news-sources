@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('13 */1 * * *', function () {
-  var scrap = require('./sources/ES/CROMO');
+cron.schedule('16 */1 * * *', function () {
+  var scrap = require('./sources/ES/PUBLINEWS');
 
   scrap();
 });

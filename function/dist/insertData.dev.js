@@ -37,16 +37,12 @@ var InsertData = function InsertData(data) {
             }, function (err, doc) {
               if (err) console.log(err);else {
                 if (typeof doc[0] != "undefined") {} else {
-                  for (var i = 0; i < 2; i++) {
-                    if (i == 0) {
-                      var newModel = new Model(articledetails);
-                      newModel.save(function (err, doc) {
-                        if (err) console.log(err);else {
-                          console.log("insert");
-                        }
-                      });
+                  var newModel = new Model(articledetails);
+                  newModel.save(function (err, doc) {
+                    if (err) console.log(err);else {
+                      console.log("insert");
                     }
-                  }
+                  });
                 }
               }
             });

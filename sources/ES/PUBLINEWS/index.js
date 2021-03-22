@@ -21,7 +21,9 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['technology'];
+
+
+var Categories=['guatemala','international','celebrity'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -49,16 +51,23 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="https://www.elobservador.com.uy/cromo"
+    var url="https://www.publinews.gt/gt/guatemala";
+    if(Category==="international") url ="https://www.publinews.gt/gt/mundo";
+    if(Category==="celebrity") url ="https://www.publinews.gt/gt/espectaculos";
     
-    try{
+
+	page.on('dialog', async dialog => {
+    console.log(dialog.message());
+    await dialog.dismiss();
+	});
+
+
+       try{
         await page.goto(url);
-        await page.waitForSelector('footer')
-       // if(i==0) await page.click('#didomi-notice-agree-button');
+        await page.click('.sub-dialog-btn');
        }catch{
-        await page.goto(url);
-       // if(i==0) await page.click('#didomi-notice-agree-button');
-      }
+             await page.goto(url);
+         }
 
  await page.evaluate(()=>{
 
@@ -76,39 +85,39 @@ for(let i=0;i<Categories.length;i++){
             }, 100);
     });
 
-     await page.waitFor(3000)
+     await page.waitFor(2000)
     
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
             
-    var articles = document.querySelectorAll('.nota_gen');
+    var articles = document.querySelectorAll('article');
     var images ="img";
     var links = "a";
     var titles ="h2";
              
         var data =[];
 
-         for(let j=0;j<5;j++){
+         for(let j=0;j<4;j++){
 
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
-
+  
                 var img = articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src;
 
                 data.push({
                     time : Date.now(),
-                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
+                    title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : img,
                     Category:Category,
-                    source :"Cromo "+Category,
-                    sourceLink:"https://www.cromo.com.uy",
-                    sourceLogo:"https://www.elobservador.com.uy/images/cromo/cromo.png"
+                    source :"PubliNews "+Category,
+                    sourceLink:"https://www.publinews.gt",
+                    sourceLogo:"https://a.calameoassets.com/691806/picture.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-        // console.log(PageData);
+       // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -139,18 +148,16 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-     //   console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.cuerpo p');
+               var second_text = document.querySelectorAll('.entry-content p');
                var scond_content ="";
-               for(let i=0;i<second_text.length-1;i++){
-                 if(second_text[i].textContent.length>200){
-                    scond_content = scond_content +"\n"+second_text[i].textContent;
-                 }
+               for(let i=0;i<second_text.length;i++){
+                scond_content = scond_content +"\n"+second_text[i].textContent;
                }
                 return scond_content+".. .";
             }catch{
@@ -158,7 +165,13 @@ const GetContent = async(page,data)=>{
             }
         });
 
-        var author = null;
+        var author = await page.evaluate(()=>{
+            try{
+                return document.querySelector('.author').textContent.trim();
+            }catch{
+                return null;
+            }
+        })
     
     if(Content!=null && Content!="" && Content.length>255){
           AllData_WithConetent.push({
@@ -175,8 +188,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-// console.log(AllData_WithConetent)
- await InsertData(AllData_WithConetent);
+//  console.log(AllData_WithConetent)
+await InsertData(AllData_WithConetent);
 }
 
 module.exports=SCRAP;

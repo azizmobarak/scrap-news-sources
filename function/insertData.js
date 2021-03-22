@@ -34,18 +34,13 @@ var second_categorie ="peru"
           else{
              if(typeof doc[0]!="undefined"){
              } else{
-                 
-            for(let i=0;i<2;i++){
-            if(i==0){
-                var newModel = new Model(articledetails);
-                newModel.save((err,doc)=>{
-                   if(err)console.log(err)
-                  else{
-                     console.log("insert")
-                   }
-               });
-            }
-            }
+               var newModel = new Model(articledetails);
+               newModel.save((err,doc)=>{
+                  if(err)console.log(err)
+                 else{
+                    console.log("insert")
+                  }
+              });
              }
           }
       })
