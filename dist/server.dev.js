@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('22 */1 * * *', function () {
-  var scrap = require('./sources/ES/ELCOMIRCIO');
+cron.schedule('13 */1 * * *', function () {
+  var scrap = require('./sources/ES/CROMO');
 
   scrap();
 });

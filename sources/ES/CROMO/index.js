@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','health','economy'];
+var Categories=['technology'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -49,9 +49,7 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="https://elcomercio.pe/politica/";
-    if(Category==="health") url="https://elcomercio.pe/noticias/coronavirus/"
-    if(Category==="economy") url="https://elcomercio.pe/economia/"
+    var url="https://www.elobservador.com.uy/cromo"
     
     try{
         await page.goto(url);
@@ -62,7 +60,7 @@ for(let i=0;i<Categories.length;i++){
        // if(i==0) await page.click('#didomi-notice-agree-button');
       }
 
-await page.evaluate(()=>{
+ await page.evaluate(()=>{
 
         var totalHeight = 0;
             var distance = 100;
@@ -83,40 +81,34 @@ await page.evaluate(()=>{
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
             
-    var articles = document.querySelectorAll('article');
+    var articles = document.querySelectorAll('.nota_gen');
     var images ="img";
     var links = "a";
     var titles ="h2";
-
-    if(Category==="health"){
-        articles = document.querySelectorAll('.story-item');
-        images ="img";
-        links = ".story-item__title";
-        titles ="h2";
-    }
              
         var data =[];
 
-         for(let j=0;j<4;j++){
+         for(let j=0;j<5;j++){
+
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
 
-         var img = articles[j].querySelector(images).src;
+                var img = articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src;
 
                 data.push({
                     time : Date.now(),
-                    title : articles[j].querySelector(titles).textContent.trim(),
+                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
-                    images : articles[j].querySelector(images)==null ? null : img,
+                    images : img,
                     Category:Category,
-                    source :"Elcomercio "+Category,
-                    sourceLink:"https://elcomercio.pe",
-                    sourceLogo:"https://cdna.elcomercio.pe/resources/dist/elcomercio/images/logo_fb.jpg"
+                    source :"Cromo "+Category,
+                    sourceLink:"https://www.cromo.com.uy",
+                    sourceLogo:"https://www.elobservador.com.uy/images/cromo/cromo.png"
                       });
                    }
                }
                       return data;
      },Category);
-          //  console.log(PageData);
+        // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -147,16 +139,18 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      // console.log(url)
+     //   console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.story-contents__content p');
+               var second_text = document.querySelectorAll('.cuerpo p');
                var scond_content ="";
-               for(let i=1;i<second_text.length/2;i++){
-                  scond_content = scond_content +"\n"+second_text[i].textContent;
+               for(let i=0;i<second_text.length-1;i++){
+                 if(second_text[i].textContent.length>200){
+                    scond_content = scond_content +"\n"+second_text[i].textContent;
+                 }
                }
                 return scond_content+".. .";
             }catch{
@@ -164,15 +158,7 @@ const GetContent = async(page,data)=>{
             }
         });
 
-
-        var author = await page.evaluate(()=>{
-            try{
-               return document.querySelector('.story-contents__author-link').textContent;
-            }catch{
-                return null;
-            }
-        })
-
+        var author = null;
     
     if(Content!=null && Content!="" && Content.length>255){
           AllData_WithConetent.push({
@@ -189,9 +175,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
- //console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+// console.log(AllData_WithConetent)
+ await InsertData(AllData_WithConetent);
 }
-
 
 module.exports=SCRAP;

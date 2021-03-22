@@ -45,14 +45,6 @@ var InsertData = function InsertData(data) {
                           console.log("insert");
                         }
                       });
-                    } else {
-                      articledetails.categoryName = second_categorie;
-                      var newModel = new Model(articledetails);
-                      newModel.save(function (err, doc) {
-                        if (err) console.log(err);else {
-                          console.log("insert 2");
-                        }
-                      });
                     }
                   }
                 }

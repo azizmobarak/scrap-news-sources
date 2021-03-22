@@ -44,16 +44,7 @@ var second_categorie ="peru"
                      console.log("insert")
                    }
                });
-            }else{
-               articledetails.categoryName=second_categorie;
-               var newModel = new Model(articledetails);
-               newModel.save((err,doc)=>{
-                  if(err)console.log(err)
-                 else{
-                    console.log("insert 2")
-                    }
-                });
-               }
+            }
             }
              }
           }
