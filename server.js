@@ -3,9 +3,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3232;
 const con = require("mongoose");
-const {InsertData} = require('./function/insertData');
 const cron = require('node-cron')
-const {category} = require('./model/Category');
 
 
 con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true},(err,db)=>{
@@ -16,8 +14,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('15 */1 * * *', () => {
-   const scrap = require('./sources/ES/REPUBLICA');
+cron.schedule('02 */1 * * *', () => {
+   const scrap = require('./sources/ES/PRENSALIBRE');
    scrap();
 });
 

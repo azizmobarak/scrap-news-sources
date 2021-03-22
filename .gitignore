@@ -150,8 +150,8 @@ sources/ES/ELPAIS
 sources/ES/LANACION
 sources/ES/OBSERVADOR
 sources/ES/OLE
-sources/ES/PRENSALIBRE
-#sources/ES/REPUBLICA
+#sources/ES/PRENSALIBRE
+sources/ES/REPUBLICA
 #error =>
 sources/ES/SOY502 
 sources/ES/CLARIN

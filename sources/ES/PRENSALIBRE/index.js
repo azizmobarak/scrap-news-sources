@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['uruguay','culture','international'];
+var Categories=['guatemala','economy','life&style'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -49,14 +49,14 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="https://www.republica.com.uy/politica/";
-    if(Category==="culture") url ="https://www.republica.com.uy/cultura/";
-    if(Category==="international") url ="https://www.republica.com.uy/mundo/";
+    var url="https://www.prensalibre.com/guatemala/";
+    if(Category==="life&style") url ="https://www.prensalibre.com/vida/";
+    if(Category==="economy") url ="https://www.prensalibre.com/economia/";
     
     try{
         await page.goto(url);
         await page.waitForSelector('footer')
-       // if(i==0) await page.click('#didomi-notice-agree-button');
+        if(i==0) await page.click('.tp-close');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -94,28 +94,28 @@ var PageData = await page.evaluate((Category)=>{
 
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
 
-                var img = articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).style.backgroundImage;
+                var img = articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src;
 
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
-                    images : img==null ? null : img.substring(img.indexOf('("')+2,img.indexOf('")')),
+                    images : img,
                     Category:Category,
-                    source :"Republica "+Category,
-                    sourceLink:"https://www.republica.com.uy",
-                    sourceLogo:"https://www.republica.com.uy/wp-content/uploads/2021/02/logo-grupo-r-94x95-1.jpg"
+                    source :"PrensaLibre "+Category,
+                    sourceLink:"https://www.prensalibre.com",
+                    sourceLogo:"https://www.trinacionalriolempa.org/mtfrl/images/imagenes_del_sitio/logos/PrensaLibre.png"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
        }}catch(e){
-        console.log(e);
+        console.log(e)
         await browser.close();
        }
 
@@ -140,7 +140,7 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-
+        
        // console.log(url)
         await page.goto(url);
     
@@ -177,7 +177,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-//  console.log(AllData_WithConetent)
+ // console.log(AllData_WithConetent)
  await InsertData(AllData_WithConetent);
 }
 

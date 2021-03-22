@@ -13,7 +13,7 @@ var InsertData = function InsertData(data) {
         case 0:
           lang = "es";
           type = "Article";
-          second_categorie = "argentina";
+          second_categorie = "guatemala";
           data.map(function (article) {
             var _articledetails;
 
@@ -46,7 +46,7 @@ var InsertData = function InsertData(data) {
                         }
                       });
                     } else {
-                      if (articledetails.categoryName != "spain" || articledetails.categoryName != "international") {
+                      if (articledetails.categoryName != second_categorie || articledetails.categoryName != "international" || articledetails.categoryName != "life&style") {
                         articledetails.categoryName = second_categorie;
                         var newModel = new Model(articledetails);
                         newModel.save(function (err, doc) {
