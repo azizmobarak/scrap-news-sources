@@ -45,7 +45,7 @@ var second_categorie ="guatemala"
                    }
                });
             }else{
-               if(articledetails.categoryName!=second_categorie || articledetails.categoryName!="international" || articledetails.categoryName!="life&style"){
+               if(articledetails.categoryName!=second_categorie && articledetails.categoryName!="international" && articledetails.categoryName!="life&style"){
                 articledetails.categoryName=second_categorie;
                 var newModel = new Model(articledetails);
                 newModel.save((err,doc)=>{

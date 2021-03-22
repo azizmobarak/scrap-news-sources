@@ -46,7 +46,7 @@ var InsertData = function InsertData(data) {
                         }
                       });
                     } else {
-                      if (articledetails.categoryName != second_categorie || articledetails.categoryName != "international" || articledetails.categoryName != "life&style") {
+                      if (articledetails.categoryName != second_categorie && articledetails.categoryName != "international" && articledetails.categoryName != "life&style") {
                         articledetails.categoryName = second_categorie;
                         var newModel = new Model(articledetails);
                         newModel.save(function (err, doc) {
