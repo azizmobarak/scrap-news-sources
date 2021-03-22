@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('04 */1 * * *', function () {
-  var scrap = require('./sources/ES/CLARIN');
+cron.schedule('11 */1 * * *', function () {
+  var scrap = require('./sources/ES/OBSERVADOR');
 
   scrap();
 });

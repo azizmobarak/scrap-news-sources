@@ -45,14 +45,16 @@ var second_categorie ="argentina"
                    }
                });
             }else{
-                articledetails.categoryName=second_categorie;
-                var newModel = new Model(articledetails);
-                newModel.save((err,doc)=>{
-                   if(err)console.log(err)
-                  else{
-                     console.log("insert 2")
-                     }
-                 });
+               if(articledetails.categoryName==="economy"){
+                  articledetails.categoryName=second_categorie;
+                  var newModel = new Model(articledetails);
+                  newModel.save((err,doc)=>{
+                     if(err)console.log(err)
+                    else{
+                       console.log("insert 2")
+                       }
+                   });
+               }
                }
             }
              }

@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','football','economy','tennis','rugby','basketball','hockey'];
+var Categories=['uruguay','economy'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -49,13 +49,9 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="https://www.clarin.com/politica/";
-    if(Category==="football") url="https://www.clarin.com/deportes/futbol/"
-    if(Category==="economy") url="https://www.clarin.com/economia/"
-    if(Category==="tennis") url="https://www.clarin.com/deportes/tenis/"
-    if(Category==="rugby") url="https://www.clarin.com/deportes/rugby/"
-    if(Category==="basketball") url="https://www.clarin.com/tema/nba.html"
-    if(Category==="hockey") url="https://www.clarin.com/deportes/hockey/"
+    var url="https://www.elobservador.com.uy/elobservador/nacional";
+    if(Category==="economy") url ="https://www.elobservador.com.uy/elobservador/economia-y-empresas";
+    if(Category==="international") url ="https://www.elobservador.com.uy/elobservador/mundo";
     
     try{
         await page.goto(url);
@@ -66,7 +62,7 @@ for(let i=0;i<Categories.length;i++){
        // if(i==0) await page.click('#didomi-notice-agree-button');
       }
 
-await page.evaluate(()=>{
+ await page.evaluate(()=>{
 
         var totalHeight = 0;
             var distance = 100;
@@ -87,33 +83,31 @@ await page.evaluate(()=>{
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
             
-    var articles = document.querySelectorAll('article');
+    var articles = document.querySelectorAll('.nota_gen');
     var images ="img";
     var links = "a";
-    var titles ="h3";
+    var titles ="h2";
              
         var data =[];
 
          for(let j=0;j<4;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
 
-         var img = articles[j].querySelector(images).src;
-
                 data.push({
                     time : Date.now(),
-                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
+                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
-                    images : articles[j].querySelector(images)==null ? null : img,
+                    images : articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"Clarin "+Category,
-                    sourceLink:"https://www.clarin.com",
-                    sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Grupo_Clar%C3%ADn_logo.svg/1200px-Grupo_Clar%C3%ADn_logo.svg.png"
+                    source :"El Observador "+Category,
+                    sourceLink:"https://www.elobservador.com.uy/",
+                    sourceLogo:"https://www.elobservador.com.uy/images/og_image.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+          // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -150,10 +144,12 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.body-nota p');
+               var second_text = document.querySelectorAll('.cuerpo p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
-                  scond_content = scond_content +"\n"+second_text[i].textContent;
+                 if(second_text[i].textContent.length>200){
+                    scond_content = scond_content +"\n"+second_text[i].textContent;
+                 }
                }
                 return scond_content+".. .";
             }catch{
@@ -180,7 +176,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-// console.log(AllData_WithConetent)
+ // console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
