@@ -46,7 +46,7 @@ var InsertData = function InsertData(data) {
                         }
                       });
                     } else {
-                      if (articledetails.categoryName === "economy") {
+                      if (articledetails.categoryName != "life&style") {
                         articledetails.categoryName = second_categorie;
                         var newModel = new Model(articledetails);
                         newModel.save(function (err, doc) {

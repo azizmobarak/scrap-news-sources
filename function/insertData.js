@@ -45,7 +45,7 @@ var second_categorie ="argentina"
                    }
                });
             }else{
-               if(articledetails.categoryName==="economy"){
+               if(articledetails.categoryName!="life&style"){
                   articledetails.categoryName=second_categorie;
                   var newModel = new Model(articledetails);
                   newModel.save((err,doc)=>{

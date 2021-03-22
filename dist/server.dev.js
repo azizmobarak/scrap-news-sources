@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('11 */1 * * *', function () {
-  var scrap = require('./sources/ES/OBSERVADOR');
+cron.schedule('9 */1 * * *', function () {
+  var scrap = require('./sources/ES/LANACION');
 
   scrap();
 });

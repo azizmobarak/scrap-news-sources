@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['uruguay','economy'];
+var Categories=['politic','football','life&style','tennis','rugby'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -49,9 +49,12 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="https://www.elobservador.com.uy/elobservador/nacional";
-    if(Category==="economy") url ="https://www.elobservador.com.uy/elobservador/economia-y-empresas";
-    if(Category==="international") url ="https://www.elobservador.com.uy/elobservador/mundo";
+    var url="https://www.lanacion.com.ar/politica/";
+    if(Category==="international") url="https://www.lanacion.com.ar/el-mundo/";
+    if(Category==="life&style") url="https://www.lanacion.com.ar/lifestyle/";
+    if(Category==="football") url="https://www.lanacion.com.ar/deportes/futbol/";
+    if(Category==="rugby") url="https://www.lanacion.com.ar/deportes/rugby/";
+    if(Category==="tennis") url="https://www.lanacion.com.ar/deportes/tenis/";
     
     try{
         await page.goto(url);
@@ -83,7 +86,7 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
             
-    var articles = document.querySelectorAll('.nota_gen');
+    var articles = document.querySelectorAll('article');
     var images ="img";
     var links = "a";
     var titles ="h2";
@@ -93,21 +96,22 @@ var PageData = await page.evaluate((Category)=>{
          for(let j=0;j<4;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
 
+
                 data.push({
                     time : Date.now(),
-                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
+                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"El Observador "+Category,
-                    sourceLink:"https://www.elobservador.com.uy/",
-                    sourceLogo:"https://www.elobservador.com.uy/images/og_image.jpg"
+                    source :"Lanacion "+Category,
+                    sourceLink:"https://www.lanacion.com.ar/",
+                    sourceLogo:"https://tuquejasuma.com/media/cache/97/60/976035403b6c74beaafd36a33aac8d8f.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+        //    console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -144,12 +148,10 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.cuerpo p');
+               var second_text = document.querySelectorAll('.cuerpo__nota p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
-                 if(second_text[i].textContent.length>200){
-                    scond_content = scond_content +"\n"+second_text[i].textContent;
-                 }
+                  scond_content = scond_content +"\n"+second_text[i].textContent;
                }
                 return scond_content+".. .";
             }catch{
@@ -158,7 +160,13 @@ const GetContent = async(page,data)=>{
         });
 
 
-        var author = null;
+        var author = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.--autor').textContent.trim();
+            }catch{
+              return null;
+            }
+        });
 
     
     if(Content!=null && Content!="" && Content.length>255){
@@ -176,7 +184,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
- // console.log(AllData_WithConetent)
+// console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
