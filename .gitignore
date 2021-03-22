@@ -1,45 +1,75 @@
 /node_modules
 
-/sources/ABC_NEWS
+/sources/EN/ABC_NEWS
 
-/sources/BBC_NEWS
+/sources/EN/BBC_NEWS
 
-/sources/Bloomberg_News
+/sources/EN/Bloomberg_News
 
-/sources/CBS_News 
+/sources/EN/CBS_News 
 
-/sources/CNET_NEWS
+/sources/EN/CNET_NEWS
 
-/sources/CNN_NEWS
+/sources/EN/CNN_NEWS
 
-/sources/Daily_Mail
+/sources/EN/Daily_Mail
 
-/sources/FOX_News_Channel
+/sources/EN/FOX_News_Channel
 
-/sources/HBO_NEWS
+/sources/EN/HBO_NEWS
 
-/sources/HuffPost_NEWS
+/sources/EN/HuffPost_NEWS
 
-/sources/Los_Angeles_Times
+/sources/EN/Los_Angeles_Times
 
-/sources/MSNBC_NEWS
+/sources/EN/MSNBC_NEWS
 
-/sources/The_Guardian
+/sources/EN/The_Guardian
 
-/sources/The_New_York_Times
+/sources/EN/The_New_York_Times
 
-/sources/The_Wall_Street_Journal
+/sources/EN/The_Wall_Street_Journal
 
-/sources/The_Washington_Post 
+/sources/EN/The_Washington_Post
 
-/sources/Time_NEWS
+/sources/EN/Time_NEWS
 
-/sources/USA_Today
+/sources/EN/USA_Today
 
-/sources/Vice_News
+/sources/EN/Vice_News
 
-/sources/Los_Angeles_Daily_News
+/sources/EN/Los_Angeles_Daily_News
 
-/sources/Investopedia
+/sources/EN/Investopedia
 
-#/ESPN_NEWS
+/sources/EN/ESPN_NEWS
+
+/sources/EN/CTV
+
+/test.html
+
+/sources/EN/Marca
+
+/sources/EN/marketWatch
+
+/sources/EN/Economist
+
+/sources/EN/Reuters
+
+/sources/EN/Investing
+
+/sources/EN/Mirror
+
+/sources/EN/conscious
+
+/sources/EN/hollywood_news
+
+/sources/EN/SBS
+
+/sources/EN/sky_news
+
+/images
+
+sources/ES 
+sources/FR
+
