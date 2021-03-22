@@ -4,7 +4,7 @@ const InsertData=async(data)=>{
   
 var lang = "es";
 var type="Article";
-var second_categorie ="argentina"  
+var second_categorie ="uruguay"  
     data.map(article=>{
 
         var articleCateory = article.Category;
@@ -45,7 +45,7 @@ var second_categorie ="argentina"
                    }
                });
             }else{
-               if(articledetails.categoryName!="spain" || articledetails.categoryName!="international"){
+               if(articledetails.categoryName!=second_categorie && articledetails.categoryName!="international"){
                 articledetails.categoryName=second_categorie;
                 var newModel = new Model(articledetails);
                 newModel.save((err,doc)=>{
