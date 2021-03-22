@@ -106,7 +106,7 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-            console.log(PageData);
+          //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });

@@ -22,8 +22,6 @@ var second_categorie ="argentina"
               articleLanguage:lang,
               articleDescription:article.content
       }
-
-      console.log(articledetails)
       
        var Model =  category("articles");
       Model.find({$and : [
@@ -45,7 +43,7 @@ var second_categorie ="argentina"
                    }
                });
             }else{
-               if(articledetails.categoryName!=second_categorie || articledetails.categoryName!="international" || articledetails.categoryName!="spain"){
+               if(articledetails.categoryName!=second_categorie && articledetails.categoryName!="international" && articledetails.categoryName!="spain"){
                 articledetails.categoryName=second_categorie;
                 var newModel = new Model(articledetails);
                 newModel.save((err,doc)=>{
