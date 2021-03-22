@@ -4,7 +4,7 @@ const InsertData=async(data)=>{
   
 var lang = "es";
 var type="Article";
-var second_categorie ="argentina"  
+var second_categorie ="peru"  
     data.map(article=>{
 
         var articleCateory = article.Category;
@@ -45,16 +45,14 @@ var second_categorie ="argentina"
                    }
                });
             }else{
-               if(articledetails.categoryName!="life&style"){
-                  articledetails.categoryName=second_categorie;
-                  var newModel = new Model(articledetails);
-                  newModel.save((err,doc)=>{
-                     if(err)console.log(err)
-                    else{
-                       console.log("insert 2")
-                       }
-                   });
-               }
+               articledetails.categoryName=second_categorie;
+               var newModel = new Model(articledetails);
+               newModel.save((err,doc)=>{
+                  if(err)console.log(err)
+                 else{
+                    console.log("insert 2")
+                    }
+                });
                }
             }
              }

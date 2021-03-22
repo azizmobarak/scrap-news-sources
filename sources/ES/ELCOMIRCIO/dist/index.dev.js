@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', 'football', 'life&style', 'tennis', 'rugby'];
+var Categories = ['politic', 'health', 'economy'];
 
 var SCRAP = function SCRAP() {
   (function _callee2() {
@@ -55,39 +55,36 @@ var SCRAP = function SCRAP() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 39;
+              _context2.next = 36;
               break;
             }
 
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "https://www.lanacion.com.ar/politica/";
-            if (Category === "international") url = "https://www.lanacion.com.ar/el-mundo/";
-            if (Category === "life&style") url = "https://www.lanacion.com.ar/lifestyle/";
-            if (Category === "football") url = "https://www.lanacion.com.ar/deportes/futbol/";
-            if (Category === "rugby") url = "https://www.lanacion.com.ar/deportes/rugby/";
-            if (Category === "tennis") url = "https://www.lanacion.com.ar/deportes/tenis/";
-            _context2.prev = 17;
-            _context2.next = 20;
+            url = "https://elcomercio.pe/politica/";
+            if (Category === "health") url = "https://elcomercio.pe/noticias/coronavirus/";
+            if (Category === "economy") url = "https://elcomercio.pe/economia/";
+            _context2.prev = 14;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 20:
-            _context2.next = 22;
+          case 17:
+            _context2.next = 19;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 22:
-            _context2.next = 28;
+          case 19:
+            _context2.next = 25;
             break;
 
-          case 24:
-            _context2.prev = 24;
-            _context2.t0 = _context2["catch"](17);
-            _context2.next = 28;
+          case 21:
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 28:
-            _context2.next = 30;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -115,30 +112,39 @@ var SCRAP = function SCRAP() {
               }, 100);
             }));
 
-          case 30:
-            _context2.next = 32;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 32:
-            _context2.next = 34;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var articles = document.querySelectorAll('article');
               var images = "img";
               var links = "a";
               var titles = "h2";
+
+              if (Category === "health") {
+                articles = document.querySelectorAll('.story-item');
+                images = "img";
+                links = ".story-item__title";
+                titles = "h2";
+              }
+
               var data = [];
 
               for (var j = 0; j < 4; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
+                  var img = articles[j].querySelector(images).src;
                   data.push({
                     time: Date.now(),
-                    title: articles[j].querySelector(titles) == null ? articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
+                    title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
-                    images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
+                    images: articles[j].querySelector(images) == null ? null : img,
                     Category: Category,
-                    source: "Lanacion " + Category,
-                    sourceLink: "https://www.lanacion.com.ar/",
-                    sourceLogo: "https://tuquejasuma.com/media/cache/97/60/976035403b6c74beaafd36a33aac8d8f.jpg"
+                    source: "Elcomercio " + Category,
+                    sourceLink: "https://elcomercio.pe",
+                    sourceLogo: "https://cdna.elcomercio.pe/resources/dist/elcomercio/images/logo_fb.jpg"
                   });
                 }
               }
@@ -146,55 +152,55 @@ var SCRAP = function SCRAP() {
               return data;
             }, Category));
 
-          case 34:
+          case 31:
             PageData = _context2.sent;
-            //    console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 36:
+          case 33:
             i++;
             _context2.next = 9;
             break;
 
-          case 39:
-            _context2.next = 46;
+          case 36:
+            _context2.next = 43;
             break;
 
-          case 41:
-            _context2.prev = 41;
+          case 38:
+            _context2.prev = 38;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 46;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
-            _context2.prev = 46;
-            _context2.next = 49;
+          case 43:
+            _context2.prev = 43;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 49:
-            _context2.next = 56;
+          case 46:
+            _context2.next = 53;
             break;
 
-          case 51:
-            _context2.prev = 51;
-            _context2.t2 = _context2["catch"](46);
+          case 48:
+            _context2.prev = 48;
+            _context2.t2 = _context2["catch"](43);
             console.log(_context2.t2);
-            _context2.next = 56;
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 56:
-            _context2.next = 58;
+          case 53:
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
+          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 41], [17, 24], [46, 51]]);
+    }, null, null, [[7, 38], [14, 21], [43, 48]]);
   })();
 };
 
@@ -214,7 +220,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
+          url = item.link; // console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -224,10 +230,10 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.cuerpo__nota p');
+              var second_text = document.querySelectorAll('.story-contents__content p');
               var scond_content = "";
 
-              for (var _i = 0; _i < second_text.length - 1; _i++) {
+              for (var _i = 1; _i < second_text.length / 2; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 
@@ -242,7 +248,7 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.--autor').textContent.trim();
+              return document.querySelector('.story-contents__author-link').textContent;
             } catch (_unused3) {
               return null;
             }

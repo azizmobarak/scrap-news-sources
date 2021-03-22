@@ -25,8 +25,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('9 */1 * * *', function () {
-  var scrap = require('./sources/ES/LANACION');
+cron.schedule('22 */1 * * *', function () {
+  var scrap = require('./sources/ES/ELCOMIRCIO');
 
   scrap();
 });
