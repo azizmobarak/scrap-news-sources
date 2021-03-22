@@ -90,7 +90,7 @@ var PageData = await page.evaluate((Category)=>{
              
         var data =[];
 
-         for(let j=0;j<4;j++){
+         for(let j=0;j<3;j++){
 
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
 
@@ -110,7 +110,7 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-            console.log(PageData);
+           // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -141,7 +141,7 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
         
-       // console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -159,6 +159,7 @@ const GetContent = async(page,data)=>{
                return null;
             }
         });
+    
 
         var author = null;
     
@@ -177,8 +178,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
- // console.log(AllData_WithConetent)
- await InsertData(AllData_WithConetent);
+  // console.log(AllData_WithConetent)
+   await InsertData(AllData_WithConetent);
 }
 
 module.exports=SCRAP;
