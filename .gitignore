@@ -142,5 +142,16 @@ sources/ES/EUROPAPRESS
 
 sources/ES/WEBCONSULTAS
 
-#sources/ES/ELDEBER
+sources/ES/ELDEBER
+
+sources/ES/CROMO
+sources/ES/ELCOMIRCIO
+sources/ES/ELPAIS
+sources/ES/LANACION
+sources/ES/OBSERVADOR
+sources/ES/OLE
+sources/ES/PRENSALIBRE
+sources/ES/REPUBLICA
+sources/ES/SOY502
+#sources/ES/CLARIN
 

@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['health','economy'];
+var Categories=['politic','football','economy','tennis','rugby','basketball','hockey'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -34,7 +34,7 @@ const SCRAP = () =>{
             '--disable-dev-shm-usage',
             '--shm-size=3gb',
         ],
-       });
+});
 
 
        var page = await browser.newPage(); 
@@ -49,22 +49,24 @@ for(let i=0;i<Categories.length;i++){
     //get the right category by number
     var Category = Categories[i]
     //navigate to category sub route
-    var url="";
-    if(Category==="health") url="https://eldeber.com.bo/salud-y-bienestar"
-    if(Category==="economy") url="https://eldeber.com.bo/economia"
+    var url="https://www.clarin.com/politica/";
+    if(Category==="football") url="https://www.clarin.com/deportes/futbol/"
+    if(Category==="economy") url="https://www.clarin.com/economia/"
+    if(Category==="tennis") url="https://www.clarin.com/deportes/tenis/"
+    if(Category==="rugby") url="https://www.clarin.com/deportes/rugby/"
+    if(Category==="basketball") url="https://www.clarin.com/tema/nba.html"
+    if(Category==="hockey") url="https://www.clarin.com/deportes/hockey/"
     
     try{
         await page.goto(url);
         await page.waitForSelector('footer')
-        if(i==0) await page.click('#didomi-notice-agree-button');
+       // if(i==0) await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
-    }
-      //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+      }
 
-
-      await page.evaluate(()=>{
+await page.evaluate(()=>{
 
         var totalHeight = 0;
             var distance = 100;
@@ -84,35 +86,34 @@ for(let i=0;i<Categories.length;i++){
     
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
-               
-    var articles = document.querySelectorAll('.region');
-    var images =".loadingImage";
-    var links = ".nota-link";
-    var titles ="h2";
-       
-         
+            
+    var articles = document.querySelectorAll('article');
+    var images ="img";
+    var links = "a";
+    var titles ="h3";
+             
         var data =[];
 
-         for(let j=0;j<articles.length/2;j++){
+         for(let j=0;j<4;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
 
-                var img = articles[j].querySelector(images).style.backgroundImage;
+         var img = articles[j].querySelector(images).src;
 
                 data.push({
                     time : Date.now(),
-                    title : articles[j].querySelector(titles).textContent.trim(),
+                    title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
-                    images : articles[j].querySelector(images)==null ? null : img.substring(img.indexOf('("')+2,img.indexOf('")')),
+                    images : articles[j].querySelector(images)==null ? null : img,
                     Category:Category,
-                    source :"ELDEBER "+Category,
-                    sourceLink:"https://eldeber.com.bo",
-                    sourceLogo:"https://www.somare.com/wp-content/uploads/2020/02/logo-el-deber.png"
+                    source :"Clarin "+Category,
+                    sourceLink:"https://www.clarin.com",
+                    sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Grupo_Clar%C3%ADn_logo.svg/1200px-Grupo_Clar%C3%ADn_logo.svg.png"
                       });
                    }
                }
                       return data;
      },Category);
-            console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -143,15 +144,15 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      //console.log(url)
+      //  console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('article p');
+               var second_text = document.querySelectorAll('.body-nota p');
                var scond_content ="";
-               for(let i=0;i<second_text.length/2;i++){
+               for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
                 return scond_content+".. .";
@@ -159,6 +160,9 @@ const GetContent = async(page,data)=>{
                return null;
             }
         });
+
+
+        var author = null;
 
     
     if(Content!=null && Content!="" && Content.length>255){
@@ -171,7 +175,7 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : null,
+                author : author,
                 content:Content
           });
        }
@@ -179,6 +183,5 @@ const GetContent = async(page,data)=>{
 // console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
-
 
 module.exports=SCRAP;

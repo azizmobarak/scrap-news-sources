@@ -6,13 +6,14 @@ var _require = require('../model/Category'),
     category = _require.category;
 
 var InsertData = function InsertData(data) {
-  var lang, type;
+  var lang, type, second_categorie;
   return regeneratorRuntime.async(function InsertData$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           lang = "es";
           type = "Article";
+          second_categorie = "argentina";
           data.map(function (article) {
             var _articledetails;
 
@@ -36,18 +37,32 @@ var InsertData = function InsertData(data) {
             }, function (err, doc) {
               if (err) console.log(err);else {
                 if (typeof doc[0] != "undefined") {} else {
-                  var newModel = new Model(articledetails);
-                  newModel.save(function (err, doc) {
-                    if (err) console.log(err);else {
-                      console.log("insert");
+                  for (var i = 0; i < 2; i++) {
+                    if (i == 0) {
+                      var newModel = new Model(articledetails);
+                      newModel.save(function (err, doc) {
+                        if (err) console.log(err);else {
+                          console.log("insert");
+                        }
+                      });
+                    } else {
+                      if (articledetails.categoryName != "spain" || articledetails.categoryName != "international") {
+                        articledetails.categoryName = second_categorie;
+                        var newModel = new Model(articledetails);
+                        newModel.save(function (err, doc) {
+                          if (err) console.log(err);else {
+                            console.log("insert 2");
+                          }
+                        });
+                      }
                     }
-                  });
+                  }
                 }
               }
             });
           });
 
-        case 3:
+        case 4:
         case "end":
           return _context.stop();
       }

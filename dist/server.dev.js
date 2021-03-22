@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-});
-cron.schedule('17 */1 * * *', function () {
-  var scrap = require('./sources/ES/ELDEBER');
+}); // cron.schedule('17 */1 * * *', () => {
 
-  scrap();
-});
+var scrap = require('./sources/ES/CLARIN');
+
+scrap(); // });
+
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

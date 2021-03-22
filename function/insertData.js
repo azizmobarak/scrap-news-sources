@@ -4,7 +4,7 @@ const InsertData=async(data)=>{
   
 var lang = "es";
 var type="Article";
-
+var second_categorie ="argentina"  
     data.map(article=>{
 
         var articleCateory = article.Category;
@@ -34,13 +34,29 @@ var type="Article";
           else{
              if(typeof doc[0]!="undefined"){
              } else{
-                   var newModel = new Model(articledetails);
-                   newModel.save((err,doc)=>{
-                    if(err)console.log(err)
-                 else{
-                  console.log("insert")
-                    }
-                });
+                 
+            for(let i=0;i<2;i++){
+            if(i==0){
+                var newModel = new Model(articledetails);
+                newModel.save((err,doc)=>{
+                   if(err)console.log(err)
+                  else{
+                     console.log("insert")
+                   }
+               });
+            }else{
+               if(articledetails.categoryName!="spain" || articledetails.categoryName!="international"){
+                articledetails.categoryName=second_categorie;
+                var newModel = new Model(articledetails);
+                newModel.save((err,doc)=>{
+                   if(err)console.log(err)
+                  else{
+                     console.log("insert 2")
+                     }
+                 });
+               }
+               }
+            }
              }
           }
       })

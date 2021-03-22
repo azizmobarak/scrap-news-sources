@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['health', 'economy'];
+var Categories = ['politic', 'football', 'economy', 'tennis', 'rugby', 'basketball', 'hockey'];
 
 var SCRAP = function SCRAP() {
   (function _callee2() {
@@ -62,38 +62,33 @@ var SCRAP = function SCRAP() {
             //get the right category by number
             Category = Categories[i]; //navigate to category sub route
 
-            url = "";
-            if (Category === "health") url = "https://eldeber.com.bo/salud-y-bienestar";
-            if (Category === "economy") url = "https://eldeber.com.bo/economia";
-            _context2.prev = 14;
-            _context2.next = 17;
+            url = "https://www.clarin.com/politica/";
+            if (Category === "football") url = "https://www.clarin.com/deportes/futbol/";
+            if (Category === "economy") url = "https://www.clarin.com/economia/";
+            if (Category === "tennis") url = "https://www.clarin.com/deportes/tenis/";
+            if (Category === "rugby") url = "https://www.clarin.com/deportes/rugby/";
+            if (Category === "basketball") url = "https://www.clarin.com/tema/nba.html";
+            if (Category === "hockey") url = "https://www.clarin.com/deportes/hockey/";
+            _context2.prev = 18;
+            _context2.next = 21;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 17:
-            _context2.next = 19;
+          case 21:
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 19:
-            if (!(i == 0)) {
-              _context2.next = 22;
-              break;
-            }
-
-            _context2.next = 22;
-            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
-
-          case 22:
-            _context2.next = 28;
+          case 23:
+            _context2.next = 29;
             break;
 
-          case 24:
-            _context2.prev = 24;
-            _context2.t0 = _context2["catch"](14);
-            _context2.next = 28;
+          case 25:
+            _context2.prev = 25;
+            _context2.t0 = _context2["catch"](18);
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 28:
-            _context2.next = 30;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -121,31 +116,31 @@ var SCRAP = function SCRAP() {
               }, 100);
             }));
 
-          case 30:
-            _context2.next = 32;
+          case 31:
+            _context2.next = 33;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 32:
-            _context2.next = 34;
+          case 33:
+            _context2.next = 35;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.region');
-              var images = ".loadingImage";
-              var links = ".nota-link";
-              var titles = "h2";
+              var articles = document.querySelectorAll('article');
+              var images = "img";
+              var links = "a";
+              var titles = "h3";
               var data = [];
 
-              for (var j = 0; j < articles.length / 2; j++) {
+              for (var j = 0; j < 4; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
-                  var img = articles[j].querySelector(images).style.backgroundImage;
+                  var img = articles[j].querySelector(images).src;
                   data.push({
                     time: Date.now(),
-                    title: articles[j].querySelector(titles).textContent.trim(),
+                    title: articles[j].querySelector(titles) == null ? articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
-                    images: articles[j].querySelector(images) == null ? null : img.substring(img.indexOf('("') + 2, img.indexOf('")')),
+                    images: articles[j].querySelector(images) == null ? null : img,
                     Category: Category,
-                    source: "ELDEBER " + Category,
-                    sourceLink: "https://eldeber.com.bo",
-                    sourceLogo: "https://www.somare.com/wp-content/uploads/2020/02/logo-el-deber.png"
+                    source: "Clarin " + Category,
+                    sourceLink: "https://www.clarin.com",
+                    sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Grupo_Clar%C3%ADn_logo.svg/1200px-Grupo_Clar%C3%ADn_logo.svg.png"
                   });
                 }
               }
@@ -153,9 +148,9 @@ var SCRAP = function SCRAP() {
               return data;
             }, Category));
 
-          case 34:
+          case 35:
             PageData = _context2.sent;
-            console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
@@ -201,12 +196,12 @@ var SCRAP = function SCRAP() {
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 42], [14, 24], [47, 52]]);
+    }, null, null, [[7, 42], [18, 25], [47, 52]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -216,12 +211,12 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 15;
             break;
           }
 
           item = data[i];
-          url = item.link; //console.log(url)
+          url = item.link; //  console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -231,10 +226,10 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('article p');
+              var second_text = document.querySelectorAll('.body-nota p');
               var scond_content = "";
 
-              for (var _i = 0; _i < second_text.length / 2; _i++) {
+              for (var _i = 0; _i < second_text.length - 1; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 
@@ -246,6 +241,7 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          author = null;
 
           if (Content != null && Content != "" && Content.length > 255) {
             AllData_WithConetent.push({
@@ -257,21 +253,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: null,
+              author: author,
               content: Content
             });
           }
 
-        case 11:
+        case 12:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
+        case 15:
+          _context3.next = 17;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 17:
         case "end":
           return _context3.stop();
       }
