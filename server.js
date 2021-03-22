@@ -16,10 +16,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('17 */1 * * *', () => {
+cron.schedule('04 */1 * * *', () => {
    const scrap = require('./sources/ES/CLARIN');
    scrap();
-// });
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
