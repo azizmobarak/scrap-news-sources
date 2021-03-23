@@ -152,7 +152,6 @@ var TELECINCO = function TELECINCO() {
 
           case 32:
             PageData = _context2.sent;
-            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
@@ -218,8 +217,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
+          url = item.link;
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
