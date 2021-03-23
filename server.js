@@ -144,7 +144,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 cron.schedule('50 */1 * * *', () => {
     //1h
-const VICENEWS = require('./sources/Vice News');
+const VICENEWS = require('./sources/Vice_News');
 VICENEWS();
 });
 

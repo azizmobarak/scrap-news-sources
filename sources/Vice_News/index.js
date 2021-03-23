@@ -40,7 +40,8 @@ const VICENEWS = () =>{
        var page = await browser.newPage(); 
 
  
-var AllData=[]; 
+var AllData=[];
+try{ 
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -92,7 +93,7 @@ var PageData = await page.evaluate((Category)=>{
            cateogryName="international"
        }else{
            if(Category==="sex"){
-               cateogryName="health,love"
+               cateogryName="health"
            }
        }
 
@@ -129,16 +130,19 @@ var PageData = await page.evaluate((Category)=>{
                    AllData.push(item)
                });
 
-            }catch{
+            }catch(e){
+            console.log(e);
              i=i-1;
             }
 
               
-       }
+       }}catch(e){  console.log(e); await browser.close();  }
   
-     await GetContent(page,AllData);
+try{await GetContent(page,AllData);}catch(e){await browser.close();}
+
      await browser.close();
-    })();
+   
+ })();
 }
 
 
