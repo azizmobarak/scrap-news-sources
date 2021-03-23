@@ -93,8 +93,16 @@ var PageData = await page.evaluate((Category)=>{
             linkClassName=".lead-one-up__info h2.lead-one-up__title a";
             loop=1;
         }else{
-            cateogryName=Category;
-            loop=3;
+
+       if(Category==="politics"){ categoryName="politic";loop=3; }
+       else{
+        if(Category==="world"){ categoryName="international";loop=3;}
+       else{
+          categoryName=Category;
+          loop=3;
+         }
+}
+            
         }
     }
     //////////////////////////////

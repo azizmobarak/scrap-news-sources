@@ -110,7 +110,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // console.log("heel")
 // });
 
-cron.schedule('4 */1 * * *', () => {
+cron.schedule('36 */1 * * *', () => {
     //1h
 const MSNBC = require('./sources/MSNBC');
 MSNBC()
