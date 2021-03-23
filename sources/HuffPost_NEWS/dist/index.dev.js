@@ -32,7 +32,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['news/us-news', 'impact/business', 'section/health', 'entertainment/celebrity', 'entertainment/arts', 'life/style', 'life/taste', 'news/media', 'news/world-news', 'entertainment/tv', 'life/travel', 'voices/women', 'life/relationships', 'news-australia', 'news-canada', 'news-uk'];
+var Categories = ['news/us-news', 'impact/business', 'section/health', 'entertainment/celebrity', 'entertainment/arts', 'life/style', 'life/taste', 'news/media', 'news/world-news', 'entertainment/tv', 'life/travel', 'voices/women', 'life/relationships', 'news-uk'];
 
 var HuffPost = function HuffPost() {
   (function _callee() {
@@ -58,7 +58,7 @@ var HuffPost = function HuffPost() {
             k = 0;
 
           case 8:
-            if (!(k < 5)) {
+            if (!(k < 3)) {
               _context.next = 22;
               break;
             }
@@ -91,7 +91,7 @@ var HuffPost = function HuffPost() {
 
           case 24:
             if (!(i < Categories.length)) {
-              _context.next = 68;
+              _context.next = 56;
               break;
             }
 
@@ -134,7 +134,7 @@ var HuffPost = function HuffPost() {
             return regeneratorRuntime.awrap(page["goto"]([url, '', Category].join('')));
 
           case 37:
-            _context.next = 61;
+            _context.next = 48;
             break;
 
           case 39:
@@ -159,43 +159,18 @@ var HuffPost = function HuffPost() {
 
           case 48:
             _context.next = 50;
-            return regeneratorRuntime.awrap(page.solveRecaptchas());
-
-          case 50:
-            _context.t2 = regeneratorRuntime;
-            _context.t3 = Promise;
-            _context.t4 = page.waitForNavigation();
-            _context.t5 = page.click(".g-recaptcha");
-            _context.next = 56;
-            return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
-              return el.click();
-            }));
-
-          case 56:
-            _context.t6 = _context.sent;
-            _context.t7 = [_context.t4, _context.t5, _context.t6];
-            _context.t8 = _context.t3.all.call(_context.t3, _context.t7);
-            _context.next = 61;
-            return _context.t2.awrap.call(_context.t2, _context.t8);
-
-          case 61:
-            _context.next = 63;
             return regeneratorRuntime.awrap(page.evaluate(function (Category, url) {
               // HuffPost Classes
-              var titleClassName = ".zone__content a.card__headline--long>h2";
-              var linkClassName = ".zone__content a.card__headline--long";
-              var imageClassName = ".zone__content .card__image__src picture img.landscape";
+              var articles = document.querySelectorAll('.card--standard');
+              var titleClassName = "h2";
+              var linkClassName = "a";
+              var imageClassName = "img";
 
               if (Category.indexOf("life") != -1) {
-                titleClassName = ".zone--latest .zone__content h3.card__headline__text";
-                linkClassName = ".zone--latest .zone__content a.card__headline";
-                imageClassName = ".zone--latest .zone__content .card__image__src picture>img";
-              } // get lists
+                articles = document.querySelectorAll('.card');
+                titleClassName = "h3";
+              } //change category name
 
-
-              var titles = document.querySelectorAll(titleClassName);
-              var links = document.querySelectorAll(linkClassName);
-              var images = document.querySelectorAll(imageClassName); //change category name
 
               var cateogryName = Category;
 
@@ -220,19 +195,19 @@ var HuffPost = function HuffPost() {
               }
 
               if (Category === 'news/world-news') cateogryName = "international";
-              if (Category === "news/us-news") cateogryName = "US"; //////////////////////////////
+              if (Category === "news/us-news") cateogryName = "us"; //////////////////////////////
 
               var data = [];
 
               for (var j = 0; j < 3; j++) {
-                if (typeof titles[j] != "undefined" && typeof links[j] != "undefined" && images[j].src.indexOf('http') == 0) {
+                if (articles[j].querySelector(titleClassName) != null && articles[j].querySelector(linkClassName) != null && articles[j].querySelector(imageClassName).src.indexOf('http') == 0) {
                   data.push({
                     time: Date.now(),
-                    title: titles[j].textContent.trim(),
-                    link: links[j].href,
-                    images: typeof images[j] != "undefined" ? images[j].src : null,
-                    Category: cateogryName,
-                    source: "HuffPost",
+                    title: articles[j].querySelector(titleClassName).textContent.trim(),
+                    link: articles[j].querySelector(linkClassName).href,
+                    images: typeof articles[j].querySelector(imageClassName) != "undefined" ? articles[j].querySelector(imageClassName).src : null,
+                    Category: cateogryName.toLowerCase(),
+                    source: "HuffPost " + cateogryName,
                     sourceLink: url,
                     sourceLogo: "http://www.logo-designer.co/wp-content/uploads/2017/04/2017-huffpost-new-logo-design-2.png"
                   });
@@ -242,53 +217,54 @@ var HuffPost = function HuffPost() {
               return data;
             }, Category, url));
 
-          case 63:
+          case 50:
             PageData = _context.sent;
+            console.log(PageData);
             PageData.map(function (item) {
               console.log(item.Category);
               AllData.push(item);
             });
 
-          case 65:
+          case 53:
             i++;
             _context.next = 24;
             break;
 
-          case 68:
-            _context.next = 74;
+          case 56:
+            _context.next = 62;
             break;
 
-          case 70:
-            _context.prev = 70;
-            _context.t9 = _context["catch"](22);
-            _context.next = 74;
+          case 58:
+            _context.prev = 58;
+            _context.t2 = _context["catch"](22);
+            _context.next = 62;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 74:
-            _context.prev = 74;
-            _context.next = 77;
+          case 62:
+            _context.prev = 62;
+            _context.next = 65;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 77:
-            _context.next = 83;
+          case 65:
+            _context.next = 71;
             break;
 
-          case 79:
-            _context.prev = 79;
-            _context.t10 = _context["catch"](74);
-            _context.next = 83;
+          case 67:
+            _context.prev = 67;
+            _context.t3 = _context["catch"](62);
+            _context.next = 71;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 83:
-            _context.next = 85;
+          case 71:
+            _context.next = 73;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 85:
+          case 73:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[9, 16], [22, 70], [29, 39], [74, 79]]);
+    }, null, null, [[9, 16], [22, 58], [29, 39], [62, 67]]);
   })();
 };
 
@@ -303,35 +279,34 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 32;
+            _context2.next = 31;
             break;
           }
 
           item = data[i];
           url = item.link;
-          console.log(i);
-          _context2.prev = 6;
-          _context2.next = 9;
+          _context2.prev = 5;
+          _context2.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url, {
             waitUntil: 'load',
             timeout: 0
           }));
 
-        case 9:
-          _context2.next = 15;
+        case 8:
+          _context2.next = 14;
           break;
 
-        case 11:
-          _context2.prev = 11;
-          _context2.t0 = _context2["catch"](6);
-          _context2.next = 15;
+        case 10:
+          _context2.prev = 10;
+          _context2.t0 = _context2["catch"](5);
+          _context2.next = 14;
           return regeneratorRuntime.awrap(page["goto"](url, {
             waitUntil: 'load',
             timeout: 0
           }));
 
-        case 15:
-          _context2.next = 17;
+        case 14:
+          _context2.next = 16;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var text = document.querySelector('.entry__text');
 
@@ -346,17 +321,17 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 17:
+        case 16:
           Content = _context2.sent;
           // get the author with content
           author = "";
 
           if (!(item.Category.indexOf("life&style") != -1)) {
-            _context2.next = 25;
+            _context2.next = 24;
             break;
           }
 
-          _context2.next = 22;
+          _context2.next = 21;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var auth = document.querySelector('.entry__byline__author>a>div');
 
@@ -367,13 +342,13 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 22:
+        case 21:
           author = _context2.sent;
-          _context2.next = 28;
+          _context2.next = 27;
           break;
 
-        case 25:
-          _context2.next = 27;
+        case 24:
+          _context2.next = 26;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var auth = document.querySelector('a.author-card__link>span');
 
@@ -384,10 +359,10 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 27:
+        case 26:
           author = _context2.sent;
 
-        case 28:
+        case 27:
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
               time: Date.now(),
@@ -403,21 +378,20 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 29:
+        case 28:
           i++;
           _context2.next = 2;
           break;
 
-        case 32:
-          _context2.next = 34;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 31:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
-        case 34:
+        case 32:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[6, 11]]);
+  }, null, null, [[5, 10]]);
 };
 
 module.exports = HuffPost;
