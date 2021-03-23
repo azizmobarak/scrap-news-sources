@@ -44,7 +44,6 @@ for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
-        console.log(Category)
       
 
       try{
@@ -55,77 +54,54 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          await page.goto(['https://www.nbcnews.com/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);
     }
 
       // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-            
-    // Los Angelece News classes
-    var loop=0;
-
-    var titleClassName="div.layout-grid-item .multi-up__content h2.tease-card__headline";
-    var linkClassName="div.layout-grid-item .multi-up__content .multi-up__article article>.tease-card__picture>a";
-    var imageClassName="div.layout-grid-item .multi-up__content .multi-up__article article>.tease-card__picture img";
+    var articles=document.querySelectorAll('article');
+    var titleClassName="h2:nth-child(1)";
+    var linkClassName="a";
+    var imageClassName="img";
   
   
     
+    var loop=3;
     //change category name
-    var cateogryName = "";
+    var categoryName = "";
     
     if(Category==="health/coronavirus"){
-        cateogryName="health";
-        imageClassName=".cover-spread-tease .cover-spread-tease--null .cover-spread-tease__image img";
-        titleClassName=".cover-spread-tease__text-wrapper h3.cover-spread-tease__headline";
-        linkClassName=".cover-spread-tease .cover-spread-tease--null .cover-spread-tease__image a";
-        loop=3;
+        categoryName="health";
     }else{
         if(Category==="think"){
-            cateogryName = "opinion";
-            imageClassName=".lazyload-wrapper img";
-            titleClassName=".lead-one-up__info h2.lead-one-up__title";
-            linkClassName=".lead-one-up__info h2.lead-one-up__title a";
-            loop=1;
+            categoryName = "opinion";
         }else{
 
-       if(Category==="politics"){ categoryName="politic";loop=3; }
+       if(Category==="politics"){ categoryName="politic"; }
        else{
-        if(Category==="world"){ categoryName="international";loop=3;}
+        if(Category==="world"){ categoryName="international";loop=2;}
        else{
           categoryName=Category;
-          loop=3;
          }
 }
             
         }
     }
-    //////////////////////////////
-
-      // change the source logo to http 
-      var titles = document.querySelectorAll(titleClassName);
-      var images = document.querySelectorAll(imageClassName);
-      var links = document.querySelectorAll(linkClassName);
 
       ///////////////////////////////////////
 
          var data =[];
          for(let j=0;j<loop;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                        time : Date.now(),
-                       title :typeof(images[j])!="undefined" ? titles[j].textContent.trim() : null,
-                       link : links[j].href,
-                       images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:cateogryName,
-                       source :"MSNBC NEWS",
+                       title :articles[j].querySelector(titleClassName).textContent.trim(),
+                       link : articles[j].querySelector(linkClassName).href,
+                       images :articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src : null,
+                       Category:categoryName,
+                       source :"MSNBC "+categoryName,
                        sourceLink:"https://www.nbcnews.com/",
                        sourceLogo:"https://png.pngitem.com/pimgs/s/488-4884737_msnbc-news-cnbc-logo-png-transparent-png.png"
                          });
@@ -134,12 +110,10 @@ var PageData = await page.evaluate((Category)=>{
                       return data;
                },Category);
 
-               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
        }
-      console.log(AllData);
   
      await GetContent(page,AllData);
      await browser.close();
@@ -156,7 +130,6 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-        console.log(url);
 
         try{
             await page.goto(url);
@@ -185,7 +158,6 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    
     await InsertData(AllData_WithConetent);
 }
 
