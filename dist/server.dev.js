@@ -28,13 +28,13 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-}); //cron.schedule('5 */1 * * *', () => {
-// 30 min
+});
+cron.schedule('5 */1 * * *', function () {
+  // 30 min
+  var HuffPost = require('./sources/HuffPost_NEWS');
 
-var HuffPost = require('./sources/HuffPost_NEWS');
-
-HuffPost(); //});
-
+  HuffPost();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

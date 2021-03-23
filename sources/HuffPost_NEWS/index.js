@@ -158,9 +158,8 @@ if(Category==="news/us-news") cateogryName="us";
                }
                       return data;
     },Category,url);
-               console.log(PageData)
+             //  console.log(PageData)
                PageData.map(item=>{
-                   console.log(item.Category)
                    AllData.push(item)
                });
     }
@@ -248,8 +247,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    console.log(AllData_WithConetent)
-   // await InsertData(AllData_WithConetent);
+   // console.log(AllData_WithConetent)
+    await InsertData(AllData_WithConetent);
 }
 
 

@@ -91,7 +91,7 @@ var HuffPost = function HuffPost() {
 
           case 24:
             if (!(i < Categories.length)) {
-              _context.next = 56;
+              _context.next = 55;
               break;
             }
 
@@ -219,52 +219,51 @@ var HuffPost = function HuffPost() {
 
           case 50:
             PageData = _context.sent;
-            console.log(PageData);
+            //  console.log(PageData)
             PageData.map(function (item) {
-              console.log(item.Category);
               AllData.push(item);
             });
 
-          case 53:
+          case 52:
             i++;
             _context.next = 24;
             break;
 
-          case 56:
-            _context.next = 62;
+          case 55:
+            _context.next = 61;
             break;
 
-          case 58:
-            _context.prev = 58;
+          case 57:
+            _context.prev = 57;
             _context.t2 = _context["catch"](22);
-            _context.next = 62;
+            _context.next = 61;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 62:
-            _context.prev = 62;
-            _context.next = 65;
+          case 61:
+            _context.prev = 61;
+            _context.next = 64;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 65:
-            _context.next = 71;
+          case 64:
+            _context.next = 70;
             break;
 
-          case 67:
-            _context.prev = 67;
-            _context.t3 = _context["catch"](62);
-            _context.next = 71;
+          case 66:
+            _context.prev = 66;
+            _context.t3 = _context["catch"](61);
+            _context.next = 70;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 71:
-            _context.next = 73;
+          case 70:
+            _context.next = 72;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 73:
+          case 72:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[9, 16], [22, 58], [29, 39], [62, 67]]);
+    }, null, null, [[9, 16], [22, 57], [29, 39], [61, 66]]);
   })();
 };
 
@@ -384,9 +383,10 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 31:
-          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
+          _context2.next = 33;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 32:
+        case 33:
         case "end":
           return _context2.stop();
       }

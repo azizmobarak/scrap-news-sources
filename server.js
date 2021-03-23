@@ -21,11 +21,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-//cron.schedule('5 */1 * * *', () => {
+cron.schedule('5 */1 * * *', () => {
 // 30 min
   const HuffPost = require('./sources/HuffPost_NEWS');
   HuffPost();
-//});
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
