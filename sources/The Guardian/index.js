@@ -40,6 +40,8 @@ const Gardian = () =>{
       
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -90,23 +92,23 @@ var PageData = await page.evaluate((Category)=>{
     
         if(Category.indexOf('/')!=-1 && Category.indexOf('uk')!=-1){
             if(Category.indexOf('commentisfree')!=-1){
-                cateogryName="opinion,uk"
+                cateogryName="opinion"
             }else{
                 if(Category.indexOf('lifeandstyle')!=-1){
-                    cateogryName="life&style,uk"
+                    cateogryName="life&style"
                 }else{
-                   cateogryName = Category.substring(Category.indexOf('/')+1,Category.length)+","+"uk";
+                   cateogryName ="uk";
                         }
             }
         }else{
             if(Category.indexOf('/')!=-1 && Category.indexOf('sport')!=-1){
                 if(Category.indexOf('us')!=-1){
-                    cateogryName="sport,us";
+                    cateogryName="sport";
                 }else{
                     if(Category.indexOf('rugby')!=-1){
-                        cateogryName="sport,rugby";
+                        cateogryName="rugby";
                     }else{
-                        cateogryName = Category.substring(Category.indexOf('/')+1,Category.length)+","+"sport";
+                        cateogryName ="sport";
                     }
                 }
         }else{
@@ -114,35 +116,34 @@ var PageData = await page.evaluate((Category)=>{
                 cateogryName="uk";
             }else{
                 if(Category.indexOf('global-development')!=-1){
-                    cateogryName="International";
+                    cateogryName="international";
                 }else{
                     if(Category.indexOf('artanddesign')!=-1){
                         cateogryName="art&design";
                     }else{
                         if(Category.indexOf('/')!=-1 && Category.indexOf('lifeandstyle/')!=-1){
-                            if(Category==='home-and-garden'){
-                                cateogryName="life&style,house";
+                            if(Category.indexOf('home-and-garden')!=-1){
+                                cateogryName="life&style";
                             }else{
-                                if(Category==='health-and-wellbeing'){
-                                    cateogryName="health,life&style";
+                                if(Category.indexOf('health-and-wellbeing')!=-1){
+                                    cateogryName="health";
                                 }else{
                                     if(cateogryName.indexOf('love-and-sex')!=-1){
-                                        cateogryName="love&next,life&style";
+                                        cateogryName="life&style";
                                     }else{
-                                        if(Category==="world"){
-                                            cateogryName="International"
-                                        }else{
-                                            cateogryName = Category.substring(Category.indexOf('/')+1,Category.length)+","+"life&style";
-                                        }
+                                            cateogryName ="life&style";
                                     }
                                 }
                             }
                         }else{
                             if(Category==="football"){
-                                cateogryName="sport,football";
+                                cateogryName="football";
                             }else{
-                                cateogryName=Category;
-                            }
+                            if(Category==="world") cateogryName="international";
+                             else{
+                               cateogryName=Category;
+                                 }
+                              }
                         }
                     }
                 }
@@ -175,10 +176,15 @@ var PageData = await page.evaluate((Category)=>{
                PageData.map(item=>{
                    AllData.push(item)
                });
-       }
-      console.log(AllData);
-  
-     await GetContent(page,AllData);
+       }} catch{
+           await browser.close();
+             }
+    
+     try{
+        await GetContent(page,AllData);
+         }catch{
+      await browser.close();
+          }
      await browser.close();
     })();
 }

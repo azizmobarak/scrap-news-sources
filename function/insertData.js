@@ -7,17 +7,15 @@ var type="Article";
 
     data.map(article=>{
 
-        var articleCateory = article.Category.split(',');
-        
-        console.log(articleCateory)
+        var articleCateory = article.Category;
       
-        for(let cat=0;cat< articleCateory.length ;cat++ ){
+    
              
           var articledetails ={
               articleTitle : article.title,
               articleSourceLink : article.link,
               articleImageURL : article.images,
-              categoryName:articleCateory[cat],
+              categoryName:articleCateory,
               mediaName :article.source,
               mediaLogo:article.sourceLogo,
               mediaName:article.source,
@@ -36,9 +34,9 @@ var type="Article";
           else{
              if(typeof doc[0]!="undefined"){
                  console.log('exist')
-             } else{
-                   var newModel = new Model(articledetails);
-                   newModel.save((err,doc)=>{
+             }else{
+                 var newModel = new Model(articledetails);
+                newModel.save((err,doc)=>{
                     if(err)console.log(err)
                  else{
                   console.log("insert")
@@ -46,8 +44,8 @@ var type="Article";
                 });
              }
           }
-      })
-        }
+      });
+  
          });
 }
 

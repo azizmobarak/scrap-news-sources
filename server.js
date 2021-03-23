@@ -116,7 +116,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // MSNBC()
 // });
 
-cron.schedule('*/35 * * * *', () => {
+cron.schedule('35 */1 * * *', () => {
 //1h
 const Gardian = require('./sources/The Guardian');
 Gardian();
