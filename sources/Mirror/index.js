@@ -51,6 +51,8 @@ for(let i=0;i<Categories.length;i++){
         //navigate to category sub route
        try{
         await page.goto('https://www.mirror.co.uk/news/politics');
+        await page.waitForSelector(".qc-cmp2-summary-buttons>button:nth-child(2)");
+        await page.click('.qc-cmp2-summary-buttons>button:nth-child(2)')
         await page.waitForSelector(".section-theme-border>a>img");
        }catch{
         await page.goto('https://www.mirror.co.uk/news/politics');
@@ -58,27 +60,45 @@ for(let i=0;i<Categories.length;i++){
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
+
+
+    await page.evaluate(()=>{
+
+        var totalHeight = 0;
+            var distance = 100;
+            var timer = setInterval(async() => {
+                var scrollHeight = document.body.scrollHeight;
+               window.scrollBy(0, distance);
+                totalHeight += distance;
+
+                if(totalHeight >= 3000){
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, 100);
+    });
     
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
 
-    var titles = document.querySelectorAll('div.channel-news>.teaser>.headline');
-    var images =document.querySelectorAll('div.channel-news>.teaser>figure>a>img')
-    var links = document.querySelectorAll('div.channel-news>.teaser>.headline')
+    var article=document.querySelectorAll('.teaser');
+    var titles ='a:nth-child(2)';
+    var images ='img';
+    var links = 'a';
        
          
         var data =[];
          for(let j=0;j<5;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
+              if(article[j].querySelector(titles)!=null && article[j].querySelector(links)!=null){
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images : typeof(images[j+1])==="undefined" ? null : images[j+1].src,
+                       title :article[j].querySelector(titles).textContent.trim(),
+                       link : article[j].querySelector(links).href,
+                       images :article[j].querySelector(images)==null ? null : article[j].querySelector(images).src,
                        Category:Category,
-                       source :"The Mirror",
+                       source :"The Mirror "+Category,
                        sourceLink:"https://www.mirror.co.uk",
                        sourceLogo:"https://cdn.freebiesupply.com/logos/large/2x/the-mirror-logo-png-transparent.png"
                       });
@@ -86,11 +106,11 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                })
-       }}catch{
+       }}catch(e){
+        console.log(e);
         await browser.close();
        }
 
@@ -117,7 +137,6 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-       // console.log(url)
     
         var Content = await page.evaluate(()=>{
         
@@ -159,7 +178,6 @@ const GetContent = async(page,data)=>{
        }
     
     }
-   //console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
