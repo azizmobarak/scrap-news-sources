@@ -56,37 +56,27 @@ for(let i=0;i<Categories.length;i++){
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
         try{
           await page.click('.ncm-not-interested-button');
-        }catch{
+        }catch(e){
+            console.log(e)
           console.log('passed')
         }
     }catch(e){
+        console.log(e)
          //navigate to category sub route
          await page.goto(['https://www.latimes.com/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);
     }
 
       // get the data from the page
+console.log(Category)
 var PageData = await page.evaluate((Category)=>{
                
-            
     // Los Angelece News classes
-    var loop=1;
 
-    var titleClassName=".promo-content .promo-title";
-    var linkClassName=".promo-content .promo-title a";
-    var imageClassName="ps-promo a img";
-
-
-    // all elements
-    var titles = document.querySelectorAll(titleClassName);
-    var images = document.querySelectorAll(imageClassName);
-    var links = document.querySelectorAll(linkClassName);
+    var articles = document.querySelectorAll(".promo");
+    var titleClassName="p:nth-child(2)";
+    var linkClassName="p:nth-child(2)>a";
+    var imageClassName="img";
   
     
     //change category name
@@ -134,17 +124,17 @@ var PageData = await page.evaluate((Category)=>{
     //////////////////////////////
 
          var data =[];
-         for(let j=0;j<loop;j++){
+         for(let j=0;j<3;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:cateogryName,
-                       source :"LosAngelesTimes "+cateogyName,
+                       title :articles[j].querySelector(titleClassName).textContent.trim(),
+                       link : articles[j].querySelector(linkClassName).href,
+                       images :(articles[j].querySelector(imageClassName)!=null && articles[j].querySelector(imageClassName).src.indexOf("data:image")==-1) ? articles[j].querySelector(imageClassName).src : null,
+                       Category:cateogryName.toLowerCase(),
+                       source :"LosAngelesTimes "+cateogryName,
                        sourceLink:"https://www.latimes.com/",
                        sourceLogo:"https://www.pngkey.com/png/detail/196-1964217_the-los-angeles-times-los-angeles-times-logo.png"
                          });
@@ -157,12 +147,18 @@ var PageData = await page.evaluate((Category)=>{
                PageData.map(item=>{
                    AllData.push(item)
                });
-       }}catch{ 
+       }}catch(e){
+           console.log(e) 
             await browser.close();
            }
         
   
-  try{await GetContent(page,AllData);}catch{await browser.close();}
+  try{
+      await GetContent(page,AllData);
+    }catch(e){
+        console.log(e)
+        await browser.close();}
+
      await browser.close();
     })();
 }
@@ -186,7 +182,6 @@ const GetContent = async(page,data)=>{
             await page.waitForSelector('.story');
         }catch{
             await page.goto(url);
-            await page.waitForSelector('.story');
         }
 
     
@@ -232,8 +227,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    
-    await InsertData(AllData_WithConetent);
+    console.log(AllData_WithConetent)
+   // await InsertData(AllData_WithConetent);
 }
 
 
