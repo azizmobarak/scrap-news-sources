@@ -3,7 +3,7 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
-const {InsertData} = require('../../function/insertData');
+const {InsertData} = require('../../../function/insertData');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -19,7 +19,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['uk/commentisfree','uk/sport','uk/culture','uk/lifeandstyle','world','uk-news','uk/environment','science','global-development','football','uk/technology','uk/business','sport/cricket','sport/rugby-union','sport/tennis','sport/cycling','sport/formulaone','sport/golf','sport/us-sport','books','artanddesign','fashion','food','lifeandstyle/love-and-sex','lifeandstyle/health-and-wellbeing','lifeandstyle/home-and-garden','lifeandstyle/women','lifeandstyle/men','lifeandstyle/family','uk/travel','uk/money'];
+var Categories=['uk/commentisfree','football','sport/rugby-union','sport/cricket','sport/tennis','sport/golf','sport/formulaone','uk/culture','uk/lifeandstyle','world','uk-news','uk/environment','science','global-development','uk/technology','uk/business','books','artanddesign','fashion','food','lifeandstyle/love-and-sex','lifeandstyle/health-and-wellbeing','lifeandstyle/home-and-garden','lifeandstyle/women','lifeandstyle/men','lifeandstyle/family','uk/travel','uk/money'];
 
 const Gardian = () =>{
     (async()=>{
@@ -74,18 +74,13 @@ for(let i=0;i<Categories.length;i++){
       // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-            
-    // Los Angelece News classes
-    var loop=2;
+        
 
-    var titleClassName=".fc-container--rolled-up-hide .fc-slice-wrapper .fc-item__container .fc-item__content h3";
-    var linkClassName=".fc-container--rolled-up-hide .fc-slice-wrapper .fc-item__container .fc-item__content a";
-    var imageClassName=".fc-container--rolled-up-hide .fc-slice-wrapper .fc-item__container .fc-item__media-wrapper img";
+    var articles = document.querySelectorAll('.fc-item__container');
+    var titleClassName="h3";
+    var linkClassName="a";
+    var imageClassName="img";
 
-    // all elements
-    var titles = document.querySelectorAll(titleClassName);
-    var images = document.querySelectorAll(imageClassName);
-    var links = document.querySelectorAll(linkClassName);
   
     //change category name
     var cateogryName = "";
@@ -102,13 +97,24 @@ var PageData = await page.evaluate((Category)=>{
             }
         }else{
             if(Category.indexOf('/')!=-1 && Category.indexOf('sport')!=-1){
-                if(Category.indexOf('us')!=-1){
-                    cateogryName="sport";
+                if(Category.indexOf('golf')!=-1){
+                    cateogryName="golf";
                 }else{
                     if(Category.indexOf('rugby')!=-1){
                         cateogryName="rugby";
                     }else{
-                        cateogryName ="sport";
+                        if(Category.indexOf('tennis')!=-1){
+                            cateogryName="tennis";
+                        }else{
+                            if(Category.indexOf('formulaone')!=-1){
+                                cateogryName="formulaone";
+                            }else{
+                                if(Category.indexOf('cricket')!=-1){
+                                    cateogryName="cricket";
+                                }
+                            }     
+                        }
+                        
                     }
                 }
         }else{
@@ -153,17 +159,17 @@ var PageData = await page.evaluate((Category)=>{
     //////////////////////////////
 
          var data =[];
-         for(let j=0;j<loop;j++){
+         for(let j=0;j<3;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                       time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images :typeof(images[j])!="undefined" ? images[j].src : null,
+                       title : articles[j].querySelector(titleClassName).textContent.trim().replaceAll('\n',' '),
+                       link : articles[j].querySelector(linkClassName).href,
+                       images :articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src : null,
                        Category: cateogryName,
-                       source :"The Gardian",
+                       source :"The Gardian "+cateogryName,
                        sourceLink:"https://www.theguardian.com/",
                        sourceLogo:"https://www.youthalive.org/wp-content/uploads/2020/07/the-guardian-logo.jpg"
                          });
@@ -172,7 +178,7 @@ var PageData = await page.evaluate((Category)=>{
                       return data;
                },Category);
 
-               console.log(PageData);
+           //    console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
@@ -199,7 +205,7 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-        console.log(url);
+      //  console.log(url);
 
         await page.setJavaScriptEnabled(false);
 
@@ -215,10 +221,21 @@ const GetContent = async(page,data)=>{
             var text = document.querySelector('.article-body-commercial-selector p').textContent+"\n"+ document.querySelector('.article-body-commercial-selector p+p').textContent;
             return text;
            }catch{
-            return null;
+            try{
+                return document.querySelector('.content__standfirst').textContent.trim();
+            }catch{
+                return null
+            }
            }
         });
     
+        var author = await page.evaluate(()=>{
+            try{
+             return document.querySelector('address a').textContent.trim();
+            }catch{
+                return null;
+            }
+        })
 
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -230,11 +247,12 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author:author!="" ? author : null,
                 content:Content!=null ? Content : null
           });
        }
     }
-    
+    //console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
