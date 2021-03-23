@@ -1,7 +1,6 @@
 const puppeteer  = require('puppeteer-extra');
 const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
-const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
 
@@ -10,18 +9,12 @@ const {InsertData} = require('../../function/insertData');
 puppeteer.use(AdblockerPlugin());
 // stealth
 puppeteer.use(puppeteer_stealth());
-// captcha configuration
-puppeteer.use(
-    Recaptcha({
-        provider: { id: '2captcha', token: process.env.KEY },
-        visualFeedback: true // colorize reCAPTCHAs (violet = detected, green = solved)
-    })
-);
+
 
 puppeteer.use(puppeteer_agent());
 
 
-var Categories=['world','health','entertainment','travel','sex','tech','food','money','environment'];
+var Categories=['entertainment','world','health','travel','sex','tech','food','money','environment'];
 
 const VICENEWS = () =>{
     (async()=>{
@@ -43,10 +36,11 @@ const VICENEWS = () =>{
 var AllData=[];
 try{ 
 // boucle on categories started 
-for(let i=0;i<Categories.length;i++){
+for(let i=0;i<1;i++){
 
         //get the right category by number
-        var Category = Categories[i]
+        var Category = Categories[parseInt(Math.random()*9)]
+        console.log(Category)
       
       
     try{
@@ -57,34 +51,37 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          await page.goto(['https://www.vice.com/en/section/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);
     }
 
-    try {
+
+await page.evaluate(()=>{
+
+    var totalHeight = 0;
+        var distance = 100;
+        var timer = setInterval(async() => {
+            var scrollHeight = document.body.scrollHeight;
+           window.scrollBy(0, distance);
+            totalHeight += distance;
+
+            if(totalHeight >= 4000){
+                clearInterval(timer);
+                resolve();
+            }
+        }, 100);
+});
+
+ await page.waitFor(6000)
+
+try {
      // get the data from the page
 var PageData = await page.evaluate((Category)=>{
-               
-            
-    // Los Angelece News classes
-    var loop=3;
-    var start=0;
+                     
+    var article = document.querySelectorAll('.vice-card');
+    var titleClassName="h3";
+    var linkClassName="a";
+    var imageClassName="picture>source+source+source";
+    var authorClassName=".vice-card-details__byline";
 
-    var titleClassName=".vice-card h3.vice-card-hed";
-    var linkClassName=".vice-card h3.vice-card-hed a";
-    var imageClassName=".vice-card .vice-card-image__placeholder-image picture>source+source+source";
-    var authorClassName=".vice-card .vice-card-details__byline";
-
-    
-    // all elements
-    var titles = document.querySelectorAll(titleClassName);
-    var images = document.querySelectorAll(imageClassName);
-    var links = document.querySelectorAll(linkClassName);
-    var authors = document.querySelectorAll(authorClassName);
   
     //change category name
     var cateogryName = Category;
@@ -100,32 +97,26 @@ var PageData = await page.evaluate((Category)=>{
      //////////////////////////////
 
          var data =[];
-         for(let j=start;j<loop;j++){
-             var type="article";
-            
-             if(links[j].href.indexOf('video')!=-1){
-                type = "video";
-            }
+         for(let j=0;j<4;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(typeof(article[j])!="undefined" && article[j].querySelector(titleClassName)!=null && article[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images :type==="article" ? (typeof(images[j])!="undefined" ? images[j].srcset.substring(0,images[j].srcset.indexOf('*')-1) : null) : links[j].href,
+                       title : article[j].querySelector(titleClassName).textContent.trim(),
+                       link :article[j].querySelector(linkClassName).href,
+                       images : article[j].querySelector(imageClassName)!=null ? article[j].querySelector(imageClassName).srcset.substring(0,article[j].querySelector(imageClassName).srcset.indexOf('*')-1) : null,
                        Category: cateogryName,
                        source :"VICE news",
-                       sourceLink:"https://www.vice.com/",
+                       sourceLink:"https://www.vice.com",
                        sourceLogo:"vice news logo",
-                       author:typeof(authors[j])!="undefined" ? authors[j].textContent : null,
-                       type:type     
+                       author:article[j].querySelector(authorClassName)!=null ? article[j].querySelector(authorClassName).textContent : null,  
                     });
                    }
               }
                       return data;
                },Category);
-
+               console.log(PageData)
                PageData.map(item=>{
                    AllData.push(item)
                });
@@ -140,7 +131,7 @@ var PageData = await page.evaluate((Category)=>{
   
 try{await GetContent(page,AllData);}catch(e){await browser.close();}
 
-     await browser.close();
+    await browser.close();
    
  })();
 }
@@ -188,7 +179,7 @@ const GetContent = async(page,data)=>{
      }
     
 
-    if(((Content!=null && Content!="") && item.type==="article")){
+    if((Content!=null && Content!="")){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -199,13 +190,14 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : item.author,
-                type : item.type,
+                type : "Article",
                 content:Content!=null ? Content : null
           });
        }
     }
     
-    await InsertData(AllData_WithConetent);
+   // console.log(AllData_WithConetent)
+   await InsertData(AllData_WithConetent);
 }
 
 
