@@ -15,11 +15,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-// cron.schedule('00 */1 * * *', () => {
+cron.schedule('00 */1 * * *', () => {
   //1h
 const LosAngeleceTimes = require('./sources/Los Angeles Times');
 LosAngeleceTimes();
-// });
+ });
 
 
 app.listen(PORT, ()=>{

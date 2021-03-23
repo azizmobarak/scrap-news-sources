@@ -18,13 +18,13 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-}); // cron.schedule('00 */1 * * *', () => {
-//1h
+});
+cron.schedule('00 */1 * * *', function () {
+  //1h
+  var LosAngeleceTimes = require('./sources/Los Angeles Times');
 
-var LosAngeleceTimes = require('./sources/Los Angeles Times');
-
-LosAngeleceTimes(); // });
-
+  LosAngeleceTimes();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

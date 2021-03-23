@@ -47,7 +47,6 @@ for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
-        console.log(Category)
       
 
       try{
@@ -56,19 +55,16 @@ for(let i=0;i<Categories.length;i++){
         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
         try{
           await page.click('.ncm-not-interested-button');
-        }catch(e){
-            console.log(e)
+        }catch{
           console.log('passed')
         }
-    }catch(e){
-        console.log(e)
+    }catch{
          //navigate to category sub route
          await page.goto(['https://www.latimes.com/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
     }
 
       // get the data from the page
-console.log(Category)
 var PageData = await page.evaluate((Category)=>{
                
     // Los Angelece News classes
@@ -142,21 +138,17 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
                },Category);
-
-               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
-       }}catch(e){
-           console.log(e) 
+       }}catch{
             await browser.close();
            }
         
   
   try{
       await GetContent(page,AllData);
-    }catch(e){
-        console.log(e)
+    }catch{
         await browser.close();}
 
      await browser.close();
@@ -173,7 +165,6 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-        console.log(url);
 
         await page.setJavaScriptEnabled(false);
 
@@ -227,8 +218,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    console.log(AllData_WithConetent)
-   // await InsertData(AllData_WithConetent);
+   await InsertData(AllData_WithConetent);
 }
 
 
