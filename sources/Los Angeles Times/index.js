@@ -40,6 +40,8 @@ const LosAngelesTimes = () =>{
       
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -101,7 +103,7 @@ var PageData = await page.evaluate((Category)=>{
                     cateogryName="art&design";
                 }else{
                     if(Category.indexOf('entertainment-arts')!=-1){
-                        cateogryName="entertainment," + Category.substring(Category.indexOf('/')+1,Category.length);
+                        cateogryName="entertainment";
                     }else{
                         cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
                     }
@@ -110,7 +112,7 @@ var PageData = await page.evaluate((Category)=>{
         }else{
             if(Category==="world-nation")
             {
-                cateogryName="International";
+                cateogryName="international";
             }else{
                 if(Category==="entertainment-arts"){
                     cateogryName="entertainment";
@@ -125,6 +127,10 @@ var PageData = await page.evaluate((Category)=>{
             }
         }
     }
+
+    if(Category==="politics"){
+        cateogryName="politic";
+         }
     //////////////////////////////
 
          var data =[];
@@ -138,7 +144,7 @@ var PageData = await page.evaluate((Category)=>{
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:cateogryName,
-                       source :"Los Angeles Times",
+                       source :"LosAngelesTimes "+cateogyName,
                        sourceLink:"https://www.latimes.com/",
                        sourceLogo:"https://www.pngkey.com/png/detail/196-1964217_the-los-angeles-times-los-angeles-times-logo.png"
                          });
@@ -151,10 +157,12 @@ var PageData = await page.evaluate((Category)=>{
                PageData.map(item=>{
                    AllData.push(item)
                });
-       }
-      console.log(AllData);
+       }}catch{ 
+            await browser.close();
+           }
+        
   
-     await GetContent(page,AllData);
+  try{await GetContent(page,AllData);}catch{await browser.close();}
      await browser.close();
     })();
 }

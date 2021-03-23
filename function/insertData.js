@@ -7,17 +7,16 @@ var type="Article";
 
     data.map(article=>{
 
-        var articleCateory = article.Category.split(',');
+        var articleCateory = article.Category;
         
         console.log(articleCateory)
-      
-        for(let cat=0;cat< articleCateory.length ;cat++ ){
+   
              
           var articledetails ={
               articleTitle : article.title,
               articleSourceLink : article.link,
               articleImageURL : article.images,
-              categoryName:articleCateory[cat],
+              categoryName:articleCateory,
               mediaName :article.source,
               mediaLogo:article.sourceLogo,
               mediaName:article.source,
@@ -47,7 +46,7 @@ var type="Article";
              }
           }
       })
-        }
+       
          });
 }
 
