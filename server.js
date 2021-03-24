@@ -14,10 +14,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('07 */1 * * *', () => {
+cron.schedule('06 */1 * * *', () => {
    const scrap = require('./sources/ES/PaginaSite');
    scrap();
-// });
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
