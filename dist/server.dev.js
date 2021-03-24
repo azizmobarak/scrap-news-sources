@@ -19,8 +19,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('08 */1 * * *', function () {
-  var scrap = require('./sources/ES/LosTiempos');
+cron.schedule('44 */1 * * *', function () {
+  var scrap = require('./sources/ES/lapatilla');
 
   scrap();
 });

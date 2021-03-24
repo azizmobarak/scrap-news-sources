@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['international', 'football', 'economy', 'culture', 'tennis', 'fashion', 'celebrity'];
+var Categories = ['venezuela', 'politic', 'economy', 'opinion', 'entertainment', 'health'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,41 +55,40 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 41;
+              _context2.next = 39;
               break;
             }
 
             //get the right category by number
-            Category = Categories[i];
-            console.log(Category); //navigate to category sub route
+            Category = Categories[i]; // console.log(Category)
+            //navigate to category sub route
 
-            url = "https://www.lostiempos.com/actualidad/mundo";
-            if (Category === "football") url = "https://www.lostiempos.com/deportes/futbol";
-            if (Category === "economy") url = "https://www.lostiempos.com/actualidad/economia";
-            if (Category === "tennis") url = "https://www.lostiempos.com/deportes/tenis";
-            if (Category === "culture") url = "https://www.lostiempos.com/doble-click/cultura";
-            if (Category === "celebrity") url = "https://www.lostiempos.com/doble-click/espectaculos";
-            if (Category === "fashion") url = "https://www.lostiempos.com/doble-click/moda";
-            _context2.prev = 19;
-            _context2.next = 22;
+            url = "https://www.lapatilla.com/secciones/nacionales/";
+            if (Category === "politic") url = "https://www.lapatilla.com/secciones/politica";
+            if (Category === "economy") url = "https://www.lapatilla.com/secciones/economia/";
+            if (Category === "opinion") url = "https://www.lapatilla.com/secciones/opinion/";
+            if (Category === "entertainment") url = "https://www.lapatilla.com/secciones/entretenimiento";
+            if (Category === "health") url = "https://www.lapatilla.com/secciones/salud/";
+            _context2.prev = 17;
+            _context2.next = 20;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 22:
-            _context2.next = 24;
+          case 20:
+            _context2.next = 22;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 24:
-            _context2.next = 30;
+          case 22:
+            _context2.next = 28;
             break;
 
-          case 26:
-            _context2.prev = 26;
-            _context2.t0 = _context2["catch"](19);
-            _context2.next = 30;
+          case 24:
+            _context2.prev = 24;
+            _context2.t0 = _context2["catch"](17);
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 30:
-            _context2.next = 32;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -117,17 +116,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 32:
-            _context2.next = 34;
+          case 30:
+            _context2.next = 32;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 34:
-            _context2.next = 36;
+          case 32:
+            _context2.next = 34;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.views-row');
+              var articles = document.querySelectorAll('.post');
               var images = "img";
               var links = "a";
-              var titles = ".views-field-title";
+              var titles = "h4";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -148,55 +147,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 36:
+          case 34:
             PageData = _context2.sent;
-            // console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 38:
+          case 36:
             i++;
             _context2.next = 9;
             break;
 
-          case 41:
-            _context2.next = 48;
+          case 39:
+            _context2.next = 46;
             break;
 
-          case 43:
-            _context2.prev = 43;
+          case 41:
+            _context2.prev = 41;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 48;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
-            _context2.prev = 48;
-            _context2.next = 51;
+          case 46:
+            _context2.prev = 46;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 51:
-            _context2.next = 58;
+          case 49:
+            _context2.next = 56;
             break;
 
-          case 53:
-            _context2.prev = 53;
-            _context2.t2 = _context2["catch"](48);
+          case 51:
+            _context2.prev = 51;
+            _context2.t2 = _context2["catch"](46);
             console.log(_context2.t2);
+            _context2.next = 56;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 56:
             _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
           case 58:
-            _context2.next = 60;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 60:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 43], [19, 26], [48, 53]]);
+    }, null, null, [[7, 41], [17, 24], [46, 51]]);
   })();
 };
 
@@ -226,10 +225,10 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.field-item p');
+              var second_text = document.querySelectorAll('article .entry-content>p');
               var scond_content = "";
 
-              for (var _i = 0; _i < second_text.length - 1; _i++) {
+              for (var _i = 1; _i < second_text.length; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent;
               }
 

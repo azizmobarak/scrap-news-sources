@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['international','football','economy','culture','tennis','fashion','celebrity'];
+var Categories=['venezuela','politic','economy','opinion','entertainment','health'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -48,16 +48,15 @@ for(let i=0;i<Categories.length;i++){
 
     //get the right category by number
     var Category = Categories[i]
-    console.log(Category)
+   // console.log(Category)
     //navigate to category sub route
-    var url ="https://www.lostiempos.com/actualidad/mundo";
+    var url ="https://www.lapatilla.com/secciones/nacionales/";
 
-    if(Category==="football") url="https://www.lostiempos.com/deportes/futbol";
-    if(Category==="economy") url="https://www.lostiempos.com/actualidad/economia";
-    if(Category==="tennis") url="https://www.lostiempos.com/deportes/tenis";
-    if(Category==="culture") url="https://www.lostiempos.com/doble-click/cultura";
-    if(Category==="celebrity") url="https://www.lostiempos.com/doble-click/espectaculos";
-    if(Category==="fashion") url="https://www.lostiempos.com/doble-click/moda";
+    if(Category==="politic") url="https://www.lapatilla.com/secciones/politica";
+    if(Category==="economy") url="https://www.lapatilla.com/secciones/economia/";
+    if(Category==="opinion") url="https://www.lapatilla.com/secciones/opinion/";
+    if(Category==="entertainment") url="https://www.lapatilla.com/secciones/entretenimiento";
+    if(Category==="health") url="https://www.lapatilla.com/secciones/salud/";
     
     try{
         await page.goto(url);
@@ -91,10 +90,10 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.views-row');
+    var articles = document.querySelectorAll('.post');
     var images ="img"
     var links = "a"
-    var titles =".views-field-title"
+    var titles ="h4"
        
          
         var data =[];
@@ -115,7 +114,7 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          // console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -151,9 +150,9 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.field-item p');
+               var second_text = document.querySelectorAll('article .entry-content>p');
                var scond_content ="";
-               for(let i=0;i<second_text.length-1;i++){
+               for(let i=1;i<second_text.length;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
                 return scond_content.replaceAll('\n','');
