@@ -25,13 +25,13 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log("connected");
   }
-}); // cron.schedule('15 */1 * * *', () => {
-//1h
+});
+cron.schedule('15 */1 * * *', function () {
+  //1h
+  var WALLSTREET = require('./sources/The_Wall_Street_Journal');
 
-var WALLSTREET = require('./sources/The_Wall_Street_Journal');
-
-WALLSTREET(); // });
-
+  WALLSTREET();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

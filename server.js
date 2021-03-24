@@ -16,11 +16,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('15 */1 * * *', () => {
+cron.schedule('15 */1 * * *', () => {
     //1h
 const WALLSTREET = require('./sources/The_Wall_Street_Journal');
 WALLSTREET();
-// });
+});
 
 
 
