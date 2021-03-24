@@ -129,7 +129,7 @@ var VICENEWS = function VICENEWS() {
                     link: article[j].querySelector(linkClassName).href,
                     images: article[j].querySelector(imageClassName) != null ? article[j].querySelector(imageClassName).srcset.substring(0, article[j].querySelector(imageClassName).srcset.indexOf('*') - 1) : null,
                     Category: cateogryName,
-                    source: "VICE news",
+                    source: "VICENEWS " + cateogryName,
                     sourceLink: "https://www.vice.com",
                     sourceLogo: "vice news logo",
                     author: article[j].querySelector(authorClassName) != null ? article[j].querySelector(authorClassName).textContent : null
