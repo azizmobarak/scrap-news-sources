@@ -49,94 +49,77 @@ var WALLSTREET = function WALLSTREET() {
 
           case 5:
             page = _context.sent;
-            AllData = []; // boucle on categories started 
-
+            AllData = [];
+            _context.prev = 7;
             i = 0;
 
-          case 8:
+          case 9:
             if (!(i < Categories.length)) {
-              _context.next = 39;
+              _context.next = 27;
               break;
             }
 
             //get the right category by number
-            Category = Categories[i];
-            _context.prev = 10;
-            _context.next = 13;
+            Category = Categories[i]; // console.log(Category)
+
+            _context.prev = 11;
+            _context.next = 14;
             return regeneratorRuntime.awrap(page["goto"](['https://www.wsj.com/news/', '', Category].join('')));
 
-          case 13:
-            _context.next = 32;
+          case 14:
+            _context.next = 20;
             break;
 
-          case 15:
-            _context.prev = 15;
-            _context.t0 = _context["catch"](10);
-            _context.next = 19;
+          case 16:
+            _context.prev = 16;
+            _context.t0 = _context["catch"](11);
+            _context.next = 20;
             return regeneratorRuntime.awrap(page["goto"](['https://www.wsj.com/news/', '', Category].join('')));
 
-          case 19:
-            _context.next = 21;
-            return regeneratorRuntime.awrap(page.solveRecaptchas());
-
-          case 21:
-            _context.t1 = regeneratorRuntime;
-            _context.t2 = Promise;
-            _context.t3 = page.waitForNavigation();
-            _context.t4 = page.click(".g-recaptcha");
-            _context.next = 27;
-            return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
-              return el.click();
-            }));
-
-          case 27:
-            _context.t5 = _context.sent;
-            _context.t6 = [_context.t3, _context.t4, _context.t5];
-            _context.t7 = _context.t2.all.call(_context.t2, _context.t6);
-            _context.next = 32;
-            return _context.t1.awrap.call(_context.t1, _context.t7);
-
-          case 32:
-            _context.next = 34;
+          case 20:
+            _context.next = 22;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var loop = 1;
-              var condition = false; // Los Angelece News classes
+              // Los Angelece News classes
+              var articles = document.querySelectorAll("article");
+              var titleClassName = "h2";
+              var imageClassName = "img";
+              var linkClassName = "a"; //change category name
 
-              var titleClassName = "#main #top-news article>div>h2";
-              var imageClassName = "#main #top-news article>div>a>img";
-              var linkClassName = "#main #top-news article>div>a"; // all elements
-
-              var titles = document.querySelectorAll(titleClassName);
-              var images = document.querySelectorAll(imageClassName);
-              var links = document.querySelectorAll(linkClassName); //change category name
-
-              var cateogryName = "";
+              var categoryName = Category;
 
               switch (Category) {
                 case 'world':
-                  cateogryName = "international";
+                  categoryName = "international";
                   break;
 
                 case 'life-arts':
-                  cateogryName = "art&design";
+                  categoryName = "art&design";
                   break;
 
                 case 'realestate':
-                  cateogryName = "business";
+                  categoryName = "business";
+                  break;
+
+                case 'politics':
+                  categoryName = "politic";
+                  break;
+
+                case 'markets':
+                  categoryName = "market";
                   break;
 
                 default:
                   if (Category.indexOf('asia') != -1) {
-                    cateogryName = "international";
+                    categoryName = "international";
                   } else {
-                    if (cateogryName.indexOf('africa') != -1) {
+                    if (categoryName.indexOf('africa') != -1) {
                       categoryName = "international";
                     } else {
                       if (categoryName.indexOf('china') != -1) {
                         categoryName = 'international';
                       } else {
-                        if (categoryName.indexOf('america')) {
-                          categoryName = "us";
+                        if (categoryName.indexOf('america') != -1) {
+                          categoryName = "international";
                         } else {
                           if (categoryName.indexOf('middle-east') != -1) {
                             categoryName = "international";
@@ -152,48 +135,24 @@ var WALLSTREET = function WALLSTREET() {
                     }
                   }
 
-              } //////////////////////////////
-              // change selectors for some categories 
-
-
-              if (Category === "technology" || Category.indexOf('type') != -1 || Category === "opinion" || Category === "politics" || Category === "business" || Category === "markets") {
-                var arr_images = [];
-                var arr_titles = [];
-                var arr_links = [];
-                var inDom = document.querySelectorAll('#main article');
-
-                for (var d = 0; d < 4; d++) {
-                  if (inDom[d].querySelector('img') != null) {
-                    arr_images.push(inDom[d]);
-                    arr_titles.push(inDom[d]);
-                    arr_links.push(inDom[d]);
-                  }
-                }
-
-                titles = arr_titles;
-                images = arr_images;
-                links = arr_links;
-                loop = 3;
-                condition = true;
-              } else {
-                loop = 1;
-                condition = false;
               } ////////////////////////////////////
 
 
               var data = [];
 
-              for (var j = 0; j < loop; j++) {
-                if (typeof titles[j] != "undefined" && typeof links[j] != "undefined") {
+              for (var j = 0; j < 4; j++) {
+                if (j > 0) titleClassName = "h3";
+
+                if (articles[j].querySelector(titleClassName) != null && articles[j].querySelector(linkClassName) != null) {
                   data.push({
                     time: Date.now(),
-                    title: condition == true ? titles[j].querySelector('h3').textContent.trim() : titles[j].textContent.trim(),
-                    link: condition == true ? links[j].querySelector('a').href : links[j].href,
-                    images: condition == true ? typeof images[j] != "undefined" ? images[j].querySelector('img').src : null : typeof images[j] != "undefined" ? images[j].src : null,
-                    Category: cateogryName,
-                    source: "The WALL STREET JOURNAL",
+                    title: articles[j].querySelector(titleClassName).textContent.trim(),
+                    link: articles[j].querySelector(linkClassName).href,
+                    images: articles[j].querySelector(imageClassName) != null ? articles[j].querySelector(imageClassName).src : null,
+                    Category: categoryName,
+                    source: "The WallStreetJournal " + categoryName,
                     sourceLink: "https://www.wsj.com",
-                    sourceLogo: "Wallstreet logo"
+                    sourceLogo: "https://assets.website-files.com/5a33ed4f5aec59000163e8fa/5bbf5920e9654bdac813dc27_WSJ%20thumbnial.png"
                   });
                 }
               }
@@ -201,36 +160,60 @@ var WALLSTREET = function WALLSTREET() {
               return data;
             }, Category));
 
-          case 34:
+          case 22:
             PageData = _context.sent;
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 36:
+          case 24:
             i++;
-            _context.next = 8;
+            _context.next = 9;
+            break;
+
+          case 27:
+            _context.next = 34;
+            break;
+
+          case 29:
+            _context.prev = 29;
+            _context.t1 = _context["catch"](7);
+            console.log(_context.t1);
+            _context.next = 34;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 34:
+            _context.prev = 34;
+            _context.next = 37;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
+
+          case 37:
+            _context.next = 44;
             break;
 
           case 39:
-            _context.next = 41;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
-
-          case 41:
-            _context.next = 43;
+            _context.prev = 39;
+            _context.t2 = _context["catch"](34);
+            console.log(e);
+            _context.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
+          case 44:
+            _context.next = 46;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 46:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 15]]);
+    }, null, null, [[7, 29], [11, 16], [34, 39]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -240,12 +223,13 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 23;
+            _context2.next = 26;
             break;
           }
 
           item = data[i];
-          url = item.link;
+          url = item.link; // console.log(url)
+
           _context2.next = 7;
           return regeneratorRuntime.awrap(page.setJavaScriptEnabled(false));
 
@@ -277,13 +261,24 @@ var GetContent = function GetContent(page, data) {
               }
 
               return textArray.join('\n');
-            } catch (_unused2) {
+            } catch (_unused3) {
               return null;
             }
           }));
 
         case 18:
           Content = _context2.sent;
+          _context2.next = 21;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.author-button').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 21:
+          author = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -295,20 +290,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
+              author: author,
               content: Content != null ? Content : null
             });
           }
 
-        case 20:
+        case 23:
           i++;
           _context2.next = 2;
           break;
 
-        case 23:
-          _context2.next = 25;
+        case 26:
+          _context2.next = 28;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 25:
+        case 28:
         case "end":
           return _context2.stop();
       }

@@ -47,6 +47,7 @@ for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
+       // console.log(Category)
       
 
       try{
@@ -57,34 +58,20 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          await page.goto(['https://www.wsj.com/news/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-        /* await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);*/
     }
 
       // get the data from the page
 var PageData = await page.evaluate((Category)=>{   
             
-    var loop=1;
-    var condition=false;
-
     // Los Angelece News classes
-    var titleClassName="#main #top-news article>div>h2";
-    var imageClassName="#main #top-news article>div>a>img";
-    var linkClassName="#main #top-news article>div>a";
-
-
-     // all elements
-     var titles = document.querySelectorAll(titleClassName);
-     var images = document.querySelectorAll(imageClassName);
-     var links = document.querySelectorAll(linkClassName);
+    var articles =  document.querySelectorAll("article");
+    var titleClassName="h2";
+    var imageClassName="img";
+    var linkClassName="a";
 
   
     //change category name
-    var categoryName = "";
+    var categoryName = Category;
 
     switch(Category){
         case 'world' : 
@@ -98,6 +85,13 @@ var PageData = await page.evaluate((Category)=>{
         case 'realestate' :
              categoryName="business";
            break;
+        case 'politics' :
+            categoryName="politic"
+            break;
+        case 'markets':
+            categoryName="market";
+            break;
+        
 
         default :
            if(Category.indexOf('asia')!=-1){
@@ -109,7 +103,7 @@ var PageData = await page.evaluate((Category)=>{
                   if(categoryName.indexOf('china')!=-1){
                       categoryName='international';
                   }else{
-                      if(categoryName.indexOf('america')){
+                      if(categoryName.indexOf('america')!=-1){
                           categoryName="international";
                       }else{
                           if(categoryName.indexOf('middle-east')!=-1){
@@ -127,60 +121,30 @@ var PageData = await page.evaluate((Category)=>{
            }
         
     }
-      
-    //////////////////////////////
-
-    // change selectors for some categories 
-    if(Category==="technology" || Category.indexOf('type')!=-1 || Category==="opinion" || Category==="politics" || Category==="business" || Category==="markets"){
-       
-        var arr_images =[];
-        var arr_titles =[];
-        var arr_links =[];
-
-        var inDom =document.querySelectorAll('#main article');
-
-        for(let d=0;d<4;d++){
-            if(inDom[d].querySelector('img')!=null){
-                arr_images.push(inDom[d]);
-                arr_titles.push(inDom[d]);
-                arr_links.push(inDom[d]);
-            }
-        }
-        
-         titles=arr_titles;
-         images=arr_images;
-         links=arr_links;
-
-         loop=3;
-         condition=true;
-    }else{
-        loop =1;
-        condition=false;
-    }
-
-     
       ////////////////////////////////////
 
          var data =[];
-         for(let j=0;j<loop;j++){
+         for(let j=0;j<4;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(j>0) titleClassName="h3";
+
+              if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                       time : Date.now(),
-                       title : condition==true ? titles[j].querySelector('h3').textContent.trim() :  titles[j].textContent.trim(),
-                       link : condition==true ? links[j].querySelector('a').href : links[j].href,
-                       images :  condition==true ?(typeof(images[j])!="undefined" ? images[j].querySelector('img').src : null) : (typeof(images[j])!="undefined" ? images[j].src : null),
+                       title :articles[j].querySelector(titleClassName).textContent.trim(),
+                       link : articles[j].querySelector(linkClassName).href,
+                       images : articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src : null,
                        Category: categoryName,
-                       source :"The WALL STREET JOURNAL",
+                       source :"The WallStreetJournal "+categoryName,
                        sourceLink:"https://www.wsj.com",
-                       sourceLogo:"Wallstreet logo"
+                       sourceLogo:"https://assets.website-files.com/5a33ed4f5aec59000163e8fa/5bbf5920e9654bdac813dc27_WSJ%20thumbnial.png"
                          });
                    }
               }
                       return data;
                },Category);
-               console.log(PageData);
+             //  console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
@@ -206,7 +170,7 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-       console.log(url)
+       // console.log(url)
         await page.setJavaScriptEnabled(false);
 
         try{
@@ -229,6 +193,14 @@ const GetContent = async(page,data)=>{
             return null;
            }
         });
+
+        var author = await page.evaluate(()=>{
+            try{
+                return document.querySelector('.author-button').textContent.trim();
+            }catch{
+                return null;
+            }
+        })
     
 
     if(Content!=null && Content!=""){
@@ -241,12 +213,13 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
+                author:author,
                 content:Content!=null ? Content : null
           });
        }
     }
-    
-    await InsertData(AllData_WithConetent);
+ //  console.log(AllData_WithConetent) 
+   await InsertData(AllData_WithConetent);
 }
 
 
