@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['bolivia', 'football', 'economy', 'culture', 'opinion'];
+var Categories = ['international', 'football', 'economy', 'culture', 'tennis', 'fashion', 'celebrity'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 39;
+              _context2.next = 41;
               break;
             }
 
@@ -63,31 +63,33 @@ var LARAZON = function LARAZON() {
             Category = Categories[i];
             console.log(Category); //navigate to category sub route
 
-            url = "https://www.paginasiete.bo/nacional/";
-            if (Category === "football") url = "https://www.paginasiete.bo/campeones/";
-            if (Category === "economy") url = "https://www.paginasiete.bo/economia/";
-            if (Category === "culture") url = "https://www.paginasiete.bo/cultura/";
-            if (Category === "opinion") url = "https://www.paginasiete.bo/opinion/";
-            _context2.prev = 17;
-            _context2.next = 20;
-            return regeneratorRuntime.awrap(page["goto"](url));
-
-          case 20:
+            url = "https://www.lostiempos.com/actualidad/mundo";
+            if (Category === "football") url = "https://www.lostiempos.com/deportes/futbol";
+            if (Category === "economy") url = "https://www.lostiempos.com/actualidad/economia";
+            if (Category === "tennis") url = "https://www.lostiempos.com/deportes/tenis";
+            if (Category === "culture") url = "https://www.lostiempos.com/doble-click/cultura";
+            if (Category === "celebrity") url = "https://www.lostiempos.com/doble-click/espectaculos";
+            if (Category === "fashion") url = "https://www.lostiempos.com/doble-click/moda";
+            _context2.prev = 19;
             _context2.next = 22;
-            return regeneratorRuntime.awrap(page.waitForSelector('footer'));
+            return regeneratorRuntime.awrap(page["goto"](url));
 
           case 22:
-            _context2.next = 28;
-            break;
+            _context2.next = 24;
+            return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
           case 24:
-            _context2.prev = 24;
-            _context2.t0 = _context2["catch"](17);
-            _context2.next = 28;
+            _context2.next = 30;
+            break;
+
+          case 26:
+            _context2.prev = 26;
+            _context2.t0 = _context2["catch"](19);
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 28:
-            _context2.next = 30;
+          case 30:
+            _context2.next = 32;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -115,17 +117,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 30:
-            _context2.next = 32;
-            return regeneratorRuntime.awrap(page.waitFor(3000));
-
           case 32:
             _context2.next = 34;
+            return regeneratorRuntime.awrap(page.waitFor(3000));
+
+          case 34:
+            _context2.next = 36;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('article');
+              var articles = document.querySelectorAll('.views-row');
               var images = "img";
               var links = "a";
-              var titles = "h2";
+              var titles = ".views-field-title";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -136,9 +138,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "PaginaSiete " + Category,
-                    sourceLink: "https://www.paginasiete.bo",
-                    sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/b/ba/P%C3%A1gina_Siete.png"
+                    source: "Lostiempos " + Category,
+                    sourceLink: "https://www.lostiempos.com",
+                    sourceLogo: "https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
                   });
                 }
               }
@@ -146,55 +148,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 34:
+          case 36:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 36:
+          case 38:
             i++;
             _context2.next = 9;
             break;
 
-          case 39:
-            _context2.next = 46;
+          case 41:
+            _context2.next = 48;
             break;
 
-          case 41:
-            _context2.prev = 41;
+          case 43:
+            _context2.prev = 43;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 46;
+            _context2.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
-            _context2.prev = 46;
-            _context2.next = 49;
+          case 48:
+            _context2.prev = 48;
+            _context2.next = 51;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 49:
-            _context2.next = 56;
+          case 51:
+            _context2.next = 58;
             break;
 
-          case 51:
-            _context2.prev = 51;
-            _context2.t2 = _context2["catch"](46);
+          case 53:
+            _context2.prev = 53;
+            _context2.t2 = _context2["catch"](48);
             console.log(_context2.t2);
-            _context2.next = 56;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 56:
             _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
           case 58:
+            _context2.next = 60;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 60:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 41], [17, 24], [46, 51]]);
+    }, null, null, [[7, 43], [19, 26], [48, 53]]);
   })();
 };
 
@@ -214,7 +216,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; //console.log(url)
+          url = item.link; // console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -224,7 +226,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.cuerpo-nota p');
+              var second_text = document.querySelectorAll('.field-item p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length - 1; _i++) {

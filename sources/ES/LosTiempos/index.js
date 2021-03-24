@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['bolivia','football','economy','culture','opinion'];
+var Categories=['international','football','economy','culture','tennis','fashion','celebrity'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -50,12 +50,14 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     console.log(Category)
     //navigate to category sub route
-    var url ="https://www.paginasiete.bo/nacional/";
+    var url ="https://www.lostiempos.com/actualidad/mundo";
 
-    if(Category==="football") url="https://www.paginasiete.bo/campeones/";
-    if(Category==="economy") url="https://www.paginasiete.bo/economia/";
-    if(Category==="culture") url="https://www.paginasiete.bo/cultura/";
-    if(Category==="opinion") url="https://www.paginasiete.bo/opinion/";
+    if(Category==="football") url="https://www.lostiempos.com/deportes/futbol";
+    if(Category==="economy") url="https://www.lostiempos.com/actualidad/economia";
+    if(Category==="tennis") url="https://www.lostiempos.com/deportes/tenis";
+    if(Category==="culture") url="https://www.lostiempos.com/doble-click/cultura";
+    if(Category==="celebrity") url="https://www.lostiempos.com/doble-click/espectaculos";
+    if(Category==="fashion") url="https://www.lostiempos.com/doble-click/moda";
     
     try{
         await page.goto(url);
@@ -89,10 +91,10 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('article');
+    var articles = document.querySelectorAll('.views-row');
     var images ="img"
     var links = "a"
-    var titles ="h2"
+    var titles =".views-field-title"
        
          
         var data =[];
@@ -105,15 +107,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"PaginaSiete "+Category,
-                    sourceLink:"https://www.paginasiete.bo",
-                    sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/b/ba/P%C3%A1gina_Siete.png"
+                    source :"Lostiempos "+Category,
+                    sourceLink:"https://www.lostiempos.com",
+                    sourceLogo:"https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+          // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -143,13 +145,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       //console.log(url)
+       // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.cuerpo-nota p');
+               var second_text = document.querySelectorAll('.field-item p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;

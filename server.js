@@ -14,8 +14,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('06 */1 * * *', () => {
-   const scrap = require('./sources/ES/PaginaSite');
+cron.schedule('08 */1 * * *', () => {
+   const scrap = require('./sources/ES/LosTiempos');
    scrap();
 });
 
