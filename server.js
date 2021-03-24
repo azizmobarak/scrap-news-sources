@@ -16,10 +16,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('02 */1 * * *', () => {
+cron.schedule('07 */1 * * *', () => {
    const scrap = require('./sources/ES/LARAZON');
    scrap();
-// });
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

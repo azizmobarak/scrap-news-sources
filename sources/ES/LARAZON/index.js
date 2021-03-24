@@ -112,7 +112,7 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-           console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -143,7 +143,7 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       console.log(url)
+      // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -154,7 +154,7 @@ const GetContent = async(page,data)=>{
                for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
-                return scond_content;
+                return scond_content.replaceAll('\n','');
             }catch{
                return null;
             }
@@ -176,8 +176,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
- console.log(AllData_WithConetent)
-//  await InsertData(AllData_WithConetent);
+// console.log(AllData_WithConetent)
+  await InsertData(AllData_WithConetent);
 }
 
 
