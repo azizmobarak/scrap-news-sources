@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy','spain','international','life&style'];
+var Categories=['bolivia','international','economy','market'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -48,17 +48,18 @@ for(let i=0;i<Categories.length;i++){
 
     //get the right category by number
     var Category = Categories[i]
+    console.log(Category)
     //navigate to category sub route
-    var url ="https://www.larazon.es/economia/";
+    var url ="https://www.la-razon.com/nacional/";
 
-    if(Category==="international") url="https://www.larazon.es/internacional/"
-    if(Category==="spain") url="https://www.larazon.es/espana/"
-    if(Category==="life&style") url="https://www.larazon.es/lifestyle/"
+    if(Category==="international") url="https://www.la-razon.com/mundo/"
+    if(Category==="economy") url="https://www.la-razon.com/economia/"
+    if(Category==="market") url="https://www.la-razon.com/suplementos/marcas/"
     
     try{
         await page.goto(url);
         await page.waitForSelector('footer')
-        if(i==0) await page.click('#didomi-notice-agree-button');
+      //  if(i==0) await page.click('#didomi-notice-agree-button');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -87,40 +88,31 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('article');
-    var images ="img"
-    var links = "h3>a"
-    var titles ="h3"
-    var authors =".card__byline>ul>li"
-
-    // if(Category==="opinion"){
-    //     articles=document.querySelectorAll('.articulo__interior');
-    //     links = "figure .enlace";
-    //     titles="h2";
-    //     authors=".autor-nombre";
-    // }
+    var articles = document.querySelectorAll('.article-block-content');
+    var images =".background-holder>div"
+    var links = "a"
+    var titles =".title"
        
          
         var data =[];
 
-         for(let j=0;j<8;j++){
+         for(let j=0;j<5;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
-                    images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
+                    images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).style.backgroundImage.substring(articles[j].querySelector(images).style.backgroundImage.indexOf('("')+2,articles[j].querySelector(images).style.backgroundImage.indexOf('")')),
                     Category:Category,
-                    author:articles[j].querySelector(authors).textContent.trim(),
-                    source :"LARAZON "+Category,
-                    sourceLink:"https://www.larazon.es",
-                    sourceLogo:"https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
+                    source :"LA-RAZON "+Category,
+                    sourceLink:"https://www.la-razon.com",
+                    sourceLogo:"https://www.la-razon.com/wp-content/themes/lr-genosha/assets/img/la-razon-logo.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+           console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -151,13 +143,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      // console.log(url)
+       console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.article__body-container p');
+               var second_text = document.querySelectorAll('.article-body p');
                var scond_content ="";
                for(let i=0;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -179,13 +171,13 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                author : item.author,
+                author : null,
                 content:Content
           });
        }
     }
- //console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+ console.log(AllData_WithConetent)
+//  await InsertData(AllData_WithConetent);
 }
 
 

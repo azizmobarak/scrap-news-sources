@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'spain', 'international', 'life&style'];
+var Categories = ['bolivia', 'international', 'economy', 'market'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,46 +55,38 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 40;
+              _context2.next = 39;
               break;
             }
 
             //get the right category by number
-            Category = Categories[i]; //navigate to category sub route
+            Category = Categories[i];
+            console.log(Category); //navigate to category sub route
 
-            url = "https://www.larazon.es/economia/";
-            if (Category === "international") url = "https://www.larazon.es/internacional/";
-            if (Category === "spain") url = "https://www.larazon.es/espana/";
-            if (Category === "life&style") url = "https://www.larazon.es/lifestyle/";
-            _context2.prev = 15;
-            _context2.next = 18;
+            url = "https://www.la-razon.com/nacional/";
+            if (Category === "international") url = "https://www.la-razon.com/mundo/";
+            if (Category === "economy") url = "https://www.la-razon.com/economia/";
+            if (Category === "market") url = "https://www.la-razon.com/suplementos/marcas/";
+            _context2.prev = 16;
+            _context2.next = 19;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 18:
-            _context2.next = 20;
+          case 19:
+            _context2.next = 21;
             return regeneratorRuntime.awrap(page.waitForSelector('footer'));
 
-          case 20:
-            if (!(i == 0)) {
-              _context2.next = 23;
-              break;
-            }
-
-            _context2.next = 23;
-            return regeneratorRuntime.awrap(page.click('#didomi-notice-agree-button'));
-
-          case 23:
-            _context2.next = 29;
+          case 21:
+            _context2.next = 27;
             break;
 
-          case 25:
-            _context2.prev = 25;
-            _context2.t0 = _context2["catch"](15);
-            _context2.next = 29;
+          case 23:
+            _context2.prev = 23;
+            _context2.t0 = _context2["catch"](16);
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 29:
-            _context2.next = 31;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -122,38 +114,30 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 31:
-            _context2.next = 33;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.waitFor(3000));
 
-          case 33:
-            _context2.next = 35;
+          case 31:
+            _context2.next = 33;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('article');
-              var images = "img";
-              var links = "h3>a";
-              var titles = "h3";
-              var authors = ".card__byline>ul>li"; // if(Category==="opinion"){
-              //     articles=document.querySelectorAll('.articulo__interior');
-              //     links = "figure .enlace";
-              //     titles="h2";
-              //     authors=".autor-nombre";
-              // }
-
+              var articles = document.querySelectorAll('.article-block-content');
+              var images = ".background-holder>div";
+              var links = "a";
+              var titles = ".title";
               var data = [];
 
-              for (var j = 0; j < 8; j++) {
+              for (var j = 0; j < 5; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
-                    images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
+                    images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).style.backgroundImage.substring(articles[j].querySelector(images).style.backgroundImage.indexOf('("') + 2, articles[j].querySelector(images).style.backgroundImage.indexOf('")')),
                     Category: Category,
-                    author: articles[j].querySelector(authors).textContent.trim(),
-                    source: "LARAZON " + Category,
-                    sourceLink: "https://www.larazon.es",
-                    sourceLogo: "https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
+                    source: "LA-RAZON " + Category,
+                    sourceLink: "https://www.la-razon.com",
+                    sourceLogo: "https://www.la-razon.com/wp-content/themes/lr-genosha/assets/img/la-razon-logo.png"
                   });
                 }
               }
@@ -161,55 +145,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 35:
+          case 33:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 37:
+          case 36:
             i++;
             _context2.next = 9;
             break;
 
-          case 40:
-            _context2.next = 47;
+          case 39:
+            _context2.next = 46;
             break;
 
-          case 42:
-            _context2.prev = 42;
+          case 41:
+            _context2.prev = 41;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 47;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 47:
-            _context2.prev = 47;
-            _context2.next = 50;
+          case 46:
+            _context2.prev = 46;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 50:
-            _context2.next = 57;
+          case 49:
+            _context2.next = 56;
             break;
 
-          case 52:
-            _context2.prev = 52;
-            _context2.t2 = _context2["catch"](47);
+          case 51:
+            _context2.prev = 51;
+            _context2.t2 = _context2["catch"](46);
             console.log(_context2.t2);
-            _context2.next = 57;
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
-            _context2.next = 59;
+          case 56:
+            _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 59:
+          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 42], [15, 25], [47, 52]]);
+    }, null, null, [[7, 41], [16, 23], [46, 51]]);
   })();
 };
 
@@ -224,22 +208,22 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 15;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.article__body-container p');
+              var second_text = document.querySelectorAll('.article-body p');
               var scond_content = "";
 
               for (var _i = 0; _i < second_text.length - 1; _i++) {
@@ -252,7 +236,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -265,19 +249,18 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: item.author,
+              author: null,
               content: Content
             });
           }
 
-        case 11:
+        case 12:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 15:
+          console.log(AllData_WithConetent); //  await InsertData(AllData_WithConetent);
 
         case 16:
         case "end":
