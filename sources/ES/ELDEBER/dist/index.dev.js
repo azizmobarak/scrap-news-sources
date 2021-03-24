@@ -55,7 +55,7 @@ var SCRAP = function SCRAP() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 40;
+              _context2.next = 39;
               break;
             }
 
@@ -155,53 +155,53 @@ var SCRAP = function SCRAP() {
 
           case 34:
             PageData = _context2.sent;
-            console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 37:
+          case 36:
             i++;
             _context2.next = 9;
             break;
 
-          case 40:
-            _context2.next = 47;
+          case 39:
+            _context2.next = 46;
             break;
 
-          case 42:
-            _context2.prev = 42;
+          case 41:
+            _context2.prev = 41;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 47;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 47:
-            _context2.prev = 47;
-            _context2.next = 50;
+          case 46:
+            _context2.prev = 46;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 50:
-            _context2.next = 57;
+          case 49:
+            _context2.next = 56;
             break;
 
-          case 52:
-            _context2.prev = 52;
-            _context2.t2 = _context2["catch"](47);
+          case 51:
+            _context2.prev = 51;
+            _context2.t2 = _context2["catch"](46);
             console.log(_context2.t2);
-            _context2.next = 57;
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
-            _context2.next = 59;
+          case 56:
+            _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 59:
+          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 42], [14, 24], [47, 52]]);
+    }, null, null, [[7, 41], [14, 24], [46, 51]]);
   })();
 };
 
