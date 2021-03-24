@@ -40,6 +40,8 @@ const WALLSTREET = () =>{
       
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -55,12 +57,12 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          await page.goto(['https://www.wsj.com/news/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
+        /* await page.solveRecaptchas();
          await Promise.all([
              page.waitForNavigation(),
              page.click(".g-recaptcha"),
              await page.$eval('input[type=submit]', el => el.click())
-         ]);
+         ]);*/
     }
 
       // get the data from the page
@@ -82,33 +84,33 @@ var PageData = await page.evaluate((Category)=>{
 
   
     //change category name
-    var cateogryName = "";
+    var categoryName = "";
 
     switch(Category){
         case 'world' : 
-           cateogryName="international"
+           categoryName="international"
            break;
 
         case 'life-arts' :
-            cateogryName="art&design";
+            categoryName="art&design";
             break;
 
         case 'realestate' :
-             cateogryName="business";
+             categoryName="business";
            break;
 
         default :
            if(Category.indexOf('asia')!=-1){
-               cateogryName="international";
+               categoryName="international";
            }else{
-              if(cateogryName.indexOf('africa')!=-1){
+              if(categoryName.indexOf('africa')!=-1){
                   categoryName="international";
               }else{
                   if(categoryName.indexOf('china')!=-1){
                       categoryName='international';
                   }else{
                       if(categoryName.indexOf('america')){
-                          categoryName="us";
+                          categoryName="international";
                       }else{
                           if(categoryName.indexOf('middle-east')!=-1){
                               categoryName="international";
@@ -169,7 +171,7 @@ var PageData = await page.evaluate((Category)=>{
                        title : condition==true ? titles[j].querySelector('h3').textContent.trim() :  titles[j].textContent.trim(),
                        link : condition==true ? links[j].querySelector('a').href : links[j].href,
                        images :  condition==true ?(typeof(images[j])!="undefined" ? images[j].querySelector('img').src : null) : (typeof(images[j])!="undefined" ? images[j].src : null),
-                       Category: cateogryName,
+                       Category: categoryName,
                        source :"The WALL STREET JOURNAL",
                        sourceLink:"https://www.wsj.com",
                        sourceLogo:"Wallstreet logo"
@@ -178,13 +180,18 @@ var PageData = await page.evaluate((Category)=>{
               }
                       return data;
                },Category);
-
+               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
-       }
+       }}catch(e){
+             console.log(e)
+             await browser.close();
+            }
   
-     await GetContent(page,AllData);
+    
+try{await GetContent(page,AllData);}catch{console.log(e);await browser.close()}
+
      await browser.close();
     })();
 }
@@ -199,7 +206,7 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-
+       console.log(url)
         await page.setJavaScriptEnabled(false);
 
         try{
