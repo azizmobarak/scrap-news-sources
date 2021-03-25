@@ -19,7 +19,7 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('22 */1 * * *', function () {
+cron.schedule('10 */1 * * *', function () {
   var scrap = require('./sources/ES/DEBAT');
 
   scrap();

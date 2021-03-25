@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['mexico', 'politic', 'international', 'technology', 'economy', 'life&style', 'health'];
+var Categories = ['football', 'basketball', 'athletic'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 38;
+              _context2.next = 34;
               break;
             }
 
@@ -63,29 +63,25 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; //console.log(Category)
             //navigate to category sub route
 
-            url = "https://www.debate.com.mx/";
-            if (Category === "politic") url = "https://www.debate.com.mx/seccion/politica/";
-            if (Category === "economy") url = "https://www.debate.com.mx/seccion/economia/";
-            if (Category === "health") url = "https://www.debate.com.mx/seccion/salud/";
-            if (Category === "life&style") url = "https://www.debate.com.mx/seccion/estiloyvida/";
-            if (Category === "technology") url = "https://www.debate.com.mx/seccion/tecnologia/";
-            if (Category === "international") url = "https://www.debate.com.mx/seccion/mundo/";
-            _context2.prev = 18;
-            _context2.next = 21;
+            url = "https://www.marca.com/futbol/primera-division.html?intcmp=MENUPROD&s_kw=primera-division";
+            if (Category === "basketball") url = "https://www.marca.com/baloncesto/acb.html?intcmp=MENUPROD&s_kw=baloncesto-acb";
+            if (Category === "athletic") url = "https://www.marca.com/atletismo.html?intcmp=MENUPROD&s_kw=atletismo";
+            _context2.prev = 14;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 21:
-            _context2.next = 27;
+          case 17:
+            _context2.next = 23;
             break;
 
-          case 23:
-            _context2.prev = 23;
-            _context2.t0 = _context2["catch"](18);
-            _context2.next = 27;
+          case 19:
+            _context2.prev = 19;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 27:
-            _context2.next = 29;
+          case 23:
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -113,17 +109,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 29:
-            _context2.next = 31;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 31:
-            _context2.next = 33;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('article.news--box');
+              var articles = document.querySelectorAll('article');
               var images = "img";
               var links = "a";
-              var titles = "h2";
+              var titles = "h3";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -134,9 +130,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "El Debate " + Category,
-                    sourceLink: "https://www.debate.com.mx/",
-                    sourceLogo: "https://i.pinimg.com/originals/a2/23/04/a22304d8e747bd105ba377d71ddd66ec.png"
+                    source: "Marca " + Category,
+                    sourceLink: "https://www.marca.com",
+                    sourceLogo: "https://greatsaveluongo.files.wordpress.com/2013/03/marca.jpg"
                   });
                 }
               }
@@ -144,55 +140,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 33:
+          case 29:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            //   console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 35:
+          case 31:
             i++;
             _context2.next = 9;
             break;
 
-          case 38:
-            _context2.next = 45;
+          case 34:
+            _context2.next = 41;
             break;
 
-          case 40:
-            _context2.prev = 40;
+          case 36:
+            _context2.prev = 36;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 45;
+            _context2.next = 41;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
-            _context2.prev = 45;
-            _context2.next = 48;
+          case 41:
+            _context2.prev = 41;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 48:
-            _context2.next = 55;
+          case 44:
+            _context2.next = 51;
             break;
 
-          case 50:
-            _context2.prev = 50;
-            _context2.t2 = _context2["catch"](45);
+          case 46:
+            _context2.prev = 46;
+            _context2.t2 = _context2["catch"](41);
             console.log(_context2.t2);
-            _context2.next = 55;
+            _context2.next = 51;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
-            _context2.next = 57;
+          case 51:
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
+          case 53:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 40], [18, 23], [45, 50]]);
+    }, null, null, [[7, 36], [14, 19], [41, 46]]);
   })();
 };
 
@@ -207,12 +203,12 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 15;
             break;
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
+          url = item.link; // console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -222,7 +218,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.newsfull__body p');
+              var second_text = document.querySelectorAll('.ue-c-article__body p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
@@ -237,17 +233,7 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
-          _context3.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.newsfull__author>a').textContent.trim();
-            } catch (_unused3) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context3.sent;
+          author = null;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -264,17 +250,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 12:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          console.log(AllData_WithConetent);
-          _context3.next = 20;
+        case 15:
+          _context3.next = 17;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 17:
         case "end":
           return _context3.stop();
       }
