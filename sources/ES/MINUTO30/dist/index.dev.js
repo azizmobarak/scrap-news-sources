@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['venezuela', 'international', 'football', 'economy'];
+var Categories = ['colombia', 'international', 'health',, 'athletic', 'economy', 'basketball', 'fashion', 'football', 'environment', 'art&design', 'entrainment'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 38;
+              _context2.next = 45;
               break;
             }
 
@@ -63,35 +63,42 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; // console.log(Category)
             //navigate to category sub route
 
-            url = "https://www.elnacional.com/venezuela/";
-            if (Category === "football") url = "https://www.elnacional.com/futbol/";
-            if (Category === "economy") url = "https://www.elnacional.com/economia/";
-            if (Category === "international") url = "https://www.elnacional.com/mundo/";
-            _context2.prev = 15;
-            _context2.next = 18;
+            url = "https://www.minuto30.com/nacional/";
+            if (Category === "health") url = "https://www.minuto30.com/antioquia/antioquia-salud/";
+            if (Category === "athletic") url = "https://www.minuto30.com/deportes/noticias-atletismo/";
+            if (Category === "international") url = "https://www.minuto30.com/internacional/";
+            if (Category === "fashion") url = "https://www.minuto30.com/entretenimiento/moda-entretenimiento/";
+            if (Category === "basketball") url = "https://www.minuto30.com/deportes/noticias-baloncesto/";
+            if (Category === "football") url = "https://www.minuto30.com/deportes/noticias-futbol-internacional/";
+            if (Category === "environment") url = "https://www.minuto30.com/nacional/medio-ambiente-nacional/";
+            if (Category === "art&design") url = "https://www.minuto30.com/entretenimiento/arte/";
+            if (Category === "economy") url = "https://www.minuto30.com/economia/";
+            if (Category === "entrainment") url = "https://www.minuto30.com/entretenimiento/";
+            _context2.prev = 22;
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 18:
+          case 25:
             if (!(i == 0)) {
-              _context2.next = 21;
+              _context2.next = 28;
               break;
             }
 
-            _context2.next = 21;
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.click('#noads-promo-close'));
 
-          case 21:
-            _context2.next = 27;
+          case 28:
+            _context2.next = 34;
             break;
 
-          case 23:
-            _context2.prev = 23;
-            _context2.t0 = _context2["catch"](15);
-            _context2.next = 27;
+          case 30:
+            _context2.prev = 30;
+            _context2.t0 = _context2["catch"](22);
+            _context2.next = 34;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 27:
-            _context2.next = 29;
+          case 34:
+            _context2.next = 36;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -119,20 +126,20 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 29:
-            _context2.next = 31;
+          case 36:
+            _context2.next = 38;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 31:
-            _context2.next = 33;
+          case 38:
+            _context2.next = 40;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.td-big-thumb');
+              var articles = document.querySelectorAll('.mvp-widget-feat2-left');
               var images = "img";
               var links = "a";
-              var titles = "h3";
+              var titles = "h2";
               var data = [];
 
-              for (var j = 0; j < 2; j++) {
+              for (var j = 0; j < 1; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -140,9 +147,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "El Nacional " + Category,
-                    sourceLink: "https://www.elnacional.com",
-                    sourceLogo: "https://cdn.elnacional.com/wp-content/uploads/2019/07/Logos-EN-Programador-23.png"
+                    source: "Minuto30 " + Category,
+                    sourceLink: "www.minuto30.com",
+                    sourceLogo: "https://www.minuto30.com/wp-content/uploads/2014/09/Minuto30_logo1.png"
                   });
                 }
               }
@@ -150,60 +157,60 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 33:
+          case 40:
             PageData = _context2.sent;
             //   console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 35:
+          case 42:
             i++;
             _context2.next = 9;
             break;
 
-          case 38:
-            _context2.next = 45;
+          case 45:
+            _context2.next = 52;
             break;
 
-          case 40:
-            _context2.prev = 40;
+          case 47:
+            _context2.prev = 47;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 45;
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
-            _context2.prev = 45;
-            _context2.next = 48;
+          case 52:
+            _context2.prev = 52;
+            _context2.next = 55;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 48:
-            _context2.next = 55;
+          case 55:
+            _context2.next = 62;
             break;
 
-          case 50:
-            _context2.prev = 50;
-            _context2.t2 = _context2["catch"](45);
-            console.log(_context2.t2);
-            _context2.next = 55;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 55:
-            _context2.next = 57;
-            return regeneratorRuntime.awrap(browser.close());
-
           case 57:
+            _context2.prev = 57;
+            _context2.t2 = _context2["catch"](52);
+            console.log(_context2.t2);
+            _context2.next = 62;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 62:
+            _context2.next = 64;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 64:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 40], [15, 23], [45, 50]]);
+    }, null, null, [[7, 47], [22, 30], [52, 57]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -213,12 +220,12 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 17;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
+          url = item.link; //  console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -228,7 +235,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.td-post-content p');
+              var second_text = document.querySelectorAll('#mvp-content-main p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
@@ -243,6 +250,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.author-name').textContent.trim();
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          author = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -254,21 +272,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              author: null,
+              author: author,
               content: Content
             });
           }
 
-        case 11:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
+        case 17:
+          _context3.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 19:
         case "end":
           return _context3.stop();
       }

@@ -19,8 +19,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('*/30 * * * *', function () {
-  var scrap = require('./sources/ES/ELNACIONAL');
+cron.schedule('*/27 * * * *', function () {
+  var scrap = require('./sources/ES/MINUTO30');
 
   scrap();
 });
