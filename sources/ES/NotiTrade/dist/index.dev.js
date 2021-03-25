@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['venezuela', 'politic', 'economy', 'opinion', 'entertainment', 'health'];
+var Categories = ['venezuela', 'international', 'economy', 'opinion', 'celebrity', 'health'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 39;
+              _context2.next = 37;
               break;
             }
 
@@ -63,32 +63,28 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; // console.log(Category)
             //navigate to category sub route
 
-            url = "https://www.lapatilla.com/secciones/nacionales/";
-            if (Category === "politic") url = "https://www.lapatilla.com/secciones/politica";
-            if (Category === "economy") url = "https://www.lapatilla.com/secciones/economia/";
-            if (Category === "opinion") url = "https://www.lapatilla.com/secciones/opinion/";
-            if (Category === "entertainment") url = "https://www.lapatilla.com/secciones/entretenimiento";
-            if (Category === "health") url = "https://www.lapatilla.com/secciones/salud/";
+            url = "https://www.notitarde.com/categoria/pais/";
+            if (Category === "economy") url = "https://www.notitarde.com/categoria/economia/";
+            if (Category === "opinion") url = "https://www.notitarde.com/categoria/opinion/";
+            if (Category === "celebrity") url = "https://www.notitarde.com/categoria/espectaculos/";
+            if (Category === "international") url = "https://www.notitarde.com/categoria/internacional/";
+            if (Category === "health") url = "https://www.notitarde.com/categoria/variedades/salud/";
             _context2.prev = 17;
             _context2.next = 20;
             return regeneratorRuntime.awrap(page["goto"](url));
 
           case 20:
-            _context2.next = 22;
-            return regeneratorRuntime.awrap(page.waitForSelector('footer'));
-
-          case 22:
-            _context2.next = 28;
+            _context2.next = 26;
             break;
 
-          case 24:
-            _context2.prev = 24;
+          case 22:
+            _context2.prev = 22;
             _context2.t0 = _context2["catch"](17);
-            _context2.next = 28;
+            _context2.next = 26;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 28:
-            _context2.next = 30;
+          case 26:
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -116,20 +112,20 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
+          case 28:
+            _context2.next = 30;
+            return regeneratorRuntime.awrap(page.waitFor(2000));
+
           case 30:
             _context2.next = 32;
-            return regeneratorRuntime.awrap(page.waitFor(3000));
-
-          case 32:
-            _context2.next = 34;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.post');
+              var articles = document.querySelectorAll('.td-big-grid-wrapper');
               var images = "img";
               var links = "a";
-              var titles = "h4";
+              var titles = "h3";
               var data = [];
 
-              for (var j = 0; j < 5; j++) {
+              for (var j = 0; j < 1; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -137,8 +133,8 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "Lostiempos " + Category,
-                    sourceLink: "https://www.lostiempos.com",
+                    source: "NotiTrade " + Category,
+                    sourceLink: "https://www.notitarde.com/",
                     sourceLogo: "https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
                   });
                 }
@@ -147,55 +143,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 34:
+          case 32:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 36:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 39:
-            _context2.next = 46;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 41:
-            _context2.prev = 41;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 46;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
-            _context2.prev = 46;
-            _context2.next = 49;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 49:
-            _context2.next = 56;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 51:
-            _context2.prev = 51;
-            _context2.t2 = _context2["catch"](46);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
+            _context2.next = 54;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 54:
             _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
           case 56:
-            _context2.next = 58;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 41], [17, 24], [46, 51]]);
+    }, null, null, [[7, 39], [17, 22], [44, 49]]);
   })();
 };
 
@@ -215,7 +211,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
+          url = item.link; //    console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -225,7 +221,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('article .entry-content>p');
+              var second_text = document.querySelectorAll('.td-post-content>p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {

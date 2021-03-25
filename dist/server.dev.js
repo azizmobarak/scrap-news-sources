@@ -19,8 +19,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('44 */1 * * *', function () {
-  var scrap = require('./sources/ES/lapatilla');
+cron.schedule('*/30 * * * *', function () {
+  var scrap = require('./sources/ES/NotiTrade');
 
   scrap();
 });
