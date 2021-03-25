@@ -19,8 +19,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('40 */1 * * *', function () {
-  var scrap = require('./sources/ES/PARAGUAY');
+cron.schedule('22 */1 * * *', function () {
+  var scrap = require('./sources/ES/DEBAT');
 
   scrap();
 });

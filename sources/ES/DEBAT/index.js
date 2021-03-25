@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['paraguay','art&design','international','technology'];
+var Categories=['mexico','politic','international','technology','economy','life&style','health'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -48,13 +48,16 @@ for(let i=0;i<Categories.length;i++){
 
     //get the right category by number
     var Category = Categories[i]
-    console.log(Category)
+    //console.log(Category)
     //navigate to category sub route
-    var url ="https://www.paraguay.com/noticias/nacionales";
+    var url ="https://www.debate.com.mx/";
 
-    if(Category==="art&design") url="https://www.paraguay.com/noticias/espectaculos";
-    if(Category==="international") url="https://www.paraguay.com/noticias/internacionales";
-    if(Category==="technology") url="https://www.paraguay.com/noticias/tecnologia";
+    if(Category==="politic") url="https://www.debate.com.mx/seccion/politica/";
+    if(Category==="economy") url="https://www.debate.com.mx/seccion/economia/";
+    if(Category==="health") url="https://www.debate.com.mx/seccion/salud/";
+    if(Category==="life&style") url="https://www.debate.com.mx/seccion/estiloyvida/";
+    if(Category==="technology") url="https://www.debate.com.mx/seccion/tecnologia/";
+    if(Category==="international") url="https://www.debate.com.mx/seccion/mundo/";
     
     try{
         await page.goto(url);
@@ -67,7 +70,7 @@ for(let i=0;i<Categories.length;i++){
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
 
-      await page.evaluate(()=>{
+  await page.evaluate(()=>{
 
         var totalHeight = 0;
             var distance = 100;
@@ -87,10 +90,10 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.section_news_story');
+    var articles = document.querySelectorAll('article.news--box');
     var images ="img"
     var links = "a"
-    var titles ="h1"
+    var titles ="h2"
        
          
         var data =[];
@@ -103,15 +106,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"Paraguay.com "+Category,
-                    sourceLink:"https://www.paraguay.com",
-                    sourceLogo:"http://cdn.paraguay.com/photos/images/000/041/302/cropped_pycom.jpg.jpg"
+                    source :"El Debate "+Category,
+                    sourceLink:"https://www.debate.com.mx/",
+                    sourceLogo:"https://i.pinimg.com/originals/a2/23/04/a22304d8e747bd105ba377d71ddd66ec.png"
                       });
                    }
                }
                       return data;
      },Category);
-            // console.log(PageData);
+          //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -141,13 +144,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        // console.log(url)
+       //  console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.news_story p');
+               var second_text = document.querySelectorAll('.newsfull__body p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');
@@ -158,7 +161,13 @@ const GetContent = async(page,data)=>{
             }
         });
 
-    var author = null;
+    var author = await page.evaluate(()=>{
+        try{
+            return document.querySelector('.newsfull__author>a').textContent.trim();
+        }catch{
+           return null;
+        }
+    });
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -175,8 +184,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    // console.log(AllData_WithConetent)
-   await InsertData(AllData_WithConetent);
+    console.log(AllData_WithConetent)
+    await InsertData(AllData_WithConetent);
 }
 
 
