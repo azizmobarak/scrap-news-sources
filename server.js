@@ -14,10 +14,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('11 */1 * * *', () => {
+// cron.schedule('11 */1 * * *', () => {
    const scrap = require('./sources/ES/ABCCOLOR');
    scrap();
-});
+// });
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

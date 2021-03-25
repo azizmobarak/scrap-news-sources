@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['paraguay','basketball','international','football','tennis','culture','business'];
+var Categories=['paraguay','art&design','international','technology'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -50,14 +50,11 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     console.log(Category)
     //navigate to category sub route
-    var url ="https://www.abc.com.py/nacionales/";
+    var url ="https://www.paraguay.com/noticias/nacionales";
 
-    if(Category==="basketball") url="https://www.abc.com.py/deportes/basquetbol/";
-    if(Category==="international") url="https://www.abc.com.py/internacionales/";
-    if(Category==="football") url="https://www.abc.com.py/deportes/futbol/";
-    if(Category==="tennis") url="https://www.abc.com.py/deportes/tenis/";
-    if(Category==="culture") url="https://www.abc.com.py/espectaculos/cultura/";
-    if(Category==="business") url="https://www.abc.com.py/empresariales/";
+    if(Category==="art&design") url="https://www.paraguay.com/noticias/espectaculos";
+    if(Category==="international") url="https://www.paraguay.com/noticias/internacionales";
+    if(Category==="technology") url="https://www.paraguay.com/noticias/tecnologia";
     
     try{
         await page.goto(url);
@@ -90,10 +87,10 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.item-article');
+    var articles = document.querySelectorAll('.section_news_story');
     var images ="img"
     var links = "a"
-    var titles =".article-title"
+    var titles ="h1"
        
          
         var data =[];
@@ -106,15 +103,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"ABC Color "+Category,
-                    sourceLink:"https://www.abc.com.py",
-                    sourceLogo:"https://pbs.twimg.com/profile_images/1280529562707918848/H2CwEOGY_400x400.jpg"
+                    source :"Paraguay.com "+Category,
+                    sourceLink:"https://www.paraguay.com",
+                    sourceLogo:"http://cdn.paraguay.com/photos/images/000/041/302/cropped_pycom.jpg.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-           // console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -144,13 +141,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      //  console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.article-container p');
+               var second_text = document.querySelectorAll('.news_story p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');
@@ -178,8 +175,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-   // console.log(AllData_WithConetent)
-    await InsertData(AllData_WithConetent);
+    console.log(AllData_WithConetent)
+   // await InsertData(AllData_WithConetent);
 }
 
 

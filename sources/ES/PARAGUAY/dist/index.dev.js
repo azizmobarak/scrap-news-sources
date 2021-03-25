@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['paraguay', 'basketball', 'international', 'football', 'tennis', 'culture', 'business'];
+var Categories = ['paraguay', 'art&design', 'international', 'technology'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 39;
+              _context2.next = 37;
               break;
             }
 
@@ -63,29 +63,26 @@ var LARAZON = function LARAZON() {
             Category = Categories[i];
             console.log(Category); //navigate to category sub route
 
-            url = "https://www.abc.com.py/nacionales/";
-            if (Category === "basketball") url = "https://www.abc.com.py/deportes/basquetbol/";
-            if (Category === "international") url = "https://www.abc.com.py/internacionales/";
-            if (Category === "football") url = "https://www.abc.com.py/deportes/futbol/";
-            if (Category === "tennis") url = "https://www.abc.com.py/deportes/tenis/";
-            if (Category === "culture") url = "https://www.abc.com.py/espectaculos/cultura/";
-            if (Category === "business") url = "https://www.abc.com.py/empresariales/";
-            _context2.prev = 19;
-            _context2.next = 22;
+            url = "https://www.paraguay.com/noticias/nacionales";
+            if (Category === "art&design") url = "https://www.paraguay.com/noticias/espectaculos";
+            if (Category === "international") url = "https://www.paraguay.com/noticias/internacionales";
+            if (Category === "technology") url = "https://www.paraguay.com/noticias/tecnologia";
+            _context2.prev = 16;
+            _context2.next = 19;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 22:
-            _context2.next = 28;
+          case 19:
+            _context2.next = 25;
             break;
 
-          case 24:
-            _context2.prev = 24;
-            _context2.t0 = _context2["catch"](19);
-            _context2.next = 28;
+          case 21:
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](16);
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 28:
-            _context2.next = 30;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -113,17 +110,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 30:
-            _context2.next = 32;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 32:
-            _context2.next = 34;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.item-article');
+              var articles = document.querySelectorAll('.section_news_story');
               var images = "img";
               var links = "a";
-              var titles = ".article-title";
+              var titles = "h1";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -134,9 +131,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "ABC Color " + Category,
-                    sourceLink: "https://www.abc.com.py",
-                    sourceLogo: "https://pbs.twimg.com/profile_images/1280529562707918848/H2CwEOGY_400x400.jpg"
+                    source: "Paraguay.com " + Category,
+                    sourceLink: "https://www.paraguay.com",
+                    sourceLogo: "http://cdn.paraguay.com/photos/images/000/041/302/cropped_pycom.jpg.jpg"
                   });
                 }
               }
@@ -144,55 +141,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 34:
+          case 31:
             PageData = _context2.sent;
-            // console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 36:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 39:
-            _context2.next = 46;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 41:
-            _context2.prev = 41;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 46;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
-            _context2.prev = 46;
-            _context2.next = 49;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 49:
-            _context2.next = 56;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 51:
-            _context2.prev = 51;
-            _context2.t2 = _context2["catch"](46);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
+            _context2.next = 54;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 54:
             _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
           case 56:
-            _context2.next = 58;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 41], [19, 24], [46, 51]]);
+    }, null, null, [[7, 39], [16, 21], [44, 49]]);
   })();
 };
 
@@ -207,22 +204,22 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 16;
             break;
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.article-container p');
+              var second_text = document.querySelectorAll('.news_story p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
@@ -235,7 +232,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
           author = null;
 
@@ -254,14 +251,13 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 12:
+        case 13:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 16:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
         case 17:
         case "end":

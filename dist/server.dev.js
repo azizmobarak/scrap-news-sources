@@ -18,12 +18,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-});
-cron.schedule('11 */1 * * *', function () {
-  var scrap = require('./sources/ES/ABCCOLOR');
+}); // cron.schedule('11 */1 * * *', () => {
 
-  scrap();
-});
+var scrap = require('./sources/ES/ABCCOLOR');
+
+scrap(); // });
+
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
