@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['colombia','international','health',,'athletic','economy','basketball','fashion','football','environment','art&design','entrainment'];
+var Categories=['colombia','politic','technology','economy','venezuela','culture'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -48,25 +48,20 @@ for(let i=0;i<Categories.length;i++){
 
     //get the right category by number
     var Category = Categories[i]
-   // console.log(Category)
+    console.log(Category)
     //navigate to category sub route
-    var url ="https://www.minuto30.com/nacional/";
+    var url ="https://www.eltiempo.com/colombia";
 
-    if(Category==="health") url="https://www.minuto30.com/antioquia/antioquia-salud/";
-    if(Category==="athletic") url="https://www.minuto30.com/deportes/noticias-atletismo/";
-    if(Category==="international") url="https://www.minuto30.com/internacional/";
-    if(Category==="fashion") url="https://www.minuto30.com/entretenimiento/moda-entretenimiento/";
-    if(Category==="basketball") url="https://www.minuto30.com/deportes/noticias-baloncesto/";
-    if(Category==="football") url="https://www.minuto30.com/deportes/noticias-futbol-internacional/";
-    if(Category==="environment") url="https://www.minuto30.com/nacional/medio-ambiente-nacional/";
-    if(Category==="art&design") url="https://www.minuto30.com/entretenimiento/arte/";
-    if(Category==="economy") url="https://www.minuto30.com/economia/";
-    if(Category==="entrainment") url="https://www.minuto30.com/entretenimiento/";
+    if(Category==="politic") url="https://www.eltiempo.com/politica";
+    if(Category==="technology") url="https://www.eltiempo.com/tecnosfera";
+    if(Category==="economy") url="https://www.eltiempo.com/economia";
+    if(Category==="venezuela") url="https://www.eltiempo.com/mundo/venezuela";
+    if(Category==="culture") url="https://www.eltiempo.com/cultura";
     
     try{
         await page.goto(url);
        // await page.waitForSelector('footer')
-        if(i==0) await page.click('#noads-promo-close');
+     //   if(i==0) await page.click('#noads-promo-close');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -82,7 +77,6 @@ for(let i=0;i<Categories.length;i++){
                 var scrollHeight = document.body.scrollHeight;
                window.scrollBy(0, distance);
                 totalHeight += distance;
-
                 if(totalHeight >= 1000){
                     clearInterval(timer);
                     resolve();
@@ -95,15 +89,15 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.mvp-widget-feat2-left');
+    var articles = document.querySelectorAll('.nota');
     var images ="img"
     var links = "a"
-    var titles ="h2"
+    var titles ="h3"
        
          
         var data =[];
 
-         for(let j=0;j<1;j++){
+         for(let j=0;j<5;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
@@ -111,15 +105,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"Minuto30 "+Category,
-                    sourceLink:"www.minuto30.com",
-                    sourceLogo:"https://www.minuto30.com/wp-content/uploads/2014/09/Minuto30_logo1.png"
+                    source :"Eltiempo "+Category,
+                    sourceLink:"www.eltiempo.com",
+                    sourceLogo:"https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062011/elt.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-        //   console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -155,7 +149,7 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('#mvp-content-main p');
+               var second_text = document.querySelectorAll('.modulos p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;
@@ -166,13 +160,7 @@ const GetContent = async(page,data)=>{
             }
         });
 
-    var author = await page.evaluate(()=>{
-        try{
-       return document.querySelector('.author-name').textContent.trim();
-        }catch{
-          return null;
-        }
-    })
+    var author = null;
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -189,8 +177,8 @@ const GetContent = async(page,data)=>{
           });
        }
     }
- //console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+   // console.log(AllData_WithConetent)
+    await InsertData(AllData_WithConetent);
 }
 
 

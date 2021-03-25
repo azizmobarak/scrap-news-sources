@@ -14,10 +14,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('*/27 * * * *', () => {
-   const scrap = require('./sources/ES/MINUTO30');
+// cron.schedule('*/27 * * * *', () => {
+   const scrap = require('./sources/ES/TIEMPO');
    scrap();
-});
+// });
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

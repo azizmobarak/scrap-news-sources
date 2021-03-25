@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['colombia', 'international', 'health',, 'athletic', 'economy', 'basketball', 'fashion', 'football', 'environment', 'art&design', 'entrainment'];
+var Categories = ['colombia', 'politic', 'technology', 'economy', 'venezuela', 'culture'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,50 +55,36 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 45;
+              _context2.next = 38;
               break;
             }
 
             //get the right category by number
-            Category = Categories[i]; // console.log(Category)
-            //navigate to category sub route
+            Category = Categories[i];
+            console.log(Category); //navigate to category sub route
 
-            url = "https://www.minuto30.com/nacional/";
-            if (Category === "health") url = "https://www.minuto30.com/antioquia/antioquia-salud/";
-            if (Category === "athletic") url = "https://www.minuto30.com/deportes/noticias-atletismo/";
-            if (Category === "international") url = "https://www.minuto30.com/internacional/";
-            if (Category === "fashion") url = "https://www.minuto30.com/entretenimiento/moda-entretenimiento/";
-            if (Category === "basketball") url = "https://www.minuto30.com/deportes/noticias-baloncesto/";
-            if (Category === "football") url = "https://www.minuto30.com/deportes/noticias-futbol-internacional/";
-            if (Category === "environment") url = "https://www.minuto30.com/nacional/medio-ambiente-nacional/";
-            if (Category === "art&design") url = "https://www.minuto30.com/entretenimiento/arte/";
-            if (Category === "economy") url = "https://www.minuto30.com/economia/";
-            if (Category === "entrainment") url = "https://www.minuto30.com/entretenimiento/";
-            _context2.prev = 22;
-            _context2.next = 25;
+            url = "https://www.eltiempo.com/colombia";
+            if (Category === "politic") url = "https://www.eltiempo.com/politica";
+            if (Category === "technology") url = "https://www.eltiempo.com/tecnosfera";
+            if (Category === "economy") url = "https://www.eltiempo.com/economia";
+            if (Category === "venezuela") url = "https://www.eltiempo.com/mundo/venezuela";
+            if (Category === "culture") url = "https://www.eltiempo.com/cultura";
+            _context2.prev = 18;
+            _context2.next = 21;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 25:
-            if (!(i == 0)) {
-              _context2.next = 28;
-              break;
-            }
-
-            _context2.next = 28;
-            return regeneratorRuntime.awrap(page.click('#noads-promo-close'));
-
-          case 28:
-            _context2.next = 34;
+          case 21:
+            _context2.next = 27;
             break;
 
-          case 30:
-            _context2.prev = 30;
-            _context2.t0 = _context2["catch"](22);
-            _context2.next = 34;
+          case 23:
+            _context2.prev = 23;
+            _context2.t0 = _context2["catch"](18);
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 34:
-            _context2.next = 36;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -126,20 +112,20 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 36:
-            _context2.next = 38;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 38:
-            _context2.next = 40;
+          case 31:
+            _context2.next = 33;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.mvp-widget-feat2-left');
+              var articles = document.querySelectorAll('.nota');
               var images = "img";
               var links = "a";
-              var titles = "h2";
+              var titles = "h3";
               var data = [];
 
-              for (var j = 0; j < 1; j++) {
+              for (var j = 0; j < 5; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -147,9 +133,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "Minuto30 " + Category,
-                    sourceLink: "www.minuto30.com",
-                    sourceLogo: "https://www.minuto30.com/wp-content/uploads/2014/09/Minuto30_logo1.png"
+                    source: "Eltiempo " + Category,
+                    sourceLink: "www.eltiempo.com",
+                    sourceLogo: "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062011/elt.jpg"
                   });
                 }
               }
@@ -157,55 +143,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 40:
+          case 33:
             PageData = _context2.sent;
-            //   console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 42:
+          case 35:
             i++;
             _context2.next = 9;
             break;
 
-          case 45:
-            _context2.next = 52;
+          case 38:
+            _context2.next = 45;
             break;
 
-          case 47:
-            _context2.prev = 47;
+          case 40:
+            _context2.prev = 40;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 52;
+            _context2.next = 45;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
-            _context2.prev = 52;
-            _context2.next = 55;
+          case 45:
+            _context2.prev = 45;
+            _context2.next = 48;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 55:
-            _context2.next = 62;
+          case 48:
+            _context2.next = 55;
             break;
 
-          case 57:
-            _context2.prev = 57;
-            _context2.t2 = _context2["catch"](52);
+          case 50:
+            _context2.prev = 50;
+            _context2.t2 = _context2["catch"](45);
             console.log(_context2.t2);
-            _context2.next = 62;
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 62:
-            _context2.next = 64;
+          case 55:
+            _context2.next = 57;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 64:
+          case 57:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 47], [22, 30], [52, 57]]);
+    }, null, null, [[7, 40], [18, 23], [45, 50]]);
   })();
 };
 
@@ -220,7 +206,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 15;
             break;
           }
 
@@ -235,7 +221,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('#mvp-content-main p');
+              var second_text = document.querySelectorAll('.modulos p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
@@ -250,17 +236,7 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
-          _context3.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.author-name').textContent.trim();
-            } catch (_unused3) {
-              return null;
-            }
-          }));
-
-        case 12:
-          author = _context3.sent;
+          author = null;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -277,16 +253,16 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 12:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 15:
+          _context3.next = 17;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 17:
         case "end":
           return _context3.stop();
       }
