@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['colombia','politic','technology','economy','venezuela','culture'];
+var Categories=['paraguay','basketball','international','football','tennis','culture','business'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -50,13 +50,14 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     console.log(Category)
     //navigate to category sub route
-    var url ="https://www.eltiempo.com/colombia";
+    var url ="https://www.abc.com.py/nacionales/";
 
-    if(Category==="politic") url="https://www.eltiempo.com/politica";
-    if(Category==="technology") url="https://www.eltiempo.com/tecnosfera";
-    if(Category==="economy") url="https://www.eltiempo.com/economia";
-    if(Category==="venezuela") url="https://www.eltiempo.com/mundo/venezuela";
-    if(Category==="culture") url="https://www.eltiempo.com/cultura";
+    if(Category==="basketball") url="https://www.abc.com.py/deportes/basquetbol/";
+    if(Category==="international") url="https://www.abc.com.py/internacionales/";
+    if(Category==="football") url="https://www.abc.com.py/deportes/futbol/";
+    if(Category==="tennis") url="https://www.abc.com.py/deportes/tenis/";
+    if(Category==="culture") url="https://www.abc.com.py/espectaculos/cultura/";
+    if(Category==="business") url="https://www.abc.com.py/empresariales/";
     
     try{
         await page.goto(url);
@@ -89,10 +90,10 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.nota');
+    var articles = document.querySelectorAll('.item-article');
     var images ="img"
     var links = "a"
-    var titles ="h3"
+    var titles =".article-title"
        
          
         var data =[];
@@ -105,15 +106,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"Eltiempo "+Category,
-                    sourceLink:"www.eltiempo.com",
-                    sourceLogo:"https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062011/elt.jpg"
+                    source :"ABC Color "+Category,
+                    sourceLink:"https://www.abc.com.py",
+                    sourceLogo:"https://pbs.twimg.com/profile_images/1280529562707918848/H2CwEOGY_400x400.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
+           // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -149,12 +150,12 @@ const GetContent = async(page,data)=>{
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.modulos p');
+               var second_text = document.querySelectorAll('.article-container p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
-                  scond_content = scond_content +"\n"+second_text[i].textContent;
+                  scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');
                }
-                return scond_content.replaceAll('\n','');
+                return scond_content;
             }catch{
                return null;
             }

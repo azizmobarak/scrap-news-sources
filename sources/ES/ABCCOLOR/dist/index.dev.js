@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['colombia', 'politic', 'technology', 'economy', 'venezuela', 'culture'];
+var Categories = ['paraguay', 'basketball', 'international', 'football', 'tennis', 'culture', 'business'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 38;
+              _context2.next = 39;
               break;
             }
 
@@ -63,28 +63,29 @@ var LARAZON = function LARAZON() {
             Category = Categories[i];
             console.log(Category); //navigate to category sub route
 
-            url = "https://www.eltiempo.com/colombia";
-            if (Category === "politic") url = "https://www.eltiempo.com/politica";
-            if (Category === "technology") url = "https://www.eltiempo.com/tecnosfera";
-            if (Category === "economy") url = "https://www.eltiempo.com/economia";
-            if (Category === "venezuela") url = "https://www.eltiempo.com/mundo/venezuela";
-            if (Category === "culture") url = "https://www.eltiempo.com/cultura";
-            _context2.prev = 18;
-            _context2.next = 21;
+            url = "https://www.abc.com.py/nacionales/";
+            if (Category === "basketball") url = "https://www.abc.com.py/deportes/basquetbol/";
+            if (Category === "international") url = "https://www.abc.com.py/internacionales/";
+            if (Category === "football") url = "https://www.abc.com.py/deportes/futbol/";
+            if (Category === "tennis") url = "https://www.abc.com.py/deportes/tenis/";
+            if (Category === "culture") url = "https://www.abc.com.py/espectaculos/cultura/";
+            if (Category === "business") url = "https://www.abc.com.py/empresariales/";
+            _context2.prev = 19;
+            _context2.next = 22;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 21:
-            _context2.next = 27;
+          case 22:
+            _context2.next = 28;
             break;
 
-          case 23:
-            _context2.prev = 23;
-            _context2.t0 = _context2["catch"](18);
-            _context2.next = 27;
+          case 24:
+            _context2.prev = 24;
+            _context2.t0 = _context2["catch"](19);
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 27:
-            _context2.next = 29;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -112,17 +113,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 29:
-            _context2.next = 31;
+          case 30:
+            _context2.next = 32;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 31:
-            _context2.next = 33;
+          case 32:
+            _context2.next = 34;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.nota');
+              var articles = document.querySelectorAll('.item-article');
               var images = "img";
               var links = "a";
-              var titles = "h3";
+              var titles = ".article-title";
               var data = [];
 
               for (var j = 0; j < 5; j++) {
@@ -133,9 +134,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "Eltiempo " + Category,
-                    sourceLink: "www.eltiempo.com",
-                    sourceLogo: "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062011/elt.jpg"
+                    source: "ABC Color " + Category,
+                    sourceLink: "https://www.abc.com.py",
+                    sourceLogo: "https://pbs.twimg.com/profile_images/1280529562707918848/H2CwEOGY_400x400.jpg"
                   });
                 }
               }
@@ -143,55 +144,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 33:
+          case 34:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            // console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 35:
+          case 36:
             i++;
             _context2.next = 9;
             break;
 
-          case 38:
-            _context2.next = 45;
+          case 39:
+            _context2.next = 46;
             break;
 
-          case 40:
-            _context2.prev = 40;
+          case 41:
+            _context2.prev = 41;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 45;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
-            _context2.prev = 45;
-            _context2.next = 48;
+          case 46:
+            _context2.prev = 46;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 48:
-            _context2.next = 55;
+          case 49:
+            _context2.next = 56;
             break;
 
-          case 50:
-            _context2.prev = 50;
-            _context2.t2 = _context2["catch"](45);
+          case 51:
+            _context2.prev = 51;
+            _context2.t2 = _context2["catch"](46);
             console.log(_context2.t2);
-            _context2.next = 55;
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
-            _context2.next = 57;
+          case 56:
+            _context2.next = 58;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 57:
+          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 40], [18, 23], [45, 50]]);
+    }, null, null, [[7, 41], [19, 24], [46, 51]]);
   })();
 };
 
@@ -221,14 +222,14 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.modulos p');
+              var second_text = document.querySelectorAll('.article-container p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
-                scond_content = scond_content + "\n" + second_text[_i].textContent;
+                scond_content = scond_content + "\n" + second_text[_i].textContent.trim().replaceAll('\n', '');
               }
 
-              return scond_content.replaceAll('\n', '');
+              return scond_content;
             } catch (_unused2) {
               return null;
             }

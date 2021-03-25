@@ -19,8 +19,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('27 */1 * * *', function () {
-  var scrap = require('./sources/ES/TIEMPO');
+cron.schedule('11 */1 * * *', function () {
+  var scrap = require('./sources/ES/ABCCOLOR');
 
   scrap();
 });
