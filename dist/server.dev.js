@@ -20,7 +20,7 @@ con.connect(process.env.DATABASE, {
   }
 }); // cron.schedule('11 */1 * * *', () => {
 
-var scrap = require('./sources/ES/ABCCOLOR');
+var scrap = require('./sources/ES/PARAGUAY');
 
 scrap(); // });
 
