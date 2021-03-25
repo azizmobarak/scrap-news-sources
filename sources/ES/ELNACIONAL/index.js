@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['venezuela','international','economy','opinion','celebrity','health'];
+var Categories=['venezuela','international','football','economy'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -50,18 +50,16 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
    // console.log(Category)
     //navigate to category sub route
-    var url ="https://www.notitarde.com/categoria/pais/";
+    var url ="https://www.elnacional.com/venezuela/";
 
-    if(Category==="economy") url="https://www.notitarde.com/categoria/economia/";
-    if(Category==="opinion") url="https://www.notitarde.com/categoria/opinion/";
-    if(Category==="celebrity") url="https://www.notitarde.com/categoria/espectaculos/";
-    if(Category==="international") url="https://www.notitarde.com/categoria/internacional/";
-    if(Category==="health") url="https://www.notitarde.com/categoria/variedades/salud/";
+    if(Category==="football") url="https://www.elnacional.com/futbol/";
+    if(Category==="economy") url="https://www.elnacional.com/economia/";
+    if(Category==="international") url="https://www.elnacional.com/mundo/";
     
     try{
         await page.goto(url);
        // await page.waitForSelector('footer')
-      //  if(i==0) await page.click('#didomi-notice-agree-button');
+        if(i==0) await page.click('#noads-promo-close');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -90,7 +88,7 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.td-big-grid-wrapper');
+    var articles = document.querySelectorAll('.td-big-thumb');
     var images ="img"
     var links = "a"
     var titles ="h3"
@@ -98,7 +96,7 @@ var PageData = await page.evaluate((Category)=>{
          
         var data =[];
 
-         for(let j=0;j<1;j++){
+         for(let j=0;j<2;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
@@ -106,15 +104,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"NotiTrade "+Category,
-                    sourceLink:"https://www.notitarde.com/",
-                    sourceLogo:"https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
+                    source :"El Nacional "+Category,
+                    sourceLink:"https://www.elnacional.com",
+                    sourceLogo:"https://cdn.elnacional.com/wp-content/uploads/2019/07/Logos-EN-Programador-23.png"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
+        //   console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -144,13 +142,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-    //    console.log(url)
+       // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.td-post-content>p');
+               var second_text = document.querySelectorAll('.td-post-content p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent;

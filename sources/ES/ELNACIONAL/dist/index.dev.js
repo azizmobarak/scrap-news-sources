@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['venezuela', 'international', 'economy', 'opinion', 'celebrity', 'health'];
+var Categories = ['venezuela', 'international', 'football', 'economy'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 37;
+              _context2.next = 38;
               break;
             }
 
@@ -63,28 +63,35 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; // console.log(Category)
             //navigate to category sub route
 
-            url = "https://www.notitarde.com/categoria/pais/";
-            if (Category === "economy") url = "https://www.notitarde.com/categoria/economia/";
-            if (Category === "opinion") url = "https://www.notitarde.com/categoria/opinion/";
-            if (Category === "celebrity") url = "https://www.notitarde.com/categoria/espectaculos/";
-            if (Category === "international") url = "https://www.notitarde.com/categoria/internacional/";
-            if (Category === "health") url = "https://www.notitarde.com/categoria/variedades/salud/";
-            _context2.prev = 17;
-            _context2.next = 20;
+            url = "https://www.elnacional.com/venezuela/";
+            if (Category === "football") url = "https://www.elnacional.com/futbol/";
+            if (Category === "economy") url = "https://www.elnacional.com/economia/";
+            if (Category === "international") url = "https://www.elnacional.com/mundo/";
+            _context2.prev = 15;
+            _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 20:
-            _context2.next = 26;
+          case 18:
+            if (!(i == 0)) {
+              _context2.next = 21;
+              break;
+            }
+
+            _context2.next = 21;
+            return regeneratorRuntime.awrap(page.click('#noads-promo-close'));
+
+          case 21:
+            _context2.next = 27;
             break;
 
-          case 22:
-            _context2.prev = 22;
-            _context2.t0 = _context2["catch"](17);
-            _context2.next = 26;
+          case 23:
+            _context2.prev = 23;
+            _context2.t0 = _context2["catch"](15);
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 26:
-            _context2.next = 28;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -112,20 +119,20 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 28:
-            _context2.next = 30;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 30:
-            _context2.next = 32;
+          case 31:
+            _context2.next = 33;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('.td-big-grid-wrapper');
+              var articles = document.querySelectorAll('.td-big-thumb');
               var images = "img";
               var links = "a";
               var titles = "h3";
               var data = [];
 
-              for (var j = 0; j < 1; j++) {
+              for (var j = 0; j < 2; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -133,9 +140,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "NotiTrade " + Category,
-                    sourceLink: "https://www.notitarde.com/",
-                    sourceLogo: "https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
+                    source: "El Nacional " + Category,
+                    sourceLink: "https://www.elnacional.com",
+                    sourceLogo: "https://cdn.elnacional.com/wp-content/uploads/2019/07/Logos-EN-Programador-23.png"
                   });
                 }
               }
@@ -143,55 +150,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 32:
+          case 33:
             PageData = _context2.sent;
-            // console.log(PageData);
+            //   console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 34:
+          case 35:
             i++;
             _context2.next = 9;
             break;
 
-          case 37:
-            _context2.next = 44;
+          case 38:
+            _context2.next = 45;
             break;
 
-          case 39:
-            _context2.prev = 39;
+          case 40:
+            _context2.prev = 40;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 44;
+            _context2.next = 45;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 44:
-            _context2.prev = 44;
-            _context2.next = 47;
+          case 45:
+            _context2.prev = 45;
+            _context2.next = 48;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 47:
-            _context2.next = 54;
+          case 48:
+            _context2.next = 55;
             break;
 
-          case 49:
-            _context2.prev = 49;
-            _context2.t2 = _context2["catch"](44);
+          case 50:
+            _context2.prev = 50;
+            _context2.t2 = _context2["catch"](45);
             console.log(_context2.t2);
-            _context2.next = 54;
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
-            _context2.next = 56;
+          case 55:
+            _context2.next = 57;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 56:
+          case 57:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 39], [17, 22], [44, 49]]);
+    }, null, null, [[7, 40], [15, 23], [45, 50]]);
   })();
 };
 
@@ -211,7 +218,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; //    console.log(url)
+          url = item.link; // console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -221,7 +228,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.td-post-content>p');
+              var second_text = document.querySelectorAll('.td-post-content p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {

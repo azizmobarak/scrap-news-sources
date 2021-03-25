@@ -20,7 +20,7 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('*/30 * * * *', function () {
-  var scrap = require('./sources/ES/NotiTrade');
+  var scrap = require('./sources/ES/ELNACIONAL');
 
   scrap();
 });
