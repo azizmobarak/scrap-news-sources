@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['mexico', 'international', 'culture', 'health', 'celebrity'];
+var Categories = ['cuba', 'politic', 'economy', 'health', 'opinion'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 39;
+              _context2.next = 36;
               break;
             }
 
@@ -63,36 +63,27 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; //console.log(Category)
             //navigate to category sub route
 
-            url = "https://www.eluniversal.com.mx/nacion";
-            if (Category === "international") url = "https://www.eluniversal.com.mx/mundo";
-            if (Category === "culture") url = "https://www.eluniversal.com.mx/cultura";
-            if (Category === "health") url = "https://www.eluniversal.com.mx/ciencia-y-salud";
-            if (Category === "celebrity") url = "https://www.eluniversal.com.mx/espectaculos";
+            url = "http://www.cubadebate.cu/etiqueta/cuba/";
+            if (Category === "politic") url = "http://www.cubadebate.cu/categoria/temas/politica-temas/";
+            if (Category === "economy") url = "http://www.cubadebate.cu/categoria/temas/economia-temas/";
+            if (Category === "health") url = "http://www.cubadebate.cu/categoria/temas/salud-medicina/";
+            if (Category === "opinion") url = "http://www.cubadebate.cu/categoria/opinion/";
             _context2.prev = 16;
             _context2.next = 19;
             return regeneratorRuntime.awrap(page["goto"](url));
 
           case 19:
-            if (!(i == 0)) {
-              _context2.next = 22;
-              break;
-            }
-
-            _context2.next = 22;
-            return regeneratorRuntime.awrap(page.click('.close'));
-
-          case 22:
-            _context2.next = 28;
+            _context2.next = 25;
             break;
 
-          case 24:
-            _context2.prev = 24;
+          case 21:
+            _context2.prev = 21;
             _context2.t0 = _context2["catch"](16);
-            _context2.next = 28;
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 28:
-            _context2.next = 30;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -120,20 +111,20 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 30:
-            _context2.next = 32;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 32:
-            _context2.next = 34;
+          case 29:
+            _context2.next = 31;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('article');
+              var articles = document.querySelectorAll('#main .generic');
               var images = "img";
-              var links = "a";
-              var titles = "h2";
+              var links = ".title>a";
+              var titles = ".title>a";
               var data = [];
 
-              for (var j = 0; j < 1; j++) {
+              for (var j = 0; j < 4; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -141,9 +132,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "El Universal " + Category,
-                    sourceLink: "www.eluniversal.com.mx/",
-                    sourceLogo: "https://logos-download.com/wp-content/uploads/2016/05/El_Universal_logo_logotype_Mexico_City_M%C3%A9xico.png"
+                    source: "CubaDebate " + Category,
+                    sourceLink: "http://www.cubadebate.cu",
+                    sourceLogo: "http://www.cadenagramonte.cu/english/images/stories/cubadebate-logo.jpg"
                   });
                 }
               }
@@ -151,55 +142,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 34:
+          case 31:
             PageData = _context2.sent;
-            //    console.log(PageData);
+            //   console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 36:
+          case 33:
             i++;
             _context2.next = 9;
             break;
 
-          case 39:
-            _context2.next = 46;
+          case 36:
+            _context2.next = 43;
             break;
 
-          case 41:
-            _context2.prev = 41;
+          case 38:
+            _context2.prev = 38;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 46;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
-            _context2.prev = 46;
-            _context2.next = 49;
+          case 43:
+            _context2.prev = 43;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 49:
-            _context2.next = 56;
+          case 46:
+            _context2.next = 53;
             break;
 
-          case 51:
-            _context2.prev = 51;
-            _context2.t2 = _context2["catch"](46);
+          case 48:
+            _context2.prev = 48;
+            _context2.t2 = _context2["catch"](43);
             console.log(_context2.t2);
-            _context2.next = 56;
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 56:
-            _context2.next = 58;
+          case 53:
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
+          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 41], [16, 24], [46, 51]]);
+    }, null, null, [[7, 38], [16, 21], [43, 48]]);
   })();
 };
 
@@ -229,7 +220,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.gl-Grid_7nota p');
+              var second_text = document.querySelectorAll('.note_content p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
