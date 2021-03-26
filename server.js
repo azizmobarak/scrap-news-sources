@@ -15,7 +15,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 cron.schedule('10 */1 * * *', () => {
-   const scrap = require('./sources/ES/DEBAT');
+   const scrap = require('./sources/ES/ELUNIVERSAL');
    scrap();
 });
 

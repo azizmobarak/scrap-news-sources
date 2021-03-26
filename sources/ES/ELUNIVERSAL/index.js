@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['football','basketball','athletic'];
+var Categories=['mexico','international','culture','health','celebrity'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -50,15 +50,17 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //console.log(Category)
     //navigate to category sub route
-    var url ="https://www.marca.com/futbol/primera-division.html?intcmp=MENUPROD&s_kw=primera-division";
+    var url ="https://www.eluniversal.com.mx/nacion";
 
-    if(Category==="basketball") url="https://www.marca.com/baloncesto/acb.html?intcmp=MENUPROD&s_kw=baloncesto-acb";
-    if(Category==="athletic") url="https://www.marca.com/atletismo.html?intcmp=MENUPROD&s_kw=atletismo";
+    if(Category==="international") url="https://www.eluniversal.com.mx/mundo";
+    if(Category==="culture") url="https://www.eluniversal.com.mx/cultura";
+    if(Category==="health") url="https://www.eluniversal.com.mx/ciencia-y-salud";
+    if(Category==="celebrity") url="https://www.eluniversal.com.mx/espectaculos";
     
     try{
         await page.goto(url);
        // await page.waitForSelector('footer')
-     //   if(i==0) await page.click('#noads-promo-close');
+      if(i==0) await page.click('.close');
        }catch{
         await page.goto(url);
        // if(i==0) await page.click('#didomi-notice-agree-button');
@@ -89,12 +91,12 @@ var PageData = await page.evaluate((Category)=>{
     var articles = document.querySelectorAll('article');
     var images ="img"
     var links = "a"
-    var titles ="h3"
+    var titles ="h2"
        
          
         var data =[];
 
-         for(let j=0;j<5;j++){
+         for(let j=0;j<1;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
                 data.push({
                     time : Date.now(),
@@ -102,15 +104,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"Marca "+Category,
-                    sourceLink:"https://www.marca.com",
-                    sourceLogo:"https://greatsaveluongo.files.wordpress.com/2013/03/marca.jpg"
+                    source :"El Universal "+Category,
+                    sourceLink:"www.eluniversal.com.mx/",
+                    sourceLogo:"https://logos-download.com/wp-content/uploads/2016/05/El_Universal_logo_logotype_Mexico_City_M%C3%A9xico.png"
                       });
                    }
                }
                       return data;
      },Category);
-         //   console.log(PageData);
+        //    console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -140,13 +142,13 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
+      //  console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.ue-c-article__body p');
+               var second_text = document.querySelectorAll('.gl-Grid_7nota p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');

@@ -20,7 +20,7 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('10 */1 * * *', function () {
-  var scrap = require('./sources/ES/DEBAT');
+  var scrap = require('./sources/ES/ELUNIVERSAL');
 
   scrap();
 });

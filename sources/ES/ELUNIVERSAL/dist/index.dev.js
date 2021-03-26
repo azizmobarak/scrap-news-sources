@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['football', 'basketball', 'athletic'];
+var Categories = ['mexico', 'international', 'culture', 'health', 'celebrity'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 34;
+              _context2.next = 39;
               break;
             }
 
@@ -63,25 +63,36 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; //console.log(Category)
             //navigate to category sub route
 
-            url = "https://www.marca.com/futbol/primera-division.html?intcmp=MENUPROD&s_kw=primera-division";
-            if (Category === "basketball") url = "https://www.marca.com/baloncesto/acb.html?intcmp=MENUPROD&s_kw=baloncesto-acb";
-            if (Category === "athletic") url = "https://www.marca.com/atletismo.html?intcmp=MENUPROD&s_kw=atletismo";
-            _context2.prev = 14;
-            _context2.next = 17;
+            url = "https://www.eluniversal.com.mx/nacion";
+            if (Category === "international") url = "https://www.eluniversal.com.mx/mundo";
+            if (Category === "culture") url = "https://www.eluniversal.com.mx/cultura";
+            if (Category === "health") url = "https://www.eluniversal.com.mx/ciencia-y-salud";
+            if (Category === "celebrity") url = "https://www.eluniversal.com.mx/espectaculos";
+            _context2.prev = 16;
+            _context2.next = 19;
             return regeneratorRuntime.awrap(page["goto"](url));
-
-          case 17:
-            _context2.next = 23;
-            break;
 
           case 19:
-            _context2.prev = 19;
-            _context2.t0 = _context2["catch"](14);
-            _context2.next = 23;
+            if (!(i == 0)) {
+              _context2.next = 22;
+              break;
+            }
+
+            _context2.next = 22;
+            return regeneratorRuntime.awrap(page.click('.close'));
+
+          case 22:
+            _context2.next = 28;
+            break;
+
+          case 24:
+            _context2.prev = 24;
+            _context2.t0 = _context2["catch"](16);
+            _context2.next = 28;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 23:
-            _context2.next = 25;
+          case 28:
+            _context2.next = 30;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -109,20 +120,20 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 25:
-            _context2.next = 27;
+          case 30:
+            _context2.next = 32;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 27:
-            _context2.next = 29;
+          case 32:
+            _context2.next = 34;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var articles = document.querySelectorAll('article');
               var images = "img";
               var links = "a";
-              var titles = "h3";
+              var titles = "h2";
               var data = [];
 
-              for (var j = 0; j < 5; j++) {
+              for (var j = 0; j < 1; j++) {
                 if (typeof articles[j].querySelector(titles) != "undefined" && articles[j].querySelector(links) != null) {
                   data.push({
                     time: Date.now(),
@@ -130,9 +141,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "Marca " + Category,
-                    sourceLink: "https://www.marca.com",
-                    sourceLogo: "https://greatsaveluongo.files.wordpress.com/2013/03/marca.jpg"
+                    source: "El Universal " + Category,
+                    sourceLink: "www.eluniversal.com.mx/",
+                    sourceLogo: "https://logos-download.com/wp-content/uploads/2016/05/El_Universal_logo_logotype_Mexico_City_M%C3%A9xico.png"
                   });
                 }
               }
@@ -140,55 +151,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 29:
+          case 34:
             PageData = _context2.sent;
-            //   console.log(PageData);
+            //    console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 31:
+          case 36:
             i++;
             _context2.next = 9;
             break;
 
-          case 34:
-            _context2.next = 41;
+          case 39:
+            _context2.next = 46;
             break;
-
-          case 36:
-            _context2.prev = 36;
-            _context2.t1 = _context2["catch"](7);
-            console.log(_context2.t1);
-            _context2.next = 41;
-            return regeneratorRuntime.awrap(browser.close());
 
           case 41:
             _context2.prev = 41;
-            _context2.next = 44;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
-
-          case 44:
-            _context2.next = 51;
-            break;
+            _context2.t1 = _context2["catch"](7);
+            console.log(_context2.t1);
+            _context2.next = 46;
+            return regeneratorRuntime.awrap(browser.close());
 
           case 46:
             _context2.prev = 46;
-            _context2.t2 = _context2["catch"](41);
-            console.log(_context2.t2);
-            _context2.next = 51;
-            return regeneratorRuntime.awrap(browser.close());
+            _context2.next = 49;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
+
+          case 49:
+            _context2.next = 56;
+            break;
 
           case 51:
-            _context2.next = 53;
+            _context2.prev = 51;
+            _context2.t2 = _context2["catch"](46);
+            console.log(_context2.t2);
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
+          case 56:
+            _context2.next = 58;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 58:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 36], [14, 19], [41, 46]]);
+    }, null, null, [[7, 41], [16, 24], [46, 51]]);
   })();
 };
 
@@ -208,7 +219,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
+          url = item.link; //  console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -218,7 +229,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.ue-c-article__body p');
+              var second_text = document.querySelectorAll('.gl-Grid_7nota p');
               var scond_content = "";
 
               for (var _i = 1; _i < second_text.length; _i++) {
