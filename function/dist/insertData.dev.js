@@ -11,7 +11,7 @@ var InsertData = function InsertData(data) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          lang = "es";
+          lang = "fr";
           type = "Article";
           data.map(function (article) {
             var _articledetails;

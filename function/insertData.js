@@ -2,7 +2,7 @@ const {category} = require('../model/Category')
 
 const InsertData=async(data)=>{
   
-var lang = "es";
+var lang = "fr";
 var type="Article";
 
     data.map(article=>{

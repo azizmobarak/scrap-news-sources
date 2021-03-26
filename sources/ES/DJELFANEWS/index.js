@@ -21,7 +21,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['cuba','politic','economy','health','opinion'];
+var Categories=['algeria','economy','culture'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -50,12 +50,10 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //console.log(Category)
     //navigate to category sub route
-    var url ="http://www.cubadebate.cu/etiqueta/cuba/";
+    var url ="https://djelfa.info/fr/djelfa_news/index.1.html";
 
-    if(Category==="politic") url="http://www.cubadebate.cu/categoria/temas/politica-temas/";
-    if(Category==="economy") url="http://www.cubadebate.cu/categoria/temas/economia-temas/";
-    if(Category==="health") url="http://www.cubadebate.cu/categoria/temas/salud-medicina/";
-    if(Category==="opinion") url="http://www.cubadebate.cu/categoria/opinion/";
+    if(Category==="economy") url="https://djelfa.info/fr/economie/index.1.html";
+    if(Category==="culture") url="https://djelfa.info/fr/culture/index.1.html";
     
     try{
         await page.goto(url);
@@ -88,11 +86,10 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('#main .generic');
-    var images ="img"
-    var links = ".title>a"
-    var titles =".title>a"
-       
+    var articles = document.querySelectorAll('.short');
+    var images ="img";
+    var links = "a";
+    var titles ="h2";  
          
         var data =[];
 
@@ -104,15 +101,15 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"CubaDebate "+Category,
-                    sourceLink:"http://www.cubadebate.cu",
-                    sourceLogo:"http://www.cadenagramonte.cu/english/images/stories/cubadebate-logo.jpg"
+                    source :"Djefla Info "+Category,
+                    sourceLink:"https://djelfa.info",
+                    sourceLogo:"https://www.djelfa.info/ar/themes/tpl_4002/img/logo.jpg"
                       });
                    }
                }
                       return data;
      },Category);
-        //   console.log(PageData);
+         //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -142,15 +139,15 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      //  console.log(url)
+        //console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
                // first try to get all content
-               var second_text = document.querySelectorAll('.note_content p');
+               var second_text = document.querySelectorAll('#article_body p');
                var scond_content ="";
-               for(let i=1;i<second_text.length;i++){
+               for(let i=1;i<second_text.length-1;i++){
                   scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');
                }
                 return scond_content;

@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['cuba', 'politic', 'economy', 'health', 'opinion'];
+var Categories = ['algeria', 'economy', 'culture'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +55,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 34;
               break;
             }
 
@@ -63,27 +63,25 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; //console.log(Category)
             //navigate to category sub route
 
-            url = "http://www.cubadebate.cu/etiqueta/cuba/";
-            if (Category === "politic") url = "http://www.cubadebate.cu/categoria/temas/politica-temas/";
-            if (Category === "economy") url = "http://www.cubadebate.cu/categoria/temas/economia-temas/";
-            if (Category === "health") url = "http://www.cubadebate.cu/categoria/temas/salud-medicina/";
-            if (Category === "opinion") url = "http://www.cubadebate.cu/categoria/opinion/";
-            _context2.prev = 16;
-            _context2.next = 19;
+            url = "https://djelfa.info/fr/djelfa_news/index.1.html";
+            if (Category === "economy") url = "https://djelfa.info/fr/economie/index.1.html";
+            if (Category === "culture") url = "https://djelfa.info/fr/culture/index.1.html";
+            _context2.prev = 14;
+            _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 19:
-            _context2.next = 25;
+          case 17:
+            _context2.next = 23;
             break;
 
-          case 21:
-            _context2.prev = 21;
-            _context2.t0 = _context2["catch"](16);
-            _context2.next = 25;
+          case 19:
+            _context2.prev = 19;
+            _context2.t0 = _context2["catch"](14);
+            _context2.next = 23;
             return regeneratorRuntime.awrap(page["goto"](url));
 
-          case 25:
-            _context2.next = 27;
+          case 23:
+            _context2.next = 25;
             return regeneratorRuntime.awrap(page.evaluate(function () {
               var totalHeight = 0;
               var distance = 100;
@@ -111,17 +109,17 @@ var LARAZON = function LARAZON() {
               }, 100);
             }));
 
-          case 27:
-            _context2.next = 29;
+          case 25:
+            _context2.next = 27;
             return regeneratorRuntime.awrap(page.waitFor(2000));
 
-          case 29:
-            _context2.next = 31;
+          case 27:
+            _context2.next = 29;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-              var articles = document.querySelectorAll('#main .generic');
+              var articles = document.querySelectorAll('.short');
               var images = "img";
-              var links = ".title>a";
-              var titles = ".title>a";
+              var links = "a";
+              var titles = "h2";
               var data = [];
 
               for (var j = 0; j < 4; j++) {
@@ -132,9 +130,9 @@ var LARAZON = function LARAZON() {
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
                     Category: Category,
-                    source: "CubaDebate " + Category,
-                    sourceLink: "http://www.cubadebate.cu",
-                    sourceLogo: "http://www.cadenagramonte.cu/english/images/stories/cubadebate-logo.jpg"
+                    source: "Djefla Info " + Category,
+                    sourceLink: "https://djelfa.info",
+                    sourceLogo: "https://www.djelfa.info/ar/themes/tpl_4002/img/logo.jpg"
                   });
                 }
               }
@@ -142,55 +140,55 @@ var LARAZON = function LARAZON() {
               return data;
             }, Category));
 
-          case 31:
+          case 29:
             PageData = _context2.sent;
-            //   console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 33:
+          case 31:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 34:
+            _context2.next = 41;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 36:
+            _context2.prev = 36;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 41;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 41:
+            _context2.prev = 41;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 44:
+            _context2.next = 51;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
+          case 46:
+            _context2.prev = 46;
+            _context2.t2 = _context2["catch"](41);
             console.log(_context2.t2);
+            _context2.next = 51;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 51:
             _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
           case 53:
-            _context2.next = 55;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [16, 21], [43, 48]]);
+    }, null, null, [[7, 36], [14, 19], [41, 46]]);
   })();
 };
 
@@ -210,7 +208,7 @@ var GetContent = function GetContent(page, data) {
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
+          url = item.link; //console.log(url)
 
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
@@ -220,10 +218,10 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
-              var second_text = document.querySelectorAll('.note_content p');
+              var second_text = document.querySelectorAll('#article_body p');
               var scond_content = "";
 
-              for (var _i = 1; _i < second_text.length; _i++) {
+              for (var _i = 1; _i < second_text.length - 1; _i++) {
                 scond_content = scond_content + "\n" + second_text[_i].textContent.trim().replaceAll('\n', '');
               }
 

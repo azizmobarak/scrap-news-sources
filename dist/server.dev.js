@@ -19,8 +19,8 @@ con.connect(process.env.DATABASE, {
     console.log('connected');
   }
 });
-cron.schedule('30 */1 * * *', function () {
-  var scrap = require('./sources/ES/CUBADEBATE');
+cron.schedule('32 */1 * * *', function () {
+  var scrap = require('./sources/ES/DJELFANEWS');
 
   scrap();
 });
