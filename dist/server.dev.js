@@ -23,13 +23,13 @@ con.connect(process.env.DATABASE, {
   useUnifiedTopology: true
 }, function (err, db) {
   if (err) console.log(err);else {}
-}); // cron.schedule('35 * * * *', () => {
-// 15 min
+});
+cron.schedule('35 * * * *', function () {
+  // 15 min
+  var CBC = require('./sources/CBS News');
 
-var CBC = require('./sources/CBS News');
-
-CBC(); // });
-
+  CBC();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

@@ -16,11 +16,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('35 * * * *', () => {
+cron.schedule('35 * * * *', () => {
   // 15 min
   const CBC = require('./sources/CBS News');
   CBC();
-// });
+});
 
 
 app.listen(PORT, ()=>{
