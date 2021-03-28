@@ -101,7 +101,7 @@ var titles = document.querySelectorAll('article .teaser h2');
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"20minutes "+Category,
+                       source :"20minutes_"+Category,
                        sourceLink:"https://www.20minutes.fr/",
                        sourceLogo:"https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
                       });
@@ -109,7 +109,7 @@ var titles = document.querySelectorAll('article .teaser h2');
                }
                       return data;
      },Category);
-            console.log(PageData);
+           // console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -157,6 +157,8 @@ const GetContent = async(page,data)=>{
                return null;
             }
         });
+
+
 
         var author = await page.evaluate(()=>{
             try{
