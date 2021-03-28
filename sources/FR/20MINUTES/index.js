@@ -109,7 +109,7 @@ var titles = document.querySelectorAll('article .teaser h2');
                }
                       return data;
      },Category);
-           // console.log(PageData);
+          //  console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -158,6 +158,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var ContentHTML = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.content').innerHTML.trim();
+            }catch{
+               return null;
+            }
+        });
+
 
 
         var author = await page.evaluate(()=>{
@@ -165,12 +173,7 @@ const GetContent = async(page,data)=>{
                 var authr =document.querySelector('.author-name').textContent.trim()
              return authr;
             }catch{
-                try{
-                    var authr = document.querySelector('.author-name').textContent.trim();
-                    return authr;
-                }catch{
-                    return null;
-                }
+                return null;
             }
         });
 
@@ -186,7 +189,8 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHTML : ContentHTML
           });
        }
     

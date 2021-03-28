@@ -56,7 +56,7 @@ var JEAN = function JEAN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 33;
+              _context2.next = 32;
               break;
             }
 
@@ -127,7 +127,7 @@ var JEAN = function JEAN() {
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "20minutes.fr",
+                    source: "20minutes_" + Category,
                     sourceLink: "https://www.20minutes.fr/",
                     sourceLogo: "https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
                   });
@@ -139,58 +139,58 @@ var JEAN = function JEAN() {
 
           case 27:
             PageData = _context2.sent;
-            console.log(PageData);
+            //  console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 30:
+          case 29:
             i++;
             _context2.next = 9;
             break;
 
-          case 33:
-            _context2.next = 40;
+          case 32:
+            _context2.next = 39;
             break;
 
-          case 35:
-            _context2.prev = 35;
+          case 34:
+            _context2.prev = 34;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 40;
+            _context2.next = 39;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 40:
-            _context2.prev = 40;
-            _context2.next = 43;
+          case 39:
+            _context2.prev = 39;
+            _context2.next = 42;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 43:
-            _context2.next = 50;
+          case 42:
+            _context2.next = 49;
             break;
 
-          case 45:
-            _context2.prev = 45;
-            _context2.t2 = _context2["catch"](40);
+          case 44:
+            _context2.prev = 44;
+            _context2.t2 = _context2["catch"](39);
             console.log(_context2.t2);
-            _context2.next = 50;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context2.next = 52;
+          case 49:
+            _context2.next = 51;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
+          case 51:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 35], [12, 17], [40, 45]]);
+    }, null, null, [[7, 34], [12, 17], [39, 44]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, ContentHTML, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -200,7 +200,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -232,19 +232,25 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var authr = document.querySelector('.author-name').textContent.trim();
-              return authr;
+              return document.querySelector('.content').innerHTML.trim();
             } catch (_unused3) {
-              try {
-                var authr = document.querySelector('.author-name').textContent.trim();
-                return authr;
-              } catch (_unused4) {
-                return null;
-              }
+              return null;
             }
           }));
 
         case 12:
+          ContentHTML = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              var authr = document.querySelector('.author-name').textContent.trim();
+              return authr;
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -258,20 +264,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contentHTML: ContentHTML
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          _context3.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context3.stop();
       }
