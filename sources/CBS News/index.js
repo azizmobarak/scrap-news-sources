@@ -39,6 +39,8 @@ const CBC = () =>{
 
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -55,12 +57,12 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          await page.goto(["https://www.cbc.ca/",'',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
+/*         await page.solveRecaptchas();
          await Promise.all([
              page.waitForNavigation(),
              page.click(".g-recaptcha"),
              await page.$eval('input[type=submit]', el => el.click())
-         ]);
+         ]);*/
     }
 
       // get the data from the page
@@ -111,6 +113,7 @@ for(let i=0;i<Categories.length;i++){
       var imageClassName=".cardImageWrap>figure.imageMedia>div>img";
       var timeClassName="div.card-content-bottom>.metadata>div>time.timeStamp";
       var author =null;
+
       if(Category==="news/opinion"){
           author = document.querySelectorAll(".authorName");
           end =3;
@@ -143,7 +146,7 @@ for(let i=0;i<Categories.length;i++){
                        Category:cateogryName,
                        source :"CBC NEWS",
                        sourceLink:"https://www.cbc.ca",
-                       sourceLogo:"cbc logo",
+                       sourceLogo:"https://ropercenter.cornell.edu/sites/default/files/styles/800x600/public/Images/CBS_News_logo8x6.png",
                        author:author==null ? null : author[j].textContent
                     });
                    }
@@ -151,13 +154,14 @@ for(let i=0;i<Categories.length;i++){
                       return data;
                },Category);
 
-               console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                });
        }
-  
-     await GetContent(page,AllData);
+  }catch(e){console.log(e); await browser.close();}
+     
+     try{await GetContent(page,AllData);}catch(e){console.log(e); await browser.close();}
+
      await browser.close();
     })();
 }
