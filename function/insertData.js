@@ -25,7 +25,7 @@ var type="Article";
               authorName : article.author,
               articleLanguage:lang,
               articleDescription:article.content,
-              articleCleanDescription:ContentHTML
+              articleCleanDescription:article.contentHTML
       }
       
       var Model =  category("articles");

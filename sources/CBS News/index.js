@@ -184,7 +184,7 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 content:Content,
-                ContentHTML:ContentHTML
+                contentHTML:ContentHTML
           });
        }
     }
