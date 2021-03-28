@@ -102,7 +102,7 @@ var PageData = await page.evaluate((Category)=>{
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
                     Category:Category,
-                    source :"DH NET",
+                    source :"DH NET_"+Category,
                     sourceLink:"https://www.dhnet.be",
                     sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
                       });
@@ -110,7 +110,7 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          //  console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -141,12 +141,20 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
             try{
               return document.querySelector('.article-text').textContent;
+            }catch{
+               return null;
+            }
+        });
+
+        var ContentHTML = await page.evaluate(()=>{
+            try{
+              return document.querySelector('.article-text').innerHTML;
             }catch{
                return null;
             }
@@ -172,12 +180,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHTML:ContentHTML
           });
        }
     }
- // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+  console.log(AllData_WithConetent)
+//  await InsertData(AllData_WithConetent);
 }
 
 
