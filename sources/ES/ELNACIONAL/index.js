@@ -104,7 +104,7 @@ var PageData = await page.evaluate((Category)=>{
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
                     Category:Category,
-                    source :"El Nacional "+Category,
+                    source :"El Nacional_"+Category,
                     sourceLink:"https://www.elnacional.com",
                     sourceLogo:"https://cdn.elnacional.com/wp-content/uploads/2019/07/Logos-EN-Programador-23.png"
                       });
@@ -159,6 +159,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var ContentHTML = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.td-post-content').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -171,12 +179,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contentHTML:ContentHTML
           });
        }
     }
  //console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+ await InsertData(AllData_WithConetent);
 }
 
 
