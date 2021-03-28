@@ -68,29 +68,6 @@ for(let i=0;i<Categories.length;i++){
       // get the data from the page
      var PageData = await page.evaluate((Category)=>{
                
-               // function to look for a word inside other words
-     const WordExist=(searchIn)=>{
-                    if(searchIn.indexOf("second")!=-1){
-                         return true;
-                         }else{
-                       if(searchIn.indexOf("seconds")!=-1){
-                      return true;
-                       }else{
-                         if(searchIn.indexOf("minute")!=-1){
-                       return true;
-                       }else{
-                       if(searchIn.indexOf("minutes")!=-1){
-                           return true;
-                          }else{
-                            return false;
-                       }
-            }
-        }
-    }
-    }
-
-    var start =0;
-    var end =1;
 
     //change category name
     var cateogryName = "";
@@ -105,14 +82,6 @@ for(let i=0;i<Categories.length;i++){
          cateogryName = Category;
      }
     //////////////////////////////
-    
-
-    // CBC classes by categories 
-      var titleClassName=".card-content h3.headline";
-      var linkClassName=".featuredArea a";
-      var imageClassName=".cardImageWrap>figure.imageMedia>div>img";
-      var timeClassName="div.card-content-bottom>.metadata>div>time.timeStamp";
-      var author =null;
 
       if(Category==="news/opinion"){
           author = document.querySelectorAll(".authorName");
@@ -126,34 +95,34 @@ for(let i=0;i<Categories.length;i++){
       }
     
      // change the source logo to http 
-    var titles = document.querySelectorAll(titleClassName)
-    var images =  document.querySelectorAll(imageClassName);
-    var time = document.querySelectorAll(timeClassName);
-    var links = document.querySelectorAll(linkClassName);
+    var articles = document.querySelectorAll(".card")
+    var titles = "h3"
+    var images =  "img"
+    var links = "a"
+    var author =".authorName"
   
 
          var data =[];
-         for(let j=start;j<end;j++){
+         for(let j=0;j<4;j++){
            
-              if(WordExist(typeof(time[j])=="undefined" ? "nothing" : time[j].textContent)==true && typeof(time[j])!="undefined" && typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" &&  images[j].src.indexOf('http')==0)
+              if(articles[j].querySelector(titles)!=null && articles[j].querySelector(links)!=null)
                 {
-
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images : j==0 ? (typeof images[j]!="undefined" ? images[j].src : null) : null,
+                       title : articles[j].querySelector(titles).textContent.trim(),
+                       link : articles[j].querySelector(links).href,
+                       images : articles[j].querySelector(images)!=null ? articles[j].querySelector(images).src : null,
                        Category:cateogryName,
-                       source :"CBC NEWS",
+                       source :"CBC NEWS_"+cateogryName,
                        sourceLink:"https://www.cbc.ca",
                        sourceLogo:"https://ropercenter.cornell.edu/sites/default/files/styles/800x600/public/Images/CBS_News_logo8x6.png",
-                       author:author==null ? null : author[j].textContent
+                       author:articles[j].querySelector(author)==null ? null : articles[j].querySelector(author).textContent
                     });
                    }
                }
                       return data;
                },Category);
-
+              //  console.log(PageData)
                PageData.map(item=>{
                    AllData.push(item)
                });
@@ -181,16 +150,26 @@ const GetContent = async(page,data)=>{
 
     
         var Content = await page.evaluate(()=>{
-
-
-            var text = document.querySelectorAll('div.story p');
-            var textArray=[];
-
-            for(let i=2;i<text.length;i++){
-                textArray.push(text[i].textContent);
-                textArray.push('   ');
+            try{
+                var text = document.querySelectorAll('div.story p');
+                var textArray=[];
+    
+                for(let i=2;i<text.length;i++){
+                    textArray.push(text[i].textContent);
+                    textArray.push('   ');
+                }
+                return textArray.join('\n');
+            }catch{
+                return null;
             }
-            return textArray.join('\n');
+        });
+
+        var ContentHTML = await page.evaluate(()=>{
+             try{
+             return document.querySelector('div.story').innerHTML;
+             }catch{
+               return null;
+             }
         });
     
 
@@ -204,11 +183,13 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content!=null ? Content : null
+                content:Content,
+                ContentHTML:ContentHTML
           });
        }
     }
-    await InsertData(AllData_WithConetent);
+     //console.log(AllData_WithConetent)
+     await InsertData(AllData_WithConetent);
 
 }
 
