@@ -22,7 +22,8 @@ var type="Article";
               articleType:type,
               authorName : article.author,
               articleLanguage:lang,
-              articleDescription:article.content
+              articleDescription:article.content,
+              articleCleanDescription:article.contentHTML,
       }
 
       console.log(articledetails)

@@ -183,7 +183,7 @@ var FOXNEWS = function FOXNEWS() {
                     link: links[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
                     Category: Category,
-                    source: "Fox News Channel",
+                    source: "FoxNews Channel_" + Category,
                     sourceLink: "https://www.foxnews.com",
                     sourceLogo: "https://pbs.twimg.com/profile_images/918480715158716419/4X8oCbge_400x400.jpg"
                   });
@@ -244,7 +244,7 @@ var FOXNEWS = function FOXNEWS() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, Author;
+  var AllData_WithConetent, i, item, url, Content, ContentHTML, Author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -254,7 +254,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 18;
+            _context2.next = 20;
             break;
           }
 
@@ -264,23 +264,37 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          console.log(url);
-          _context2.next = 10;
+          _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelectorAll('.article-content p');
-            var textArray = [];
+            try {
+              var text = document.querySelectorAll('.article-content p');
+              var textArray = [];
 
-            for (var _i = 1; _i < text.length; _i++) {
-              textArray.push(text[_i].textContent);
-              textArray.push(' ');
+              for (var _i = 1; _i < text.length; _i++) {
+                textArray.push(text[_i].textContent);
+                textArray.push(' ');
+              }
+
+              return textArray.join(' ').replaceAll('\n', '  ');
+            } catch (_unused3) {
+              return null;
             }
-
-            return textArray.join(' ').replaceAll('\n', '  ');
           }));
 
-        case 10:
+        case 9:
           Content = _context2.sent;
-          _context2.next = 13;
+          _context2.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.article-content').innerHTML;
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 12:
+          ContentHTML = _context2.sent;
+          _context2.next = 15;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var auth = document.querySelector('.author-byline span>span>a');
 
@@ -295,7 +309,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 13:
+        case 15:
           Author = _context2.sent;
 
           if (Content != null && Content != "") {
@@ -309,20 +323,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: Author,
-              content: Content.substring(0, 3000)
+              content: Content.substring(0, 3000),
+              contentHTML: ContentHTML
             });
           }
 
-        case 15:
+        case 17:
           i++;
           _context2.next = 2;
           break;
 
-        case 18:
-          _context2.next = 20;
+        case 20:
+          _context2.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 22:
         case "end":
           return _context2.stop();
       }

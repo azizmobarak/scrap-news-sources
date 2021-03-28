@@ -15,7 +15,6 @@ var InsertData = function InsertData(data) {
           type = "Article";
           data.map(function (article) {
             var articleCateory = article.Category.split(',');
-            console.log(articleCateory);
 
             for (var cat = 0; cat < articleCateory.length; cat++) {
               var _articledetails;
@@ -27,7 +26,8 @@ var InsertData = function InsertData(data) {
                 categoryName: articleCateory[cat],
                 mediaName: article.source,
                 mediaLogo: article.sourceLogo
-              }, _defineProperty(_articledetails, "mediaName", article.source), _defineProperty(_articledetails, "articleType", type), _defineProperty(_articledetails, "authorName", article.author), _defineProperty(_articledetails, "articleLanguage", lang), _defineProperty(_articledetails, "articleDescription", article.content), _articledetails);
+              }, _defineProperty(_articledetails, "mediaName", article.source), _defineProperty(_articledetails, "articleType", type), _defineProperty(_articledetails, "authorName", article.author), _defineProperty(_articledetails, "articleLanguage", lang), _defineProperty(_articledetails, "articleDescription", article.content), _defineProperty(_articledetails, "articleCleanDescription", article.contentHTML), _articledetails);
+              console.log(articledetails);
               var Model = category("articles");
               Model.find({
                 $and: [{
@@ -37,9 +37,7 @@ var InsertData = function InsertData(data) {
                 }]
               }, function (err, doc) {
                 if (err) console.log(err);else {
-                  if (typeof doc[0] != "undefined") {
-                    console.log('exist');
-                  } else {
+                  if (typeof doc[0] != "undefined") {} else {
                     var newModel = new Model(articledetails);
                     newModel.save(function (err, doc) {
                       if (err) console.log(err);else {

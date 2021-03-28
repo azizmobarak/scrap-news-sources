@@ -85,7 +85,7 @@ for(let i=0;i<Categories.length;i++){
       // get the data from the page
  var PageData = await page.evaluate((Category)=>{
                
-            // function to look for a word inside other words
+    // function to look for a word inside other words
           const WordExist=(searchIn)=>{
                     if(searchIn.indexOf("second")!=-1){
                          return true;
@@ -155,7 +155,7 @@ for(let i=0;i<Categories.length;i++){
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
                        Category:Category,
-                       source :"Fox News Channel",
+                       source :"FoxNews Channel_"+Category,
                        sourceLink:"https://www.foxnews.com",
                        sourceLogo:"https://pbs.twimg.com/profile_images/918480715158716419/4X8oCbge_400x400.jpg"
                     });
@@ -163,8 +163,7 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-
-              
+    
                PageData.map(item=>{
                 console.log(item.Category);
                    AllData.push(item)
@@ -195,12 +194,11 @@ const GetContent = async(page,data)=>{
 
 
         await page.goto(url);
-        console.log(url)
+      //  console.log(url)
 
     
         var Content = await page.evaluate(()=>{
-
-
+           try{
             var text = document.querySelectorAll('.article-content p');
             var textArray=[];
 
@@ -209,6 +207,17 @@ const GetContent = async(page,data)=>{
                 textArray.push(' ');
             }
             return textArray.join(' ').replaceAll('\n','  ');
+           }catch{
+             return null;
+           }
+        });
+
+        var ContentHTML = await page.evaluate(()=>{
+           try {
+            return document.querySelector('.article-content').innerHTML;
+           }catch{
+            return null;
+           }
         });
 
         var Author = await page.evaluate(()=>{
@@ -235,12 +244,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : Author,
-                content:Content.substring(0,3000)
+                content:Content.substring(0,3000),
+                contentHTML : ContentHTML
           });
        }
     }
-    
-    await InsertData(AllData_WithConetent);
+   //console.log(AllData_WithConetent) 
+   await InsertData(AllData_WithConetent);
 }
 
 
