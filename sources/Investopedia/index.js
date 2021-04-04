@@ -34,18 +34,21 @@ const INVESTOPEDIA = () =>{
             '--disable-dev-shm-usage',
             '--shm-size=3gb',
         ],
-       });
+  });
 
 
        var page = await browser.newPage(); 
 
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
         var Category = Categories[i]
+        console.log(Category);
         //navigate to category sub route
        try{
         await page.goto(['https://www.investopedia.com/','',Category].join(''));
@@ -54,7 +57,8 @@ for(let i=0;i<Categories.length;i++){
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
-    
+
+  
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
@@ -104,14 +108,14 @@ for(let i=0;i<Categories.length;i++){
                       return data;
                },Category);
 
-              console.log(PageData);
                PageData.map(item=>{
                    AllData.push(item)
                })
        }
+    }catch{ await browser.close();}        
+     
+  try{await GetContent(page,AllData)}catch{await browser.close();}
 
-  
-     await GetContent(page,AllData);
      await browser.close();
     })();
 }
