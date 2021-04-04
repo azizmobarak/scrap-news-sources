@@ -99,7 +99,7 @@ for(let i=0;i<Categories.length;i++){
                        link : links[j].href,
                        images :  typeof(images[j])=="undefined" ? null : images[j].src,
                        Category:Category,
-                       source :"Investopedia",
+                       source :"Investopedia_"+Category,
                        sourceLink:"https://www.investopedia.com/",
                        sourceLogo:"https://download.logo.wine/logo/Investopedia/Investopedia-Logo.wine.png"
                       });
