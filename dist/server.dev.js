@@ -24,12 +24,12 @@ con.connect(process.env.DATABASE, {
   if (err) console.log(err);else {
     console.log('connected');
   }
-}); // cron.schedule('*/25 * * * *', () => {
+});
+cron.schedule('*/25 * * * *', function () {
+  var matin = require('./sources/FR/LEMATIN.MA');
 
-var matin = require('./sources/FR/LEMATIN.MA');
-
-matin(); // });
-
+  matin();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
