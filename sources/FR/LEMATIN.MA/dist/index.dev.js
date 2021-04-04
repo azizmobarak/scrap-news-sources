@@ -27,7 +27,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['life&style', 'technology', 'international'];
+var Categories = ['Life & style', 'Technology', 'International'];
 
 var LEMATIN = function LEMATIN() {
   (function _callee2() {
@@ -63,8 +63,8 @@ var LEMATIN = function LEMATIN() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://lematin.ma/journal/lifestyle/";
-            if (Category === "technology") url = "https://lematin.ma/journal/hi-tech/";
-            if (Category === "international") url = "https://lematin.ma/journal/monde/";
+            if (Category === "Technology") url = "https://lematin.ma/journal/hi-tech/";
+            if (Category === "International") url = "https://lematin.ma/journal/monde/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -132,7 +132,7 @@ var LEMATIN = function LEMATIN() {
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
                     Category: Category,
-                    source: "LE MATIN.ma",
+                    source: "LE MATIN.ma_" + Category,
                     sourceLink: "https://www.lematin.ma",
                     sourceLogo: "https://s1.lematin.ma/cdn/images/logo.png"
                   });
