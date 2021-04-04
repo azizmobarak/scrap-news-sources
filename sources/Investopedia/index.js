@@ -146,6 +146,15 @@ var Content = await page.evaluate(()=>{
                 return null;
             }
         });
+var ContentHtml = await page.evaluate(()=>{
+          try{
+            var text = document.querySelector('.article-body-content').innerHTML;
+            return text;
+          }catch{
+             return null;
+          }
+           
+        });
 
 
 var author = await page.evaluate(()=>{
@@ -162,7 +171,7 @@ var author = await page.evaluate(()=>{
           }
         });
     
-    if(Content!=null && Content!=""){
+    if(Content!=null && Content!="" || ContentHtml!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -173,7 +182,8 @@ var author = await page.evaluate(()=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHtml : ContentHtml
           });
        }
     
