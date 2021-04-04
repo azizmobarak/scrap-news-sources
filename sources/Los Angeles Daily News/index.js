@@ -40,6 +40,8 @@ const LosAngelesNews = () =>{
       
  
 var AllData=[]; 
+
+try{
 // boucle on categories started 
 for(let i=0;i<Categories.length;i++){
 
@@ -110,7 +112,7 @@ var PageData = await page.evaluate((Category)=>{
     }else{
         if(Category.indexOf('/')!=-1){
             if(Category.indexOf('housing')!=-1){
-                cateogryName="business,house";
+                cateogryName="business";
             }else{
                 cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
             }
@@ -118,6 +120,8 @@ var PageData = await page.evaluate((Category)=>{
             cateogryName=Category;
         }
     }
+
+  if(cateogryName.indexOf("politics")!=-1) cateogryName="politic";
     //////////////////////////////
 
          var data =[];
@@ -145,10 +149,19 @@ var PageData = await page.evaluate((Category)=>{
                    AllData.push(item)
                });
        }
-      console.log(AllData);
-  
-     await GetContent(page,AllData);
+     }catch(e){
+        console.log(e)
      await browser.close();
+       }
+
+      try{
+      await GetContent(page,AllData);
+        }catch(e){
+          console.log(e)
+         await browser.close();
+        }
+      
+       await browser.close();
     })();
 }
 

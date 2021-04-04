@@ -94,7 +94,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 //  HuffPost();
 // });
 
-cron.schedule('10 1 * * *', () => {
+cron.schedule('28 */1 * * *', () => {
 //1h
  const LosAngelesNews = require('./sources/Los Angeles Daily News');
  LosAngelesNews();
