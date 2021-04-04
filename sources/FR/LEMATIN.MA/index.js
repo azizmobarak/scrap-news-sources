@@ -110,7 +110,7 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          //  console.log(PageData);
+            console.log(PageData);
             PageData.map(item=>{
             AllData.push(item)
                     });
@@ -141,7 +141,7 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        //console.log(url)
+        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -158,10 +158,20 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var ContentHTML = await page.evaluate(()=>{
+            try{
+               // first try to get all content
+               var text = document.querySelector('.single-page .card-body').innerHTML;
+                return text;
+            }catch{
+               return null;
+            }
+        });
+
      var author = null;
 
     
-    if(Content!=null && Content!=""){
+    if(Content!=null && Content!="" && ContentHTML!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -172,12 +182,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHTML : ContentHTML
           });
        }
     }
- // console.log(AllData_WithConetent)
-  await InsertData(AllData_WithConetent);
+ console.log(AllData_WithConetent)
+ // await InsertData(AllData_WithConetent);
 }
 
 

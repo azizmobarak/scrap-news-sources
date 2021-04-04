@@ -55,7 +55,7 @@ var LEMATIN = function LEMATIN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 37;
               break;
             }
 
@@ -144,58 +144,58 @@ var LEMATIN = function LEMATIN() {
 
           case 31:
             PageData = _context2.sent;
-            //  console.log(PageData);
+            console.log(PageData);
             PageData.map(function (item) {
               AllData.push(item);
             });
 
-          case 33:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 53;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
-            _context2.next = 55;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [14, 21], [43, 48]]);
+    }, null, null, [[7, 39], [14, 21], [44, 49]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, ContentHTML, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -205,18 +205,18 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 19;
             break;
           }
 
           item = data[i];
-          url = item.link; //console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 8:
+          _context3.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -233,11 +233,24 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context3.sent;
+          _context3.next = 13;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              // first try to get all content
+              var text = document.querySelector('.single-page .card-body').innerHTML;
+              return text;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 13:
+          ContentHTML = _context3.sent;
           author = null;
 
-          if (Content != null && Content != "") {
+          if (Content != null && Content != "" && ContentHTML != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -248,20 +261,20 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contentHTML: ContentHTML
             });
           }
 
-        case 12:
+        case 16:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
-          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
+        case 19:
+          console.log(AllData_WithConetent); // await InsertData(AllData_WithConetent);
 
-        case 17:
+        case 20:
         case "end":
           return _context3.stop();
       }
