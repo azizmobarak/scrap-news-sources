@@ -355,10 +355,11 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 30:
-          _context3.next = 32;
+          console.log(AllData_WithConetent);
+          _context3.next = 33;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 32:
+        case 33:
         case "end":
           return _context3.stop();
       }

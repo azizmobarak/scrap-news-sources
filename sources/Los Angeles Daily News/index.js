@@ -156,7 +156,7 @@ var PageData = await page.evaluate((Category)=>{
                     SendToServer("en",item.Category,item.source,item.sourceLogo)
                 }, 5000*i);
                    AllData.push(item);
-                   
+
                });
        }
      }catch(e){
@@ -245,7 +245,7 @@ if(Content!=null && Content!="" && ContentHTML!=null){
           });
        }
     }
-   //console.log(AllData_WithConetent)
+   console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
