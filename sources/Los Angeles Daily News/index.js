@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {SendToServer} = require('../../function/SendToServer');
+const {capitalizeFirstLetter} = require('../../function/toUppearCase');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -108,11 +110,11 @@ var PageData = await page.evaluate((Category)=>{
     var cateogryName = "";
     
     if(Category==="news/crime-and-public-safety"){
-        cateogryName="safety";
+        cateogryName="Safety";
     }else{
         if(Category.indexOf('/')!=-1){
             if(Category.indexOf('housing')!=-1){
-                cateogryName="business";
+                cateogryName="Business";
             }else{
                 cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
             }
@@ -121,7 +123,7 @@ var PageData = await page.evaluate((Category)=>{
         }
     }
 
-  if(cateogryName.indexOf("politics")!=-1) cateogryName="politic";
+  if(cateogryName.indexOf("politics")!=-1) cateogryName="Politic";
     //////////////////////////////
 
          var data =[];
@@ -134,8 +136,8 @@ var PageData = await page.evaluate((Category)=>{
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:cateogryName,
-                       source :"Los Angeles Daily News",
+                       Category:cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"LosAngeles Daily News - "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.dailynews.com/",
                        sourceLogo:"https://www.brainsway.com/wp-content/uploads/2019/05/img47.png"
                          });
@@ -146,7 +148,15 @@ var PageData = await page.evaluate((Category)=>{
 
                console.log(PageData);
                PageData.map(item=>{
-                   AllData.push(item)
+
+                var category = capitalizeFirstLetter(item.Category)
+                item.Category = category;
+                setTimeout(() => {
+                    console.log("request here")
+                    SendToServer("en",item.Category,item.source,item.sourceLogo)
+                }, 5000*i);
+                   AllData.push(item);
+                   
                });
        }
      }catch(e){
@@ -186,17 +196,28 @@ const GetContent = async(page,data)=>{
 
     
         var Content = await page.evaluate(()=>{
-
-
+           try{
             var text = document.querySelectorAll('.article-body p');
             var textArray=[];
-
             for(let i=0;i<text.length;i++){
                 textArray.push(text[i].textContent);
                 textArray.push('   ');
             }
             return textArray.join('\n');
+           }catch{
+            return null;
+           }
         });
+
+        var ContentHTML = await page.evaluate(()=>{
+           try{
+            var text = document.querySelector('.article-body').innerHTML;
+            return text;
+           }catch{
+             return null;
+           }
+        });
+        
 
         var author = await page.evaluate(()=>{
            try{
@@ -205,25 +226,26 @@ const GetContent = async(page,data)=>{
            }catch{
                return null;
            }
-        })
+});
     
 
-    if(Content!=null && Content!=""){
+if(Content!=null && Content!="" && ContentHTML!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
                 link : item.link,
-                images : item.images,
+                images : item.images==="" ? null : item.images,
                 Category:item.Category,
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author:author,
-                content:Content!=null ? Content : null
+                content:Content!=null ? Content : null,
+                contentHTML : ContentHTML
           });
        }
     }
-    
+   //console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
