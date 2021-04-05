@@ -6,6 +6,9 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/Formatimage');
+const {SendToServer} = require('../../function/SendToserver');
+
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -63,7 +66,6 @@ for(let i=0;i<Categories.length;i++){
     var PageData = await page.evaluate((Category)=>{
                
            
-
             var titles = document.querySelectorAll('a.mntl-card .card__title');
             var images =document.querySelectorAll('a.mntl-card .card__media>img')
             var links = document.querySelectorAll('a.mntl-card')
@@ -92,14 +94,14 @@ for(let i=0;i<Categories.length;i++){
                 var data =[];
          for(let j=0;j<4;j++){
            
-              if(typeof titles[j] != "undefined"){
+              if(typeof titles[j] != "undefined" && images[j].src.indexOf("data:image")==-1){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent,
                        link : links[j].href,
                        images :  typeof(images[j])=="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"Investopedia_"+Category,
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"Investopedia - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.investopedia.com/",
                        sourceLogo:"https://download.logo.wine/logo/Investopedia/Investopedia-Logo.wine.png"
                       });
@@ -108,13 +110,18 @@ for(let i=0;i<Categories.length;i++){
                       return data;
                },Category);
 
-               PageData.map(item=>{
+               console.log(PageData)
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
-               })
+               });
        }
-    }catch{ await browser.close();}        
+    }catch(e){ await browser.close();console.log(e)}        
      
-  try{await GetContent(page,AllData)}catch{await browser.close();}
+  try{await GetContent(page,AllData)}catch(e){console.log(e);await browser.close();}
 
      await browser.close();
     })();
@@ -146,6 +153,7 @@ var Content = await page.evaluate(()=>{
                 return null;
             }
         });
+
 var ContentHtml = await page.evaluate(()=>{
           try{
             var text = document.querySelector('.article-body-content').innerHTML;
@@ -169,7 +177,7 @@ var author = await page.evaluate(()=>{
                   return null;
               }
           }
-        });
+});
     
     if(Content!=null && Content!="" || ContentHtml!=null){
           AllData_WithConetent.push({

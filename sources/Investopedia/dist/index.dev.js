@@ -13,7 +13,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/Formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/SendToserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -57,7 +63,7 @@ var INVESTOPEDIA = function INVESTOPEDIA() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 28;
+              _context.next = 29;
               break;
             }
 
@@ -109,14 +115,14 @@ var INVESTOPEDIA = function INVESTOPEDIA() {
               var data = [];
 
               for (var j = 0; j < 4; j++) {
-                if (typeof titles[j] != "undefined") {
+                if (typeof titles[j] != "undefined" && images[j].src.indexOf("data:image") == -1) {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent,
                     link: links[j].href,
                     images: typeof images[j] == "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "Investopedia_" + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Investopedia - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.investopedia.com/",
                     sourceLogo: "https://download.logo.wine/logo/Investopedia/Investopedia-Logo.wine.png"
                   });
@@ -128,50 +134,59 @@ var INVESTOPEDIA = function INVESTOPEDIA() {
 
           case 23:
             PageData = _context.sent;
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 25:
+          case 26:
             i++;
             _context.next = 9;
             break;
 
-          case 28:
-            _context.next = 34;
+          case 29:
+            _context.next = 36;
             break;
 
-          case 30:
-            _context.prev = 30;
+          case 31:
+            _context.prev = 31;
             _context.t1 = _context["catch"](7);
-            _context.next = 34;
+            _context.next = 35;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 34:
-            _context.prev = 34;
-            _context.next = 37;
+          case 35:
+            console.log(_context.t1);
+
+          case 36:
+            _context.prev = 36;
+            _context.next = 39;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 37:
-            _context.next = 43;
+          case 39:
+            _context.next = 46;
             break;
 
-          case 39:
-            _context.prev = 39;
-            _context.t2 = _context["catch"](34);
-            _context.next = 43;
+          case 41:
+            _context.prev = 41;
+            _context.t2 = _context["catch"](36);
+            console.log(_context.t2);
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context.next = 45;
+          case 46:
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
+          case 48:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 30], [12, 17], [34, 39]]);
+    }, null, null, [[7, 31], [12, 17], [36, 41]]);
   })();
 };
 
@@ -220,7 +235,7 @@ var GetContent = function GetContent(page, data) {
             try {
               var text = document.querySelector('.article-body-content').innerHTML;
               return text;
-            } catch (_unused4) {
+            } catch (_unused2) {
               return null;
             }
           }));
