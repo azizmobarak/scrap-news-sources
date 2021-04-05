@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/sendToServer'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var CBC = function CBC() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 28;
+              _context.next = 29;
               break;
             }
 
@@ -119,8 +125,8 @@ var CBC = function CBC() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) != null ? articles[j].querySelector(images).src : null,
-                    Category: cateogryName,
-                    source: "CBC NEWS_" + cateogryName,
+                    Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                    source: "CBC NEWS - " + cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                     sourceLink: "https://www.cbc.ca",
                     sourceLogo: "https://ropercenter.cornell.edu/sites/default/files/styles/800x600/public/Images/CBS_News_logo8x6.png",
                     author: articles[j].querySelector(author) == null ? null : articles[j].querySelector(author).textContent
@@ -133,53 +139,59 @@ var CBC = function CBC() {
 
           case 23:
             PageData = _context.sent;
-            //  console.log(PageData)
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              console.log(item.images);
+              setTimeout(function () {
+                console.log("request here");
+                SendToServer("en", item.Category, item.source, item.sourceLogo);
+              }, 5000 * j);
               AllData.push(item);
             });
 
-          case 25:
+          case 26:
             i++;
             _context.next = 9;
             break;
 
-          case 28:
-            _context.next = 35;
+          case 29:
+            _context.next = 36;
             break;
 
-          case 30:
-            _context.prev = 30;
+          case 31:
+            _context.prev = 31;
             _context.t1 = _context["catch"](7);
             console.log(_context.t1);
-            _context.next = 35;
+            _context.next = 36;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 35:
-            _context.prev = 35;
-            _context.next = 38;
+          case 36:
+            _context.prev = 36;
+            _context.next = 39;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 38:
-            _context.next = 45;
+          case 39:
+            _context.next = 46;
             break;
 
-          case 40:
-            _context.prev = 40;
-            _context.t2 = _context["catch"](35);
+          case 41:
+            _context.prev = 41;
+            _context.t2 = _context["catch"](36);
             console.log(_context.t2);
-            _context.next = 45;
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 45:
-            _context.next = 47;
+          case 46:
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 47:
+          case 48:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 30], [12, 17], [35, 40]]);
+    }, null, null, [[7, 31], [12, 17], [36, 41]]);
   })();
 };
 
@@ -235,7 +247,7 @@ var GetContent = function GetContent(page, data) {
         case 12:
           ContentHTML = _context2.sent;
 
-          if (Content != null && Content != "") {
+          if (Content != null && Content != "" && ContentHTML != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,

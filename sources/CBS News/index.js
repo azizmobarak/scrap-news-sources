@@ -4,6 +4,9 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const  {FormatImage} = require('../../function/FormatImage');
+const  {SendToServer} = require('../../function/sendToServer');
+
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -112,8 +115,8 @@ for(let i=0;i<Categories.length;i++){
                        title : articles[j].querySelector(titles).textContent.trim(),
                        link : articles[j].querySelector(links).href,
                        images : articles[j].querySelector(images)!=null ? articles[j].querySelector(images).src : null,
-                       Category:cateogryName,
-                       source :"CBC NEWS_"+cateogryName,
+                       Category:cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"CBC NEWS - "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.cbc.ca",
                        sourceLogo:"https://ropercenter.cornell.edu/sites/default/files/styles/800x600/public/Images/CBS_News_logo8x6.png",
                        author:articles[j].querySelector(author)==null ? null : articles[j].querySelector(author).textContent
@@ -122,10 +125,18 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-              //  console.log(PageData)
-               PageData.map(item=>{
-                   AllData.push(item)
-               });
+                console.log(PageData)
+                PageData.map((item,j)=>{
+
+                    item.images = FormatImage(item.images);
+                    console.log(item.images)
+                    setTimeout(() => {
+                        console.log("request here")
+                        SendToServer("en",item.Category,item.source,item.sourceLogo)
+                    }, 5000*j);
+                       AllData.push(item);
+    
+                   });
        }
   }catch(e){console.log(e); await browser.close();}
      
@@ -173,7 +184,7 @@ const GetContent = async(page,data)=>{
         });
     
 
-    if(Content!=null && Content!=""){
+    if(Content!=null && Content!="" && ContentHTML!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -188,7 +199,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-     //console.log(AllData_WithConetent)
+   //  console.log(AllData_WithConetent)
      await InsertData(AllData_WithConetent);
 
 }
