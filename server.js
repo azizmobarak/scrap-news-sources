@@ -15,7 +15,6 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
      }
 });
 
-
 cron.schedule('00 */1 * * *', () => {
    const DHNET = require('./sources/FR/DHNET');
    DHNET();

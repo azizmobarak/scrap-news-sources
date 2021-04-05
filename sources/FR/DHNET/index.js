@@ -194,7 +194,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-//  console.log(AllData_WithConetent)
+ // console.log(AllData_WithConetent)
  await InsertData(AllData_WithConetent);
 }
 
