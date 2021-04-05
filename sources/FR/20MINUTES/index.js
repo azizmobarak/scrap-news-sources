@@ -9,6 +9,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/FormatImage');
+const {SendToServer} = require('../../../function/sendToServer');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -24,7 +26,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['entertainment'];
+var Categories=['divertissement'];
 
 const JEAN = () =>{
     (async()=>{
@@ -100,8 +102,8 @@ var titles = document.querySelectorAll('article .teaser h2');
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"20minutes_"+Category,
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"20minutes - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.20minutes.fr/",
                        sourceLogo:"https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
                       });
@@ -109,10 +111,19 @@ var titles = document.querySelectorAll('article .teaser h2');
                }
                       return data;
      },Category);
-          //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            console.log(PageData);
+          PageData.map((item,j)=>{
+
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                console.log("request here")
+                SendToServer("fr",item.Category,item.source,item.sourceLogo)
+            }, 5000*j);
+
+               AllData.push(item);
+
+           });
+
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -195,7 +206,7 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  // console.log(AllData_WithConetent)
+   console.log(AllData_WithConetent)
    await InsertData(AllData_WithConetent);
 }
 

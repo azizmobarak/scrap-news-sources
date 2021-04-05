@@ -12,7 +12,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendToServer'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -28,7 +34,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['entertainment'];
+var Categories = ['divertissement'];
 
 var JEAN = function JEAN() {
   (function _callee2() {
@@ -56,7 +62,7 @@ var JEAN = function JEAN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 32;
+              _context2.next = 33;
               break;
             }
 
@@ -126,8 +132,8 @@ var JEAN = function JEAN() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "20minutes_" + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "20minutes - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.20minutes.fr/",
                     sourceLogo: "https://upload.wikimedia.org/wikipedia/fr/thumb/3/33/Logo_20_Minutes.svg/1200px-Logo_20_Minutes.svg.png"
                   });
@@ -139,53 +145,58 @@ var JEAN = function JEAN() {
 
           case 27:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                console.log("request here");
+                SendToServer("fr", item.Category, item.source, item.sourceLogo);
+              }, 5000 * j);
               AllData.push(item);
             });
 
-          case 29:
+          case 30:
             i++;
             _context2.next = 9;
             break;
 
-          case 32:
-            _context2.next = 39;
+          case 33:
+            _context2.next = 40;
             break;
 
-          case 34:
-            _context2.prev = 34;
+          case 35:
+            _context2.prev = 35;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 39;
+            _context2.next = 40;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 39:
-            _context2.prev = 39;
-            _context2.next = 42;
+          case 40:
+            _context2.prev = 40;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 42:
-            _context2.next = 49;
+          case 43:
+            _context2.next = 50;
             break;
 
-          case 44:
-            _context2.prev = 44;
-            _context2.t2 = _context2["catch"](39);
+          case 45:
+            _context2.prev = 45;
+            _context2.t2 = _context2["catch"](40);
             console.log(_context2.t2);
-            _context2.next = 49;
+            _context2.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 49:
-            _context2.next = 51;
+          case 50:
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 51:
+          case 52:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 34], [12, 17], [39, 44]]);
+    }, null, null, [[7, 35], [12, 17], [40, 45]]);
   })();
 };
 
@@ -275,10 +286,11 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 20:
-          _context3.next = 22;
+          console.log(AllData_WithConetent);
+          _context3.next = 23;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 22:
+        case 23:
         case "end":
           return _context3.stop();
       }
