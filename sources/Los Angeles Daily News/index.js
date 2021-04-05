@@ -6,6 +6,7 @@ const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
 const {SendToServer} = require('../../function/SendToServer');
 const {capitalizeFirstLetter} = require('../../function/toUppearCase');
+const {FormatImage} = require('../../function/imageFormat');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -75,47 +76,35 @@ var PageData = await page.evaluate((Category)=>{
     // Los Angelece News classes
     var loop=3;
 
-    var titleClassName=".feature-primary article .entry-title";
-    var linkClassName=".feature-primary article .entry-title a";
-    var imageClassName=".feature-primary article figure div.image-wrapper>img";
+    var articles = document.querySelectorAll('article')
+    var titleClassName="h4";
+    var linkClassName="a";
+    var imageClassName="img";
 
 
-    // setconditions on categories 
-    if(Category==="news/environment"){
-        titleClassName="section.landing a.article-title";
-        linkClassName="section.landing a.article-title";
-        imageClassName="section.landing .image-wrapper>img";
-        loop=1;
-    }else{
-        if(Category==="business" || Category==="news/politics" || Category==="opinion" ){
-            titleClassName=".feature-top article h2";
-            linkClassName=".feature-top article a";
-            imageClassName=".feature-top article img";
-            loop=1;
-        }if(Category==="sports"){
-            titleClassName=".feature-wrapper .article-title .dfm-title";
-            linkClassName=".feature-wrapper article .entry-title a";
-            imageClassName=".feature-wrapper article img";
+   // set conditions on categories 
+        if(Category==="business" || Category==="news/politics" || Category==="opinion" || Category==="sports" ){
+            var titleClassName="h2";
             loop=1;
         }
-    }
-
-    // change the source logo to http 
-    var titles = document.querySelectorAll(titleClassName);
-    var images = document.querySelectorAll(imageClassName);
-    var links = document.querySelectorAll(linkClassName);
   
     
     //change category name
     var cateogryName = "";
     
     if(Category==="news/crime-and-public-safety"){
+        var titleClassName="h2";
+        loop=1;
         cateogryName="Safety";
     }else{
         if(Category.indexOf('/')!=-1){
             if(Category.indexOf('housing')!=-1){
+                var titleClassName="h2";
+                loop=1;
                 cateogryName="Business";
             }else{
+                var titleClassName="h2";
+                loop=1;
                 cateogryName = Category.substring(Category.indexOf('/')+1,Category.length);
             }
         }else{
@@ -129,16 +118,16 @@ var PageData = await page.evaluate((Category)=>{
          var data =[];
          for(let j=0;j<loop;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                        time : Date.now(),
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images :typeof(images[j])!="undefined" ? images[j].src : null,
+                       title : articles[j].querySelector(titleClassName).textContent.trim(),
+                       link : articles[j].querySelector(linkClassName).href,
+                       images :articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src: null,
                        Category:cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        source :"LosAngeles Daily News - "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
-                       sourceLink:"https://www.dailynews.com/",
+                       sourceLink:"https://www.dailynews.com",
                        sourceLogo:"https://www.brainsway.com/wp-content/uploads/2019/05/img47.png"
                          });
                    }
@@ -147,14 +136,16 @@ var PageData = await page.evaluate((Category)=>{
                },Category);
 
                console.log(PageData);
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
 
                 var category = capitalizeFirstLetter(item.Category)
                 item.Category = category;
+                item.images = FormatImage(item.images);
+                console.log(item.images)
                 setTimeout(() => {
                     console.log("request here")
                     SendToServer("en",item.Category,item.source,item.sourceLogo)
-                }, 5000*i);
+                }, 5000*j);
                    AllData.push(item);
 
                });
@@ -245,7 +236,7 @@ if(Content!=null && Content!="" && ContentHTML!=null){
           });
        }
     }
-   console.log(AllData_WithConetent)
+  // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
