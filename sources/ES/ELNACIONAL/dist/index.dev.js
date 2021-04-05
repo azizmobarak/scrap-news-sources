@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/SendToserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['venezuela', 'international', 'football', 'economy'];
+var Categories = ['venezuela', 'internacional', 'fútbol', 'economía'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -64,9 +70,9 @@ var LARAZON = function LARAZON() {
             //navigate to category sub route
 
             url = "https://www.elnacional.com/venezuela/";
-            if (Category === "football") url = "https://www.elnacional.com/futbol/";
-            if (Category === "economy") url = "https://www.elnacional.com/economia/";
-            if (Category === "international") url = "https://www.elnacional.com/mundo/";
+            if (Category === "fútbol") url = "https://www.elnacional.com/futbol/";
+            if (Category === "economía") url = "https://www.elnacional.com/economia/";
+            if (Category === "internacional") url = "https://www.elnacional.com/mundo/";
             _context2.prev = 15;
             _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -139,8 +145,8 @@ var LARAZON = function LARAZON() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
-                    Category: Category,
-                    source: "El Nacional_" + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "El Nacional - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.elnacional.com",
                     sourceLogo: "https://cdn.elnacional.com/wp-content/uploads/2019/07/Logos-EN-Programador-23.png"
                   });
@@ -153,7 +159,11 @@ var LARAZON = function LARAZON() {
           case 33:
             PageData = _context2.sent;
             //   console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 5000 * j);
               AllData.push(item);
             });
 
