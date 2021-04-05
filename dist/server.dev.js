@@ -30,13 +30,13 @@ con.connect(process.env.DATABASE, {
     // }
     // });
   }
-}); //cron.schedule('28 */1 * * *', () => {
-//1h
+});
+cron.schedule('28 */1 * * *', function () {
+  //1h
+  var LosAngelesNews = require('./sources/Los Angeles Daily News');
 
-var LosAngelesNews = require('./sources/Los Angeles Daily News');
-
-LosAngelesNews(); //});
-
+  LosAngelesNews();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
