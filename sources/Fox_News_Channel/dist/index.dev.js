@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/SendToServer'),
+    SendToServer = _require2.SendToServer;
+
+var _require3 = require('../../function/Formatimage'),
+    FormatImage = _require3.FormatImage; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -56,7 +62,7 @@ var FOXNEWS = function FOXNEWS() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 43;
+              _context.next = 44;
               break;
             }
 
@@ -156,13 +162,21 @@ var FOXNEWS = function FOXNEWS() {
                 timeClassName = ".collection-river .article time.time";
               } else {
                 if (Category === "lifestyle") {
-                  Category = "life&style";
+                  Category = "Life & Style";
                 } else {
                   if (Category === "politics") {
                     Category = "politic";
                   } else {
                     if (Category === "sports") {
                       Category = "sport";
+                    } else {
+                      if (Category === "markets") {
+                        Category = "market";
+                      } else {
+                        if (Category === "us") {
+                          Category = "United State";
+                        }
+                      }
                     }
                   }
                 }
@@ -182,8 +196,8 @@ var FOXNEWS = function FOXNEWS() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
-                    Category: Category,
-                    source: "FoxNews Channel_" + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "FoxNews Channel - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.foxnews.com",
                     sourceLogo: "https://pbs.twimg.com/profile_images/918480715158716419/4X8oCbge_400x400.jpg"
                   });
@@ -195,51 +209,55 @@ var FOXNEWS = function FOXNEWS() {
 
           case 38:
             PageData = _context.sent;
-            PageData.map(function (item) {
-              console.log(item.Category);
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 40:
+          case 41:
             i++;
             _context.next = 9;
             break;
 
-          case 43:
-            _context.next = 49;
+          case 44:
+            _context.next = 50;
             break;
 
-          case 45:
-            _context.prev = 45;
+          case 46:
+            _context.prev = 46;
             _context.t8 = _context["catch"](7);
-            _context.next = 49;
+            _context.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 49:
-            _context.prev = 49;
-            _context.next = 52;
+          case 50:
+            _context.prev = 50;
+            _context.next = 53;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 52:
-            _context.next = 58;
+          case 53:
+            _context.next = 59;
             break;
 
-          case 54:
-            _context.prev = 54;
-            _context.t9 = _context["catch"](49);
-            _context.next = 58;
+          case 55:
+            _context.prev = 55;
+            _context.t9 = _context["catch"](50);
+            _context.next = 59;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
-            _context.next = 60;
+          case 59:
+            _context.next = 61;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 60:
+          case 61:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 45], [14, 19], [49, 54]]);
+    }, null, null, [[7, 46], [14, 19], [50, 55]]);
   })();
 };
 

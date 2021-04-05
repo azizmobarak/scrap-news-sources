@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {SendToServer} = require('../../function/SendToServer');
+const {FormatImage} = require('../../function/Formatimage');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -124,7 +126,7 @@ for(let i=0;i<Categories.length;i++){
           timeClassName=".collection-river .article time.time";
       }else{
           if(Category==="lifestyle"){
-              Category="life&style"
+              Category="Life & Style"
           }else{
               if(Category==="politics"){
                   Category="politic"
@@ -132,6 +134,14 @@ for(let i=0;i<Categories.length;i++){
               else{
                   if(Category==="sports"){
                     Category="sport"
+                }else{
+                    if(Category==="markets"){
+                        Category="market";
+                    }else{
+                        if(Category==="us"){
+                            Category="United State";
+                        }
+                    }
                 }
               }
           }
@@ -154,8 +164,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:Category,
-                       source :"FoxNews Channel_"+Category,
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"FoxNews Channel - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.foxnews.com",
                        sourceLogo:"https://pbs.twimg.com/profile_images/918480715158716419/4X8oCbge_400x400.jpg"
                     });
@@ -163,9 +173,12 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-    
-               PageData.map(item=>{
-                console.log(item.Category);
+                console.log(PageData)
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }
