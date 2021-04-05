@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/FormatImage');
+const {SendToServer} = require('../../../function/SendToServer');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['Life & style','Technology','International'];
+var Categories=['Life & style','La technologie','International'];
 
 const LEMATIN = () =>{
     (async()=>{
@@ -101,8 +103,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : titles[j>=2 ? j++ : j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
-                    Category:Category,
-                    source :"LE MATIN.ma_"+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"LE MATIN.ma - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.lematin.ma",
                     sourceLogo:"https://s1.lematin.ma/cdn/images/logo.png"
                       });
@@ -110,10 +112,14 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-           // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            console.log(PageData);
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('fr',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();

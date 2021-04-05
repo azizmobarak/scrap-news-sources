@@ -16,10 +16,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-cron.schedule('*/25 * * * *', () => {
+// cron.schedule('*/25 * * * *', () => {
    const matin = require('./sources/FR/LEMATIN.MA');
    matin();
-});
+// });
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

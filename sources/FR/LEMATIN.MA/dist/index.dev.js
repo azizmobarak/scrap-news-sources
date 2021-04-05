@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/SendToServer'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['Life & style', 'Technology', 'International'];
+var Categories = ['Life & style', 'La technologie', 'International'];
 
 var LEMATIN = function LEMATIN() {
   (function _callee2() {
@@ -55,7 +61,7 @@ var LEMATIN = function LEMATIN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 37;
               break;
             }
 
@@ -131,8 +137,8 @@ var LEMATIN = function LEMATIN() {
                     title: titles[j >= 2 ? j++ : j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "LE MATIN.ma_" + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "LE MATIN.ma - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.lematin.ma",
                     sourceLogo: "https://s1.lematin.ma/cdn/images/logo.png"
                   });
@@ -144,53 +150,57 @@ var LEMATIN = function LEMATIN() {
 
           case 31:
             PageData = _context2.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 33:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 53;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
-            _context2.next = 55;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [14, 21], [43, 48]]);
+    }, null, null, [[7, 39], [14, 21], [44, 49]]);
   })();
 };
 
