@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {SendToServer} = require('../../../function/SendToserver.js')
+const {FormatImage} = require('../../../function/FormatImage.js');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -101,8 +103,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
-                    Category:Category,
-                    source :"DH NET_"+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"DH NET - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.dhnet.be",
                     sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
                       });
@@ -110,10 +112,17 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            console.log(PageData);
+
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                console.log(item.images)
+            setTimeout(() => {
+                    console.log("request here")
+                    SendToServer("fr",item.Category,item.source,item.sourceLogo)
+              }, 5000*j);
+                   AllData.push(item);
+               });
        }}catch(e){
         console.log(e)
         await browser.close();

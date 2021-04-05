@@ -23,8 +23,6 @@ var type="Article";
               articleDescription:article.content,
               articleCleanDescription:article.contentHTML
       }
-
-      console.log(articledetails)
       
        var Model =  category("articles");
       Model.find({$and : [

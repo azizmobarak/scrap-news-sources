@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/SendToserver.js'),
+    SendToServer = _require2.SendToServer;
+
+var _require3 = require('../../../function/FormatImage.js'),
+    FormatImage = _require3.FormatImage; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var DHNET = function DHNET() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 37;
               break;
             }
 
@@ -131,8 +137,8 @@ var DHNET = function DHNET() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "DH NET_" + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "DH NET - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.dhnet.be",
                     sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_Derni%C3%A8re_Heure_logo.svg/1200px-La_Derni%C3%A8re_Heure_logo.svg.png"
                   });
@@ -144,53 +150,59 @@ var DHNET = function DHNET() {
 
           case 31:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              console.log(item.images);
+              setTimeout(function () {
+                console.log("request here");
+                SendToServer("fr", item.Category, item.source, item.sourceLogo);
+              }, 5000 * j);
               AllData.push(item);
             });
 
-          case 33:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 53;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
-            _context2.next = 55;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [14, 21], [43, 48]]);
+    }, null, null, [[7, 39], [14, 21], [44, 49]]);
   })();
 };
 
