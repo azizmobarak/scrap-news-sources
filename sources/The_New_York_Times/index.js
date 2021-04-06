@@ -4,6 +4,9 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/FormatImage');
+const {SendToServer} = require('../../function/SaveToServer');
+
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -75,7 +78,7 @@ var PageData = await page.evaluate((Category)=>{
     var linkClassName="#collection-highlights-container ol>li>article figure a";
   
     //change category name
-    var cateogryName = "";
+    var cateogryName = Category;
 
     switch(Category){
         case 'world' : 
@@ -118,26 +121,29 @@ var PageData = await page.evaluate((Category)=>{
          var data =[];
          for(let j=0;j<loop;j++){
            
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
+              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined" || cateogryName!="")
                     {
                    data.push({
-                      time : Date.now(),
+                       time : Date.now(),
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category: cateogryName,
-                       source :"NYT "+cateogryName,
+                       Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"NYT "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.nytimes.com",
-                       sourceLogo:"NYTIMES logo"
+                       sourceLogo:"https://static.squarespace.com/static/5321a303e4b0ec6cd1a61429/533da9bbe4b0e2847b2313da/533da9bee4b0e2847b231954/1375473510683/1000w/101065_300.jpg"
                          });
                    }
               }
                       return data;
                },Category);
-                 console.log(PageData);
-                PageData.map(item=>{
-                   AllData.push(item)
-               });
+                 PageData.map((item,j)=>{
+                    item.images = FormatImage(item.images);
+                    setTimeout(() => {
+                         SendToServer('en',item.Category,item.source,item.sourceLogo)
+                    },2000*j);
+                       AllData.push(item)
+                   });
        }}catch{
         await browser.close();
          }
@@ -182,6 +188,14 @@ const GetContent = async(page,data)=>{
            }
         });
 
+        var ContentHtml = await page.evaluate(()=>{
+            try{
+                return document.querySelector('.meteredContent').innerHTML;
+               }catch{
+                return null;
+               }
+        })
+
         var author = await page.evaluate(()=>{
             try{
                 return document.querySelector('.last-byline').textContent;
@@ -202,7 +216,8 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author:author,
-                content:Content!=null ? Content : null
+                content:Content!=null ? Content : null,
+                contetHtml : ContentHtml,
           });
        }
     }
