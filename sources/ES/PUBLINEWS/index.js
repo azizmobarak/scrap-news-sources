@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {SendToServer} = require('../../../function/SendToServer');
+const {FormatImage} = require('../../../function/FormatImage')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -23,7 +25,7 @@ puppeteer.use(puppeteer_agent());
 
 
 
-var Categories=['guatemala','international','celebrity'];
+var Categories=['Guatemala','internacional','celebridad'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -52,12 +54,11 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url="https://www.publinews.gt/gt/guatemala";
-    if(Category==="international") url ="https://www.publinews.gt/gt/mundo";
-    if(Category==="celebrity") url ="https://www.publinews.gt/gt/espectaculos";
+    if(Category==="internacional") url ="https://www.publinews.gt/gt/mundo";
+    if(Category==="celebridad") url ="https://www.publinews.gt/gt/espectaculos";
     
 
 	page.on('dialog', async dialog => {
-    console.log(dialog.message());
     await dialog.dismiss();
 	});
 
@@ -108,8 +109,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : img,
-                    Category:Category,
-                    source :"PubliNews "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"PubliNews "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.publinews.gt",
                     sourceLogo:"https://a.calameoassets.com/691806/picture.jpg"
                       });
@@ -117,10 +118,15 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-       // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+
+        PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('en',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
+
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -148,7 +154,6 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -160,6 +165,14 @@ const GetContent = async(page,data)=>{
                 scond_content = scond_content +"\n"+second_text[i].textContent;
                }
                 return scond_content+".. .";
+            }catch{
+               return null;
+            }
+        });
+
+        var ContentHtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.entry-content').innerHTML;
             }catch{
                return null;
             }
@@ -184,11 +197,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHTML : ContentHtml
           });
        }
     }
-//  console.log(AllData_WithConetent)
 await InsertData(AllData_WithConetent);
 }
 

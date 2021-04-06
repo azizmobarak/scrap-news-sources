@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/SendToServer'),
+    SendToServer = _require2.SendToServer;
+
+var _require3 = require('../../../function/FormatImage'),
+    FormatImage = _require3.FormatImage; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['guatemala', 'international', 'celebrity'];
+var Categories = ['Guatemala', 'internacional', 'celebridad'];
 
 var SCRAP = function SCRAP() {
   (function _callee3() {
@@ -63,18 +69,17 @@ var SCRAP = function SCRAP() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://www.publinews.gt/gt/guatemala";
-            if (Category === "international") url = "https://www.publinews.gt/gt/mundo";
-            if (Category === "celebrity") url = "https://www.publinews.gt/gt/espectaculos";
+            if (Category === "internacional") url = "https://www.publinews.gt/gt/mundo";
+            if (Category === "celebridad") url = "https://www.publinews.gt/gt/espectaculos";
             page.on('dialog', function _callee(dialog) {
               return regeneratorRuntime.async(function _callee$(_context) {
                 while (1) {
                   switch (_context.prev = _context.next) {
                     case 0:
-                      console.log(dialog.message());
-                      _context.next = 3;
+                      _context.next = 2;
                       return regeneratorRuntime.awrap(dialog.dismiss());
 
-                    case 3:
+                    case 2:
                     case "end":
                       return _context.stop();
                   }
@@ -149,8 +154,8 @@ var SCRAP = function SCRAP() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: img,
-                    Category: Category,
-                    source: "PubliNews " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "PubliNews " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.publinews.gt",
                     sourceLogo: "https://a.calameoassets.com/691806/picture.jpg"
                   });
@@ -162,8 +167,11 @@ var SCRAP = function SCRAP() {
 
           case 32:
             PageData = _context3.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -213,7 +221,7 @@ var SCRAP = function SCRAP() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, ContentHtml, author;
   return regeneratorRuntime.async(function GetContent$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -223,18 +231,17 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context4.next = 18;
+            _context4.next = 20;
             break;
           }
 
           item = data[i];
           url = item.link;
-          console.log(url);
-          _context4.next = 8;
+          _context4.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 8:
-          _context4.next = 10;
+        case 7:
+          _context4.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -251,18 +258,29 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context4.sent;
-          _context4.next = 13;
+          _context4.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.author').textContent.trim();
+              return document.querySelector('.entry-content').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 13:
+        case 12:
+          ContentHtml = _context4.sent;
+          _context4.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.author').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context4.sent;
 
           if (Content != null && Content != "" && Content.length > 255) {
@@ -276,20 +294,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contentHTML: ContentHtml
             });
           }
 
-        case 15:
+        case 17:
           i++;
           _context4.next = 2;
           break;
 
-        case 18:
-          _context4.next = 20;
+        case 20:
+          _context4.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 22:
         case "end":
           return _context4.stop();
       }

@@ -20,10 +20,9 @@ var second_categorie ="peru"
               articleType:type,
               authorName : article.author,
               articleLanguage:lang,
-              articleDescription:article.content
+              articleDescription:article.content,
+              articleCleanDescription: article.contentHTML
       }
-
-      console.log(articledetails)
       
        var Model =  category("articles");
       Model.find({$and : [
