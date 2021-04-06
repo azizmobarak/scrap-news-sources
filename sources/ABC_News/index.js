@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const  {FormatImage} = require('../../function/FormatImage');
+const  {SendToServer} = require('../../function/SendToServer');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -100,14 +102,14 @@ for(let i=0;i<Categories.length;i++){
                 var data =[];
          for(let j=0;j<titles.length;j++){
            
-              if(WordExist(time[j].textContent)==true){
+              if(WordExist(time[j].textContent)==true && typeof(images[j])!="undefined"){
                    data.push({
                        time : Date.now(),
                        title : titles[j].textContent,
                        link : titles[j].href,
                        images :  typeof(images[j])=="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"ABC NEWS",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"ABC - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://abcnews.go.com",
                        sourceLogo:"https://gray-wbay-prod.cdn.arcpublishing.com/resizer/fln06LgHS8awdDtCHhWoikKI7UE=/1200x675/smart/cloudfront-us-east-1.images.arcpublishing.com/gray/X3TAX5IMPBHY7EBGM6XW47YETE.jpg"
                       });
@@ -115,17 +117,22 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-               PageData.map(item=>{
-                console.log(item.Category)
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
-               })
-       }}catch{
+               });
+       }}catch(e){
+        console.log(e)
         await browser.close();
        }
 
      try{
         await GetContent(page,AllData);
-     }catch{
+     }catch(e){
+         console.log(e)
         await browser.close();
      }
      await browser.close();
@@ -144,10 +151,14 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-        console.log(url)
     
         var Content = await page.evaluate(()=>{
             var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
+            return text;
+        });
+
+        var ContentHtml = await page.evaluate(()=>{
+            var text = document.querySelector('.Article__Wrapper>.Article__Content')==null ? null : document.querySelector('.Article__Wrapper>.Article__Content').innerHTML;
             return text;
         });
 
@@ -172,7 +183,8 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHtml : ContentHtml
           });
        }
     

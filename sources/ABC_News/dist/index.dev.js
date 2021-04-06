@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/SendToServer'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -116,14 +122,14 @@ var ABC_NEWS = function ABC_NEWS() {
               var data = [];
 
               for (var j = 0; j < titles.length; j++) {
-                if (WordExist(time[j].textContent) == true) {
+                if (WordExist(time[j].textContent) == true && typeof images[j] != "undefined") {
                   data.push({
                     time: Date.now(),
                     title: titles[j].textContent,
                     link: titles[j].href,
                     images: typeof images[j] == "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "ABC NEWS",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "ABC - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://abcnews.go.com",
                     sourceLogo: "https://gray-wbay-prod.cdn.arcpublishing.com/resizer/fln06LgHS8awdDtCHhWoikKI7UE=/1200x675/smart/cloudfront-us-east-1.images.arcpublishing.com/gray/X3TAX5IMPBHY7EBGM6XW47YETE.jpg"
                   });
@@ -135,8 +141,11 @@ var ABC_NEWS = function ABC_NEWS() {
 
           case 22:
             PageData = _context.sent;
-            PageData.map(function (item) {
-              console.log(item.Category);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -146,45 +155,47 @@ var ABC_NEWS = function ABC_NEWS() {
             break;
 
           case 27:
-            _context.next = 33;
+            _context.next = 34;
             break;
 
           case 29:
             _context.prev = 29;
             _context.t1 = _context["catch"](7);
-            _context.next = 33;
+            console.log(_context.t1);
+            _context.next = 34;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 33:
-            _context.prev = 33;
-            _context.next = 36;
+          case 34:
+            _context.prev = 34;
+            _context.next = 37;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 36:
-            _context.next = 42;
+          case 37:
+            _context.next = 44;
             break;
 
-          case 38:
-            _context.prev = 38;
-            _context.t2 = _context["catch"](33);
-            _context.next = 42;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 42:
+          case 39:
+            _context.prev = 39;
+            _context.t2 = _context["catch"](34);
+            console.log(_context.t2);
             _context.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
           case 44:
+            _context.next = 46;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 46:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 29], [11, 16], [33, 38]]);
+    }, null, null, [[7, 29], [11, 16], [34, 39]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, ContentHtml, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -194,7 +205,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 18;
+            _context2.next = 20;
             break;
           }
 
@@ -204,27 +215,34 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 7:
-          console.log(url);
-          _context2.next = 10;
+          _context2.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var text = document.querySelector('.Article__Wrapper>.Article__Content') == null ? null : document.querySelector('.Article__Wrapper>.Article__Content').textContent;
             return text;
           }));
 
-        case 10:
+        case 9:
           Content = _context2.sent;
-          _context2.next = 13;
+          _context2.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            var text = document.querySelector('.Article__Wrapper>.Article__Content') == null ? null : document.querySelector('.Article__Wrapper>.Article__Content').innerHTML;
+            return text;
+          }));
+
+        case 12:
+          ContentHtml = _context2.sent;
+          _context2.next = 15;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var auth = document.querySelector('.Byline__Author').textContent;
               var upperCaseWords = auth.match(/(\b[A-Z][A-Z]+|\b[A-Z]\b)/g);
               return upperCaseWords[0] + " " + upperCaseWords[1];
-            } catch (_unused4) {
+            } catch (_unused2) {
               return null;
             }
           }));
 
-        case 13:
+        case 15:
           author = _context2.sent;
 
           if (item.images != null && Content != null && Content != "") {
@@ -238,20 +256,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contentHtml: ContentHtml
             });
           }
 
-        case 15:
+        case 17:
           i++;
           _context2.next = 2;
           break;
 
-        case 18:
-          _context2.next = 20;
+        case 20:
+          _context2.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 22:
         case "end":
           return _context2.stop();
       }
