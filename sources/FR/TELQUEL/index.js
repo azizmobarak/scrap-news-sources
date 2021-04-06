@@ -6,6 +6,9 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/FormatImage')
+const {SendToServer} = require('../../../function/SendToServer')
+
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +24,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','opinion','economy'];
+var Categories=['politique','avis','économie'];
 
 const TELQUEL = () =>{
     (async()=>{
@@ -50,8 +53,8 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url ="https://telquel.ma/categorie/maroc/politique";
-    if(Category==="opinion") url="https://telquel.ma/categorie/opinions";
-    if(Category==="economy") url="https://telquel.ma/categorie/economie";
+    if(Category==="avis") url="https://telquel.ma/categorie/opinions";
+    if(Category==="économie") url="https://telquel.ma/categorie/economie";
     
     try{
         await page.goto(url);
@@ -99,8 +102,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
-                    Category:Category,
-                    source :"TelQuel.ma",
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"TelQuel.ma - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.telquel.ma",
                     sourceLogo:"https://cdn.dialy.net/png/telquel.png"
                       });
@@ -108,10 +111,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-        //    console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -139,7 +145,6 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -151,6 +156,14 @@ const GetContent = async(page,data)=>{
                    scond_content = scond_content +"\n"+second_text[i].textContent;
                 }
                  return scond_content.trim();
+             }catch{
+                return null;
+             }
+        });
+
+        var ContentHtml = await page.evaluate(()=>{
+            try{
+                return document.querySelector('#article-container').innerHTML;
              }catch{
                 return null;
              }
@@ -176,11 +189,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contentHtml : ContentHtml
           });
        }
     }
-// console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

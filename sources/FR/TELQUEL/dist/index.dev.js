@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/SendToServer'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', 'opinion', 'economy'];
+var Categories = ['politique', 'avis', 'économie'];
 
 var TELQUEL = function TELQUEL() {
   (function _callee2() {
@@ -63,8 +69,8 @@ var TELQUEL = function TELQUEL() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://telquel.ma/categorie/maroc/politique";
-            if (Category === "opinion") url = "https://telquel.ma/categorie/opinions";
-            if (Category === "economy") url = "https://telquel.ma/categorie/economie";
+            if (Category === "avis") url = "https://telquel.ma/categorie/opinions";
+            if (Category === "économie") url = "https://telquel.ma/categorie/economie";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -140,8 +146,8 @@ var TELQUEL = function TELQUEL() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "TelQuel.ma",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "TelQuel.ma - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.telquel.ma",
                     sourceLogo: "https://cdn.dialy.net/png/telquel.png"
                   });
@@ -153,8 +159,11 @@ var TELQUEL = function TELQUEL() {
 
           case 34:
             PageData = _context2.sent;
-            //    console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -204,7 +213,7 @@ var TELQUEL = function TELQUEL() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, ContentHtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -214,18 +223,17 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 18;
+            _context3.next = 20;
             break;
           }
 
           item = data[i];
           url = item.link;
-          console.log(url);
-          _context3.next = 8;
+          _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 8:
-          _context3.next = 10;
+        case 7:
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -242,18 +250,29 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 10:
+        case 9:
           Content = _context3.sent;
-          _context3.next = 13;
+          _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.author').textContent.trim();
+              return document.querySelector('#article-container').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 13:
+        case 12:
+          ContentHtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.author').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -267,20 +286,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contentHtml: ContentHtml
             });
           }
 
-        case 15:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 18:
-          _context3.next = 20;
+        case 20:
+          _context3.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 22:
         case "end":
           return _context3.stop();
       }
