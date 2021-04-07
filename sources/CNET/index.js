@@ -1,9 +1,11 @@
-const puppeteer  = require('puppeteer-extra');
+const puppeteer = require('puppeteer-extra');
 const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
-const {InsertData} = require('../../function/insertData')
+const { InsertData } = require('../../function/insertData')
+const { FormatImage } = require('../../function/FormatImage');
+const { SendToServer } = require('../../function/SendToServer');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -19,216 +21,227 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['topics/security','topics/tech-industry','topics/internet','topics/culture','topics/mobile','topics/sci-tech','topics/computers','personal-finance/investing','health/fitness','health/healthy-eating','health/sleep','health/personal-care'];
+var Categories = ['topics/security', 'topics/tech-industry', 'topics/internet', 'topics/culture', 'topics/mobile', 'topics/sci-tech', 'topics/computers', 'personal-finance/investing', 'health/fitness', 'health/healthy-eating', 'health/sleep', 'health/personal-care'];
 
-const CNET = () =>{
-    (async()=>{
-       var browser =await puppeteer.launch({
-        headless: true,
-        args: [
-            '--enable-features=NetworkService',
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--shm-size=3gb',
-        ],
-       });
-
-
-       var page = await browser.newPage(); 
-
- 
-var AllData=[]; 
-// boucle on categories started 
-try{
-for(let i=0;i<Categories.length;i++){
-
-        //get the right category by number
-        var Category = Categories[i]
-        console.log(Category)
+const CNET = () => {
+    (async () => {
+        var browser = await puppeteer.launch({
+            headless: true,
+            args: [
+                '--enable-features=NetworkService',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--shm-size=3gb',
+            ],
+        });
 
 
-      try{
-         //navigate to category sub route
-        await page.goto(["https://www.cnet.com/",'',Category].join(''));
-        //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-    }catch(e){
-         //navigate to category sub route
-         await page.goto(["https://www.cnet.com/",'',Category].join(''));
-         //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);
-    }
+        var page = await browser.newPage();
 
-      // get the data from the page
-var PageData = await page.evaluate((Category)=>{
 
-           //change category name
-           var cateogryName = "";
-    
-          if(i==9){
-              cateogryName="food"
-          }else{
-            if(Category.indexOf("tech")!=-1){
-            cateogryName = "technology";
-            }else{
-                if(Category.indexOf('sci-tech')!=-1){
-                    cateogryName = "science";
-                }else{
-                   if(Category.indexOf('sleep')!=-1 || cateogryName.indexOf('care')!=-1 || Category.indexOf('fitness')){
-                       cateogryName="health";
-                   }else{
-                    if(Category.indexOf('computers')!=-1){
-                        cateogryName="technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
-                    }else{
-                        if(Category.indexOf('cobile')!=-1){
-                            cateogryName="technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
-                        }else{
-                            if(Category.indexOf('internet')!=-1){
-                                cateogryName="technology,"+ Category.substring(Category.indexOf('/')+1,Category.length);
-                            }else{
-                                if(Category.indexOf('security')!=-1){
-                                       cateogryName="safety"
-                                }else{
-                                    cateogryName=Category.substring(Category.indexOf('/')+1,Category.length);
+        var AllData = [];
+        // boucle on categories started 
+        try {
+            for (let i = 0; i < Categories.length; i++) {
+
+                //get the right category by number
+                var Category = Categories[i]
+                console.log(Category)
+
+
+                try {
+                    //navigate to category sub route
+                    await page.goto(["https://www.cnet.com/", '', Category].join(''));
+                    //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+                } catch (e) {
+                    //navigate to category sub route
+                    await page.goto(["https://www.cnet.com/", '', Category].join(''));
+                    //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
+                    await page.solveRecaptchas();
+                    await Promise.all([
+                        page.waitForNavigation(),
+                        page.click(".g-recaptcha"),
+                        await page.$eval('input[type=submit]', el => el.click())
+                    ]);
+                }
+
+                // get the data from the page
+                var PageData = await page.evaluate((Category) => {
+
+                    //change category name
+                    var cateogryName = "";
+
+                    if (i == 9) {
+                        cateogryName = "food"
+                    } else {
+                        if (Category.indexOf("tech") != -1) {
+                            cateogryName = "technology";
+                        } else {
+                            if (Category.indexOf('sci-tech') != -1) {
+                                cateogryName = "science";
+                            } else {
+                                if (Category.indexOf('sleep') != -1 || cateogryName.indexOf('care') != -1 || Category.indexOf('fitness')) {
+                                    cateogryName = "health";
+                                } else {
+                                    if (Category.indexOf('computers') != -1) {
+                                        cateogryName = "technology," + Category.substring(Category.indexOf('/') + 1, Category.length);
+                                    } else {
+                                        if (Category.indexOf('cobile') != -1) {
+                                            cateogryName = "technology," + Category.substring(Category.indexOf('/') + 1, Category.length);
+                                        } else {
+                                            if (Category.indexOf('internet') != -1) {
+                                                cateogryName = "technology," + Category.substring(Category.indexOf('/') + 1, Category.length);
+                                            } else {
+                                                if (Category.indexOf('security') != -1) {
+                                                    cateogryName = "safety"
+                                                } else {
+                                                    cateogryName = Category.substring(Category.indexOf('/') + 1, Category.length);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                   }
-                }
-           }
-         }
-    //////////////////////////////
-    
-
-    // CBC classes by categories 
-      var titleClassName=".assetBody h2";
-      var linkClassName=".assetBody a";
-      var imageClassName=".assetThumb>a>figure>img";
-      var authorClassName=".assetAuthor";
-
-      if(Category.indexOf('health')!=-1 || Category.indexOf('investing')!=-1){
-          authorClassName=".c-metaText_link"
-      }
+                    //////////////////////////////
 
 
-      if(cateogryName==="culture"){
-           titleClassName=".assetText a";
-           linkClassName=".assetText a";
-           imageClassName=".assetBody>a>figure>img";
-      }else{
-          if(cateogryName==="investing" || cateogryName==="health"){
-            titleClassName=".latestScrollItems .c-universalLatest_text h3";
-            linkClassName=".latestScrollItems .c-universalLatest_text>a";
-            imageClassName=".c-universalLatest_image>a>span>img";
-          }
-      }
-    
-     // change the source logo to http 
-    var titles = document.querySelectorAll(titleClassName)
-    var images =  document.querySelectorAll(imageClassName);
-    var links = document.querySelectorAll(linkClassName);
-    var authors = document.querySelectorAll(authorClassName);
-  
+                    // CBC classes by categories 
+                    var titleClassName = ".assetBody h2";
+                    var linkClassName = ".assetBody a";
+                    var imageClassName = ".assetThumb>a>figure>img";
+                    var authorClassName = ".assetAuthor";
 
-         var data =[];
-         for(let j=0;j<3;j++){
-           
-              if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
-                    {
-                         var auth ="";
-                      if(typeof authors[j]!="undefined"){
-                           if(authors[j].textContent.indexOf('by')!=-1) auth = authors[j].textContent.replace('by','').trim()
-                           else{
-                               auth = authors[j].textContent.trim();
-                               }
-                             }else{
-                               auth=null;
-                              }
-                   data.push({
-                       title : titles[j].textContent.trim(),
-                       link : links[j].href,
-                       images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:cateogryName,
-                       source :"CNET",
-                       sourceLink:"https://www.cnet.com",
-                       sourceLogo:"cnet logo",
-                       author:auth
-                    });
-                   }
-               }
-                      return data;
-               },Category);
+                    if (Category.indexOf('health') != -1 || Category.indexOf('investing') != -1) {
+                        authorClassName = ".c-metaText_link"
+                    }
 
-               console.log(PageData);
-               PageData.map(item=>{
-                   AllData.push(item)
-               });
-       }}catch{
-           await browser.close();
-       }
-  
-      try{
-          await GetContent(page,AllData);
-        }catch{
+
+                    if (cateogryName === "culture") {
+                        titleClassName = ".assetText a";
+                        linkClassName = ".assetText a";
+                        imageClassName = ".assetBody>a>figure>img";
+                    } else {
+                        if (cateogryName === "investing" || cateogryName === "health") {
+                            titleClassName = ".latestScrollItems .c-universalLatest_text h3";
+                            linkClassName = ".latestScrollItems .c-universalLatest_text>a";
+                            imageClassName = ".c-universalLatest_image>a>span>img";
+                        }
+                    }
+
+                    // change the source logo to http 
+                    var titles = document.querySelectorAll(titleClassName)
+                    var images = document.querySelectorAll(imageClassName);
+                    var links = document.querySelectorAll(linkClassName);
+                    var authors = document.querySelectorAll(authorClassName);
+
+
+                    var data = [];
+                    for (let j = 0; j < 3; j++) {
+
+                        if (typeof (titles[j]) != "undefined" && typeof (links[j]) != "undefined") {
+                            var auth = "";
+                            if (typeof authors[j] != "undefined") {
+                                if (authors[j].textContent.indexOf('by') != -1) auth = authors[j].textContent.replace('by', '').trim()
+                                else {
+                                    auth = authors[j].textContent.trim();
+                                }
+                            } else {
+                                auth = null;
+                            }
+
+                            data.push({
+                                title: titles[j].textContent.trim(),
+                                link: links[j].href,
+                                images: typeof (images[j]) != "undefined" ? images[j].src : null,
+                                Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                                source: "CNET - " + cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                                sourceLink: "https://www.cnet.com",
+                                sourceLogo: "https://cdn.freebiesupply.com/logos/thumbs/2x/cnet-1-logo.png",
+                                author: auth
+                            });
+                        }
+                    }
+                    return data;
+                }, Category);
+
+                PageData.map((item, j) => {
+                    item.images = FormatImage(item.images);
+                    setTimeout(() => {
+                        SendToServer('en', item.Category, item.source, item.sourceLogo)
+                    }, 2000 * j);
+                    AllData.push(item)
+                });
+
+            }
+        } catch {
             await browser.close();
-         }
-     await browser.close();
+        }
+
+        try {
+            await GetContent(page, AllData);
+        } catch {
+            await browser.close();
+        }
+        await browser.close();
     })();
 }
 
 
 
-const GetContent = async(page,data)=>{
-      
-    var AllData_WithConetent=[];
-    
-    for(var i=0;i<data.length;i++){
-    
+const GetContent = async (page, data) => {
+
+    var AllData_WithConetent = [];
+
+    for (var i = 0; i < data.length; i++) {
+
         var item = data[i];
         var url = item.link;
-       // console.log(url);
+        // console.log(url);
 
         await page.goto(url);
 
-    
-        var Content = await page.evaluate(()=>{
 
-
+        var Content = await page.evaluate(() => {
             var text = document.querySelectorAll('.article-main-body p');
-            var textArray=[];
+            var textArray = [];
 
-            for(let i=0;i<text.length;i++){
+            for (let i = 0; i < text.length; i++) {
                 textArray.push(text[i].textContent);
                 textArray.push('   ');
             }
             return textArray.join('\n');
         });
-    
 
-    if(Content!=null && Content!=""){
-          AllData_WithConetent.push({
-                time : Date.now(),
-                title : item.title,
-                link : item.link,
-                images : item.images,
-                Category:item.Category,
-                source :item.source,
-                sourceLink:item.sourceLink,
-                sourceLogo:item.sourceLogo,
-                author : item.author,
-                content:Content!=null ? Content : null
-          });
-       }
+        var contenthtml = await page.evaluate(() => {
+            try {
+                return document.querySelector('.article-main-body').innerHTML;
+            } catch {
+                return null;
+            }
+        });
+
+        if (Content != null && Content != "") {
+            AllData_WithConetent.push({
+                time: Date.now(),
+                title: item.title,
+                link: item.link,
+                images: item.images,
+                Category: item.Category,
+                source: item.source,
+                sourceLink: item.sourceLink,
+                sourceLogo: item.sourceLogo,
+                author: item.author,
+                content: Content != null ? Content : null,
+                contentHtml: contenthtml,
+            });
+        }
     }
-    await InsertData(AllData_WithConetent);
+  await InsertData(AllData_WithConetent);
 
 }
 
 
-module.exports=CNET;
+module.exports = CNET;

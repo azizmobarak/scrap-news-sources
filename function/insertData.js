@@ -12,7 +12,6 @@ var type="Article";
         console.log(articleCateory)
       
         for(let cat=0;cat< articleCateory.length ;cat++ ){
-             
           var articledetails ={
               articleTitle : article.title,
               articleSourceLink : article.link,
@@ -24,7 +23,8 @@ var type="Article";
               articleType:type,
               authorName : article.author,
               articleLanguage:lang,
-              articleDescription:article.content
+              articleDescription:article.content,
+              articleCleanDescription:contentHtml
       }
       
       var Model =  category("articles");

@@ -38,7 +38,8 @@ var CategorySchema = mongoose.Schema({
         enum:['fr','en','es','ar']
     },
     articleSourceLink:String,
-    articleDescription:String,
+    articleDescription:String, 
+    articleCleanDescription:String,
    status: {type: String,default:"published",enum: ["archive","draft","published"]}
 
 });
