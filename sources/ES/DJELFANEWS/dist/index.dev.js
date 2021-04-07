@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/FormatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/SendToServer'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['algeria', 'economy', 'culture'];
+var Categories = ['Algérie', 'économie', 'culture'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -55,7 +61,7 @@ var LARAZON = function LARAZON() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 34;
+              _context2.next = 35;
               break;
             }
 
@@ -64,7 +70,7 @@ var LARAZON = function LARAZON() {
             //navigate to category sub route
 
             url = "https://djelfa.info/fr/djelfa_news/index.1.html";
-            if (Category === "economy") url = "https://djelfa.info/fr/economie/index.1.html";
+            if (Category === "économie") url = "https://djelfa.info/fr/economie/index.1.html";
             if (Category === "culture") url = "https://djelfa.info/fr/culture/index.1.html";
             _context2.prev = 14;
             _context2.next = 17;
@@ -129,8 +135,8 @@ var LARAZON = function LARAZON() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
-                    Category: Category,
-                    source: "Djefla Info " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "DjeflaInfo - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://djelfa.info",
                     sourceLogo: "https://www.djelfa.info/ar/themes/tpl_4002/img/logo.jpg"
                   });
@@ -142,58 +148,62 @@ var LARAZON = function LARAZON() {
 
           case 29:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 31:
+          case 32:
             i++;
             _context2.next = 9;
             break;
 
-          case 34:
-            _context2.next = 41;
+          case 35:
+            _context2.next = 42;
             break;
 
-          case 36:
-            _context2.prev = 36;
+          case 37:
+            _context2.prev = 37;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 41;
+            _context2.next = 42;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 41:
-            _context2.prev = 41;
-            _context2.next = 44;
+          case 42:
+            _context2.prev = 42;
+            _context2.next = 45;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context2.next = 51;
+          case 45:
+            _context2.next = 52;
             break;
 
-          case 46:
-            _context2.prev = 46;
-            _context2.t2 = _context2["catch"](41);
+          case 47:
+            _context2.prev = 47;
+            _context2.t2 = _context2["catch"](42);
             console.log(_context2.t2);
-            _context2.next = 51;
+            _context2.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 51:
-            _context2.next = 53;
+          case 52:
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
+          case 54:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 36], [14, 19], [41, 46]]);
+    }, null, null, [[7, 37], [14, 19], [42, 47]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, Contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -203,7 +213,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 18;
             break;
           }
 
@@ -233,9 +243,21 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              // first try to get all content
+              return document.querySelector('#article_body').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          Contenthtml = _context3.sent;
           author = null;
 
-          if (Content != null && Content != "") {
+          if (Content != null && Content != "" && Contenthtml != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -246,20 +268,22 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contentHtml: Contenthtml
             });
           }
 
-        case 12:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
+        case 18:
+          console.log(AllData_WithConetent);
+          _context3.next = 21;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 17:
+        case 21:
         case "end":
           return _context3.stop();
       }
