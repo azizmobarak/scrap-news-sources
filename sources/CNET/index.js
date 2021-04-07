@@ -40,6 +40,7 @@ const CNET = () =>{
  
 var AllData=[]; 
 // boucle on categories started 
+try{
 for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
@@ -70,13 +71,13 @@ var PageData = await page.evaluate((Category)=>{
            var cateogryName = "";
     
           if(i==9){
-              cateogryName="health,food"
+              cateogryName="food"
           }else{
             if(Category.indexOf("tech")!=-1){
             cateogryName = "technology";
             }else{
                 if(Category.indexOf('sci-tech')!=-1){
-                    cateogryName = "science,technology";
+                    cateogryName = "science";
                 }else{
                    if(Category.indexOf('sleep')!=-1 || cateogryName.indexOf('care')!=-1 || Category.indexOf('fitness')){
                        cateogryName="health";
@@ -140,6 +141,15 @@ var PageData = await page.evaluate((Category)=>{
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined")
                     {
+                         var auth ="";
+                      if(typeof authors[j]!="undefined"){
+                           if(authors[j].textContent.indexOf('by')!=-1) auth = authors[j].textContent.replace('by','').trim()
+                           else{
+                               auth = authors[j].textContent.trim();
+                               }
+                             }else{
+                               auth=null;
+                              }
                    data.push({
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
@@ -148,7 +158,7 @@ var PageData = await page.evaluate((Category)=>{
                        source :"CNET",
                        sourceLink:"https://www.cnet.com",
                        sourceLogo:"cnet logo",
-                       author:typeof authors[j]!='undefined' ? authors[j].textContent.trim() : null
+                       author:auth
                     });
                    }
                }
@@ -159,9 +169,15 @@ var PageData = await page.evaluate((Category)=>{
                PageData.map(item=>{
                    AllData.push(item)
                });
+       }}catch{
+           await browser.close();
        }
   
-     await GetContent(page,AllData);
+      try{
+          await GetContent(page,AllData);
+        }catch{
+            await browser.close();
+         }
      await browser.close();
     })();
 }

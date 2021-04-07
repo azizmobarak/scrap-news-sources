@@ -60,7 +60,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 // });
 
 
-cron.schedule('23 * * * *', () => {
+cron.schedule('23 */1 * * *', () => {
   //15 min
   const CNET = require('./sources/CNET');
   CNET();
