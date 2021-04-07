@@ -7,7 +7,6 @@ const {InsertData} = require('./function/insertData');
 const cron = require('node-cron')
 const {category} = require('./model/Category');
 
-
 con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true},(err,db)=>{
     if(err)console.log(err);
     else{
