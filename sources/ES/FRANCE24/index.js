@@ -103,7 +103,7 @@ for(let i=0;i<Categories.length;i++){
                        images : typeof(images[j])!="undefined" ? images[j].src : null,
                        link : typeof(links[j])==="undefined" ? null : links[j].href ,
                        Category:Category.charAt(0).toUpperCase() + Category.slice(1),
-                       source :"France 24 - "+Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"France24 - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.france24.com",
                        sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/FRANCE_24_logo.svg/768px-FRANCE_24_logo.svg.png"
                       });
