@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['france', 'international', 'economy', 'culture'];
+var Categories = ['Francia', 'internacional', 'economía', 'cultura'];
 
 var FRANCE24 = function FRANCE24() {
   (function _callee2() {
@@ -63,9 +69,9 @@ var FRANCE24 = function FRANCE24() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://www.france24.com/es/francia/";
-            if (Category === "international") url = "https://www.france24.com/es/am%C3%A9rica-latina/";
-            if (Category === "economy") url = "https://www.france24.com/es/vod/economia";
-            if (Category === "culture") url = "https://www.france24.com/es/cultura/";
+            if (Category === "internacional") url = "https://www.france24.com/es/am%C3%A9rica-latina/";
+            if (Category === "economía") url = "https://www.france24.com/es/vod/economia";
+            if (Category === "cultura") url = "https://www.france24.com/es/cultura/";
             _context2.prev = 15;
             _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -128,8 +134,8 @@ var FRANCE24 = function FRANCE24() {
                     title: titles[j].textContent.trim(),
                     images: typeof images[j] != "undefined" ? images[j].src : null,
                     link: typeof links[j] === "undefined" ? null : links[j].href,
-                    Category: Category,
-                    source: "France 24 " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "France 24 - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.france24.com",
                     sourceLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/FRANCE_24_logo.svg/768px-FRANCE_24_logo.svg.png"
                   });
@@ -141,8 +147,11 @@ var FRANCE24 = function FRANCE24() {
 
           case 30:
             PageData = _context2.sent;
-            //   console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -192,7 +201,7 @@ var FRANCE24 = function FRANCE24() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, Contenthtml;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -202,7 +211,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 18;
             break;
           }
 
@@ -232,6 +241,17 @@ var GetContent = function GetContent(page, data) {
 
         case 10:
           Content = _context3.sent;
+          _context3.next = 13;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.t-content__body').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 13:
+          Contenthtml = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -244,20 +264,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: null,
-              content: Content
+              content: Content,
+              contentHtml: Contenthtml
             });
           }
 
-        case 12:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
+        case 18:
+          _context3.next = 20;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 17:
+        case 20:
         case "end":
           return _context3.stop();
       }

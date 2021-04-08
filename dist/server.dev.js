@@ -30,12 +30,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-});
-cron.schedule('40 */1 * * *', function () {
-  var france24 = require('./sources/ES/FRANCE24');
+}); // cron.schedule('40 */1 * * *', () => {
 
-  france24();
-});
+var france24 = require('./sources/ES/FRANCE24');
+
+france24(); // });
+
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

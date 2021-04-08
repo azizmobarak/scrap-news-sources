@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['france','international','economy','culture'];
+var Categories=['Francia','internacional','economía','cultura'];
 
 const FRANCE24 = () =>{
     (async()=>{
@@ -51,9 +53,9 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.france24.com/es/francia/";
 
-    if(Category==="international") url="https://www.france24.com/es/am%C3%A9rica-latina/";
-    if(Category==="economy") url="https://www.france24.com/es/vod/economia";
-    if(Category==="culture") url="https://www.france24.com/es/cultura/";
+    if(Category==="internacional") url="https://www.france24.com/es/am%C3%A9rica-latina/";
+    if(Category==="economía") url="https://www.france24.com/es/vod/economia";
+    if(Category==="cultura") url="https://www.france24.com/es/cultura/";
 
     try{
         await page.goto(url);
@@ -100,8 +102,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        images : typeof(images[j])!="undefined" ? images[j].src : null,
                        link : typeof(links[j])==="undefined" ? null : links[j].href ,
-                       Category:Category,
-                       source :"France 24 "+Category,
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"France 24 - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.france24.com",
                        sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/FRANCE_24_logo.svg/768px-FRANCE_24_logo.svg.png"
                       });
@@ -109,10 +111,13 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-        //   console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+          PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('es',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -144,7 +149,6 @@ const GetContent = async(page,data)=>{
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
-        
             try{
             // first try to get all content
              var second_text = document.querySelectorAll('.t-content__body p');
@@ -153,6 +157,14 @@ const GetContent = async(page,data)=>{
                 scond_content = scond_content +"\n"+second_text[i].textContent;
              }
               return scond_content;
+            }catch{
+               return null;
+            }
+        });
+        
+        var Contenthtml = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.t-content__body').innerHTML;
             }catch{
                return null;
             }
@@ -172,12 +184,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contentHtml : Contenthtml
           });
        }
     
     }
-   //  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
