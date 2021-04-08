@@ -32,7 +32,12 @@ con.connect(process.env.DATABASE, {
   }
 });
 cron.schedule('40 */1 * * *', function () {
-  var france24 = require('./sources/ES/FRANCE24');
+  var france24a = require('./sources/ES/FRANCE24');
+
+  france24a();
+});
+cron.schedule('30 */1 * * *', function () {
+  var france24 = require('./sources/FR/FRANCE24');
 
   france24();
 });

@@ -10,6 +10,8 @@ module.exports = {
       } else {
         if (img.indexOf('.jpeg') != -1) {
           return img.substring(0, img.indexOf('.jpeg') + 5);
+        } else {
+          return img;
         }
       }
     }

@@ -25,9 +25,16 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 cron.schedule('40 */1 * * *', () => {
-   const france24 = require('./sources/ES/FRANCE24');
-   france24();
+   const france24a = require('./sources/ES/FRANCE24');
+   france24a();
 });
+
+
+cron.schedule('30 */1 * * *', () => {
+    const france24 = require('./sources/FR/FRANCE24');
+    france24();
+});
+
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
