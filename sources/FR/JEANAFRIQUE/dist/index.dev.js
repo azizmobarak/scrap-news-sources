@@ -13,8 +13,11 @@ var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 var _require = require('../../../function/insertData'),
     InsertData = _require.InsertData;
 
-var _require2 = require('../../../model/Category'),
-    category = _require2.category; //block ads
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -30,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', "culture"];
+var Categories = ['politique', "culture"];
 
 var JEAN = function JEAN() {
   (function _callee2() {
@@ -66,7 +69,7 @@ var JEAN = function JEAN() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "";
-            if (Category === "politic") url = "https://www.jeuneafrique.com/rubriques/politique/";else {
+            if (Category === "politique") url = "https://www.jeuneafrique.com/rubriques/politique/";else {
               if (Category === "culture") url = "https://www.jeuneafrique.com/rubriques/culture/";
             }
             _context2.prev = 13;
@@ -147,10 +150,10 @@ var JEAN = function JEAN() {
                     title: titles[index].textContent.trim(),
                     link: links[index].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "LeQuotidien",
-                    sourceLink: "https://www.lequotidien.com",
-                    sourceLogo: "https://www.otlhotelsaguenay.ca/uploads/1/0/6/8/106825145/editor/le-quotidien-logo1_10.jpg"
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "JeuneAfrique - " + Category.charAt(0).toUpperCase() + Category.slice(1),
+                    sourceLink: "www.jeuneafrique",
+                    sourceLogo: "https://www.jeuneafrique.com/medias/2019/05/10/1-new2018-icon2x-ja-fondblanc-3.png"
                   });
                 }
               }
@@ -160,8 +163,11 @@ var JEAN = function JEAN() {
 
           case 32:
             PageData = _context2.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -211,7 +217,7 @@ var JEAN = function JEAN() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, Contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -221,7 +227,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -253,19 +259,30 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
+              return document.querySelector('.ja-teads-inread').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          Contenthtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
               var authr = document.querySelector('.art-header-author>a').textContent.trim();
               return authr;
-            } catch (_unused3) {
+            } catch (_unused4) {
               try {
                 var authr = document.querySelector('.box__description-title>span').textContent.trim();
                 return authr;
-              } catch (_unused4) {
+              } catch (_unused5) {
                 return null;
               }
             }
           }));
 
-        case 12:
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -279,20 +296,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              Contenthtml: Contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          _context3.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context3.stop();
       }
