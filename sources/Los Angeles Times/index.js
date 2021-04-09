@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {SendToServer} = require('../../function/SendToServer');
+const {FormatImage} = require('../../function/formatimage');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -86,7 +88,7 @@ var PageData = await page.evaluate((Category)=>{
                 cateogryName="business";
             }else{
                 if(Category.indexOf('arts')!=-1){
-                    cateogryName="art&design";
+                    cateogryName="art & design";
                 }else{
                     if(Category.indexOf('entertainment-arts')!=-1){
                         cateogryName="entertainment";
@@ -105,7 +107,7 @@ var PageData = await page.evaluate((Category)=>{
                 }
                 else{
                     if(Category==="lifestyle"){
-                        cateogryName="life&style";
+                        cateogryName="life & Style";
                     }else{
                         cateogryName=Category;
                     }
@@ -120,7 +122,7 @@ var PageData = await page.evaluate((Category)=>{
     //////////////////////////////
 
          var data =[];
-         for(let j=0;j<3;j++){
+         for(let j=0;j<1;j++){
            
               if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
@@ -129,8 +131,8 @@ var PageData = await page.evaluate((Category)=>{
                        title :articles[j].querySelector(titleClassName).textContent.trim(),
                        link : articles[j].querySelector(linkClassName).href,
                        images :(articles[j].querySelector(imageClassName)!=null && articles[j].querySelector(imageClassName).src.indexOf("data:image")==-1) ? articles[j].querySelector(imageClassName).src : null,
-                       Category:cateogryName.toLowerCase(),
-                       source :"LosAngelesTimes "+cateogryName,
+                       Category:cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"LosAngelesTimes - "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.latimes.com/",
                        sourceLogo:"https://www.pngkey.com/png/detail/196-1964217_the-los-angeles-times-los-angeles-times-logo.png"
                          });
@@ -138,18 +140,26 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
                },Category);
-               PageData.map(item=>{
-                   AllData.push(item)
-               });
-       }}catch{
+           console.log(PageData)   
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('en',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
+       }}catch(e){
             await browser.close();
+            console.log(e)
            }
         
   
   try{
       await GetContent(page,AllData);
-    }catch{
-        await browser.close();}
+    }catch(e){
+        await browser.close();
+        console.log(e)
+    }
 
      await browser.close();
     })();
@@ -176,9 +186,9 @@ const GetContent = async(page,data)=>{
         }
 
     
-        var Content = await page.evaluate(()=>{
+  var Content = await page.evaluate(()=>{
            
-            var text = document.querySelector('.rich-text-article-body-content');
+        var text = document.querySelector('.rich-text-article-body-content');
 
            if(text==null || typeof(text)==="undefined"){
                text = document.querySelectorAll('p');
@@ -194,6 +204,17 @@ const GetContent = async(page,data)=>{
            }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+           try{
+               
+            var text = document.querySelector('.rich-text-article-body-content');
+            return text.innerHTML;
+           }catch{
+               return null;
+           }
+        });
+        
+
         var author = await page.evaluate(()=>{
             try{
                return document.querySelector('.author-name>span+span').textContent;
@@ -203,7 +224,7 @@ const GetContent = async(page,data)=>{
         })
     
 
-    if(Content!=null && Content!=""){
+    if(Content!=null && Content!="" && contenthtml!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -214,7 +235,8 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author:author,
-                content:Content!=null ? Content : null
+                content:Content!=null ? Content : null,
+                contenthtml : contenthtml,
           });
        }
     }

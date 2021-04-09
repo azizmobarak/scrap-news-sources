@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/SendToServer'),
+    SendToServer = _require2.SendToServer;
+
+var _require3 = require('../../function/formatimage'),
+    FormatImage = _require3.FormatImage; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var LosAngelesTimes = function LosAngelesTimes() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 35;
+              _context.next = 36;
               break;
             }
 
@@ -108,7 +114,7 @@ var LosAngelesTimes = function LosAngelesTimes() {
                     cateogryName = "business";
                   } else {
                     if (Category.indexOf('arts') != -1) {
-                      cateogryName = "art&design";
+                      cateogryName = "art & design";
                     } else {
                       if (Category.indexOf('entertainment-arts') != -1) {
                         cateogryName = "entertainment";
@@ -125,7 +131,7 @@ var LosAngelesTimes = function LosAngelesTimes() {
                       cateogryName = "entertainment";
                     } else {
                       if (Category === "lifestyle") {
-                        cateogryName = "life&style";
+                        cateogryName = "life & Style";
                       } else {
                         cateogryName = Category;
                       }
@@ -141,15 +147,15 @@ var LosAngelesTimes = function LosAngelesTimes() {
 
               var data = [];
 
-              for (var j = 0; j < 3; j++) {
+              for (var j = 0; j < 1; j++) {
                 if (articles[j].querySelector(titleClassName) != null && articles[j].querySelector(linkClassName) != null) {
                   data.push({
                     time: Date.now(),
                     title: articles[j].querySelector(titleClassName).textContent.trim(),
                     link: articles[j].querySelector(linkClassName).href,
                     images: articles[j].querySelector(imageClassName) != null && articles[j].querySelector(imageClassName).src.indexOf("data:image") == -1 ? articles[j].querySelector(imageClassName).src : null,
-                    Category: cateogryName.toLowerCase(),
-                    source: "LosAngelesTimes " + cateogryName,
+                    Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                    source: "LosAngelesTimes - " + cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                     sourceLink: "https://www.latimes.com/",
                     sourceLogo: "https://www.pngkey.com/png/detail/196-1964217_the-los-angeles-times-los-angeles-times-logo.png"
                   });
@@ -161,55 +167,66 @@ var LosAngelesTimes = function LosAngelesTimes() {
 
           case 30:
             PageData = _context.sent;
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 32:
+          case 33:
             i++;
             _context.next = 9;
             break;
 
-          case 35:
-            _context.next = 41;
+          case 36:
+            _context.next = 43;
             break;
 
-          case 37:
-            _context.prev = 37;
+          case 38:
+            _context.prev = 38;
             _context.t2 = _context["catch"](7);
-            _context.next = 41;
+            _context.next = 42;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 41:
-            _context.prev = 41;
-            _context.next = 44;
+          case 42:
+            console.log(_context.t2);
+
+          case 43:
+            _context.prev = 43;
+            _context.next = 46;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 44:
-            _context.next = 50;
+          case 46:
+            _context.next = 53;
             break;
 
-          case 46:
-            _context.prev = 46;
-            _context.t3 = _context["catch"](41);
-            _context.next = 50;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 50:
+          case 48:
+            _context.prev = 48;
+            _context.t3 = _context["catch"](43);
             _context.next = 52;
             return regeneratorRuntime.awrap(browser.close());
 
           case 52:
+            console.log(_context.t3);
+
+          case 53:
+            _context.next = 55;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 55:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 37], [11, 24], [14, 19], [41, 46]]);
+    }, null, null, [[7, 38], [11, 24], [14, 19], [43, 48]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -219,7 +236,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 28;
+            _context2.next = 31;
             break;
           }
 
@@ -273,16 +290,28 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 23;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.author-name>span+span').textContent;
-            } catch (_unused6) {
+              var text = document.querySelector('.rich-text-article-body-content');
+              return text.innerHTML;
+            } catch (_unused4) {
               return null;
             }
           }));
 
         case 23:
+          contenthtml = _context2.sent;
+          _context2.next = 26;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.author-name>span+span').textContent;
+            } catch (_unused5) {
+              return null;
+            }
+          }));
+
+        case 26:
           author = _context2.sent;
 
-          if (Content != null && Content != "") {
+          if (Content != null && Content != "" && contenthtml != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -293,20 +322,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content != null ? Content : null
+              content: Content != null ? Content : null,
+              contenthtml: contenthtml
             });
           }
 
-        case 25:
+        case 28:
           i++;
           _context2.next = 2;
           break;
 
-        case 28:
-          _context2.next = 30;
+        case 31:
+          _context2.next = 33;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 30:
+        case 33:
         case "end":
           return _context2.stop();
       }

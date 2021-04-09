@@ -19,7 +19,7 @@ cron.schedule('00 */1 * * *', () => {
   //1h
 const LosAngeleceTimes = require('./sources/Los Angeles Times');
 LosAngeleceTimes();
- });
+});
 
 
 app.listen(PORT, ()=>{
