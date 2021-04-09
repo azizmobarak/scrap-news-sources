@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy'];
+var Categories = ['économie'];
 
 var LEMESSAGE = function LEMESSAGE() {
   (function _callee2() {
@@ -55,7 +61,7 @@ var LEMESSAGE = function LEMESSAGE() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 41;
+              _context2.next = 40;
               break;
             }
 
@@ -147,8 +153,8 @@ var LEMESSAGE = function LEMESSAGE() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "Le Messager",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Le Messager -" + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.lemessager.fr",
                     sourceLogo: "https://journal.lemessager.fr/medias/specifique_titre/mes/images/logo_square.png"
                   });
@@ -160,58 +166,61 @@ var LEMESSAGE = function LEMESSAGE() {
 
           case 35:
             PageData = _context2.sent;
-            console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 38:
+          case 37:
             i++;
             _context2.next = 9;
             break;
 
-          case 41:
-            _context2.next = 48;
+          case 40:
+            _context2.next = 47;
             break;
 
-          case 43:
-            _context2.prev = 43;
+          case 42:
+            _context2.prev = 42;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 48;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
-            _context2.prev = 48;
-            _context2.next = 51;
+          case 47:
+            _context2.prev = 47;
+            _context2.next = 50;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 51:
-            _context2.next = 58;
+          case 50:
+            _context2.next = 57;
             break;
 
-          case 53:
-            _context2.prev = 53;
-            _context2.t2 = _context2["catch"](48);
+          case 52:
+            _context2.prev = 52;
+            _context2.t2 = _context2["catch"](47);
             console.log(_context2.t2);
-            _context2.next = 58;
+            _context2.next = 57;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
-            _context2.next = 60;
+          case 57:
+            _context2.next = 59;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 60:
+          case 59:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 43], [12, 22], [48, 53]]);
+    }, null, null, [[7, 42], [12, 22], [47, 52]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, Contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -221,7 +230,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -254,13 +263,24 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.gr-meta-author>a').textContent.trim();
+              return document.querySelector('.gr-article-content').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
         case 12:
+          Contenthtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.gr-meta-author>a').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -274,20 +294,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: Contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          _context3.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context3.stop();
       }
