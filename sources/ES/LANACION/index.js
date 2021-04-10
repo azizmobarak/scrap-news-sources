@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','football','life&style','tennis','rugby'];
+var Categories=['Política','fútbol','Vida & Estilo','tenis','rugby','internacional'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -50,11 +52,11 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url="https://www.lanacion.com.ar/politica/";
-    if(Category==="international") url="https://www.lanacion.com.ar/el-mundo/";
-    if(Category==="life&style") url="https://www.lanacion.com.ar/lifestyle/";
-    if(Category==="football") url="https://www.lanacion.com.ar/deportes/futbol/";
+    if(Category==="internacional") url="https://www.lanacion.com.ar/el-mundo/";
+    if(Category==="Vida & Estilo") url="https://www.lanacion.com.ar/lifestyle/";
+    if(Category==="fútbol") url="https://www.lanacion.com.ar/deportes/futbol/";
     if(Category==="rugby") url="https://www.lanacion.com.ar/deportes/rugby/";
-    if(Category==="tennis") url="https://www.lanacion.com.ar/deportes/tenis/";
+    if(Category==="tenis") url="https://www.lanacion.com.ar/deportes/tenis/";
     
     try{
         await page.goto(url);
@@ -95,15 +97,13 @@ var PageData = await page.evaluate((Category)=>{
 
          for(let j=0;j<4;j++){
             if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
-
-
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"Lanacion "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Lanacion - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.lanacion.com.ar/",
                     sourceLogo:"https://tuquejasuma.com/media/cache/97/60/976035403b6c74beaafd36a33aac8d8f.jpg"
                       });
@@ -111,10 +111,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-        //    console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+             PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('es',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -159,6 +162,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.cuerpo__nota').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
 
         var author = await page.evaluate(()=>{
             try{
@@ -180,11 +191,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
-// console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
