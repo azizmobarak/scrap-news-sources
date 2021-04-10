@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic'];
+var Categories=['politique'];
 
 const MARKETWATCH = () =>{
     (async()=>{
@@ -75,20 +77,25 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"Le Monde",
-                       sourceLink:"https://www.lemonde.fr/",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"Le Monde - "+Category.charAt(0).toUpperCase() + Category.slice(1),
+                       sourceLink:"https://www.lemonde.fr",
                        sourceLogo:"https://static1.ozap.com/companies/4/45/71/84/@/4440434-le-logo-du-journal-le-monde-media_diapo_image-1.jpg"
                       });
                    }
                }
                       return data;
                },Category);
-               console.log(PageData);
-               PageData.map(item=>{
-                   AllData.push(item)
-               })
-       }}catch{
+              
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('fr',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
+       }}catch(e){
+           console.log(e)
         await browser.close();
        }
 
@@ -110,17 +117,18 @@ const GetContent = async(page,data)=>{
     var AllData_WithConetent=[];
     
     for(var i=0;i<data.length;i++){
-    
+
         var item = data[i];
         var url = item.link;
-
-        await page.goto(url);
-       // console.log(url)
+       console.log(url)
+        try{
+            await page.goto(url);
+        }catch(e){
+            console.log(e);
+        }
     
         var Content = await page.evaluate(()=>{
-        
             try{
-
              var first_text = document.querySelectorAll(".article__content p");
             var first_cont="";
             for(let i=0;i<first_text.length;i++){
@@ -128,6 +136,14 @@ const GetContent = async(page,data)=>{
             }
 
               return first_cont;
+            }catch{
+                return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             return document.querySelector(".article__content").innerHTML;
             }catch{
                 return null;
             }
@@ -153,12 +169,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
-    
     }
-    //console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
