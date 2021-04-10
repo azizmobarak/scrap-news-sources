@@ -3,7 +3,8 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
-
+const  {FormatImage} = require('../../function/formatimage');
+const  {SendToServer} = require('../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -40,7 +41,6 @@ for(let i=0;i<1;i++){
 
         //get the right category by number
         var Category = Categories[parseInt(Math.random()*9)]
-        console.log(Category)
       
       
     try{
@@ -106,18 +106,21 @@ var PageData = await page.evaluate((Category)=>{
                        title : article[j].querySelector(titleClassName).textContent.trim(),
                        link :article[j].querySelector(linkClassName).href,
                        images : article[j].querySelector(imageClassName)!=null ? article[j].querySelector(imageClassName).srcset.substring(0,article[j].querySelector(imageClassName).srcset.indexOf('*')-1) : null,
-                       Category: cateogryName,
-                       source :"VICENEWS "+cateogryName,
+                       Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"VICENEWS - "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.vice.com",
-                       sourceLogo:"vice news logo",
+                       sourceLogo:"https://i1.sndcdn.com/avatars-000312434008-0l2rhq-t500x500.jpg",
                        author:article[j].querySelector(authorClassName)!=null ? article[j].querySelector(authorClassName).textContent : null,  
                     });
                    }
               }
                       return data;
                },Category);
-               console.log(PageData)
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
 
@@ -165,6 +168,15 @@ const GetContent = async(page,data)=>{
            }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             var text = document.querySelector('.article__body-components').innerHTML
+             return text;
+            }catch{
+             return null;
+            }
+         });
+
 
     var imageItem="";
      if(item.images==="" || item.images.length==0){
@@ -191,13 +203,13 @@ const GetContent = async(page,data)=>{
                 sourceLogo:item.sourceLogo,
                 author : item.author,
                 type : "Article",
-                content:Content!=null ? Content : null
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
     
-   // console.log(AllData_WithConetent)
-   await InsertData(AllData_WithConetent);
+    await InsertData(AllData_WithConetent);
 }
 
 
