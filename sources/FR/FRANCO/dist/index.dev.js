@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,11 +61,11 @@ var FRANCO = function FRANCO() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 35;
+              _context2.next = 36;
               break;
             }
 
-            //get the right category by number
+            //get the right cate    >,ؤوووروىىوgory by number
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://lefranco.ab.ca/category/opinions/";
@@ -130,8 +136,8 @@ var FRANCO = function FRANCO() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('http'), images[j].style.backgroundImage.indexOf('")')),
-                    Category: Category,
-                    source: "LE FRANCO",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "LE FRANCO - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://lefranco.ab.ca/",
                     sourceLogo: "https://lecdea.ca/wp-content/uploads/2020/10/Le-Franco-logo.png"
                   });
@@ -143,58 +149,62 @@ var FRANCO = function FRANCO() {
 
           case 30:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 32:
+          case 33:
             i++;
             _context2.next = 9;
             break;
 
-          case 35:
-            _context2.next = 42;
+          case 36:
+            _context2.next = 43;
             break;
 
-          case 37:
-            _context2.prev = 37;
+          case 38:
+            _context2.prev = 38;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 42;
+            _context2.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 42:
-            _context2.prev = 42;
-            _context2.next = 45;
+          case 43:
+            _context2.prev = 43;
+            _context2.next = 46;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 45:
-            _context2.next = 52;
+          case 46:
+            _context2.next = 53;
             break;
 
-          case 47:
-            _context2.prev = 47;
-            _context2.t2 = _context2["catch"](42);
+          case 48:
+            _context2.prev = 48;
+            _context2.t2 = _context2["catch"](43);
             console.log(_context2.t2);
-            _context2.next = 52;
+            _context2.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 52:
-            _context2.next = 54;
+          case 53:
+            _context2.next = 55;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 54:
+          case 55:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 37], [13, 20], [42, 47]]);
+    }, null, null, [[7, 38], [13, 20], [43, 48]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -204,7 +214,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 18;
             break;
           }
 
@@ -234,6 +244,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('article .entry-content').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          contenthtml = _context3.sent;
           author = null;
 
           if (Content != null && Content != "") {
@@ -247,20 +268,22 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 12:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
+        case 18:
+          console.log(AllData_WithConetent);
+          _context3.next = 21;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 17:
+        case 21:
         case "end":
           return _context3.stop();
       }

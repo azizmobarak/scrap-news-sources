@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -43,10 +45,10 @@ const FRANCO = () =>{
 var AllData=[]; 
 
 try{
-// boucle on categories started 
+// boucle on categories started  
 for(let i=0;i<Categories.length;i++){
 
-    //get the right category by number
+    //get the right cate    >,ؤوووروىىوgory by number
     var Category = Categories[i]
     //navigate to category sub route
     var url ="https://lefranco.ab.ca/category/opinions/";
@@ -99,8 +101,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].style.backgroundImage.substring(images[j].style.backgroundImage.indexOf('http'),images[j].style.backgroundImage.indexOf('")')),
-                    Category:Category,
-                    source :"LE FRANCO",
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"LE FRANCO - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://lefranco.ab.ca/",
                     sourceLogo:"https://lecdea.ca/wp-content/uploads/2020/10/Le-Franco-logo.png"
                       });
@@ -108,10 +110,14 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            console.log(PageData);
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('fr',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -156,6 +162,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('article .entry-content').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
      var author = null;
 
     
@@ -170,11 +184,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
-//  console.log(AllData_WithConetent)
+  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
