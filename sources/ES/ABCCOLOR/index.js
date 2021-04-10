@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['paraguay','basketball','international','football','tennis','culture','business'];
+var Categories=['Paraguay','baloncesto','internacional','fútbol','tenis','cultura','business'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,12 +54,12 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.abc.com.py/nacionales/";
 
-    if(Category==="basketball") url="https://www.abc.com.py/deportes/basquetbol/";
-    if(Category==="international") url="https://www.abc.com.py/internacionales/";
-    if(Category==="football") url="https://www.abc.com.py/deportes/futbol/";
-    if(Category==="tennis") url="https://www.abc.com.py/deportes/tenis/";
-    if(Category==="culture") url="https://www.abc.com.py/espectaculos/cultura/";
-    if(Category==="business") url="https://www.abc.com.py/empresariales/";
+    if(Category==="baloncesto") url="https://www.abc.com.py/deportes/basquetbol/";
+    if(Category==="internacional") url="https://www.abc.com.py/internacionales/";
+    if(Category==="fútbol") url="https://www.abc.com.py/deportes/futbol/";
+    if(Category==="tenis") url="https://www.abc.com.py/deportes/tenis/";
+    if(Category==="cultura") url="https://www.abc.com.py/espectaculos/cultura/";
+    if(Category==="negocio") url="https://www.abc.com.py/empresariales/";
     
     try{
         await page.goto(url);
@@ -105,8 +107,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"ABC Color "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"ABC Color - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.abc.com.py",
                     sourceLogo:"https://pbs.twimg.com/profile_images/1280529562707918848/H2CwEOGY_400x400.jpg"
                       });
@@ -114,10 +116,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-           // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+     PageData.map((item,j)=>{
+        item.images = FormatImage(item.images);
+        setTimeout(() => {
+             SendToServer('es',item.Category,item.source,item.sourceLogo)
+        },2000*j);
+           AllData.push(item)
+       });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -153,9 +158,18 @@ const GetContent = async(page,data)=>{
                var second_text = document.querySelectorAll('.article-container p');
                var scond_content ="";
                for(let i=1;i<second_text.length;i++){
-                  scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');
+                  scond_content = scond_content +"\n"+second_text[i].textContent.trim();
                }
-                return scond_content;
+                return scond_content.replaceAll('\n',' ');
+            }catch{
+               return null;
+            }
+        });
+
+        var Contenthtml = await page.evaluate(()=>{
+            try{
+               // first try to get all content
+               return document.querySelector('.article-container').innerHTML;
             }catch{
                return null;
             }
@@ -174,11 +188,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                Contenthtml : Contenthtml
           });
        }
     }
-   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
