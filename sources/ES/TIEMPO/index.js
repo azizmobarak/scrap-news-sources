@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const  {FormatImage} = require('../../../function/formatimage')
+const  {SendToServer} = require('../../../function/sendtoserver')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['colombia','politic','technology','economy','venezuela','culture'];
+var Categories=['Colombia','politica','tecnología','economía','venezuela','cultura'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,11 +54,11 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.eltiempo.com/colombia";
 
-    if(Category==="politic") url="https://www.eltiempo.com/politica";
-    if(Category==="technology") url="https://www.eltiempo.com/tecnosfera";
-    if(Category==="economy") url="https://www.eltiempo.com/economia";
+    if(Category==="politica") url="https://www.eltiempo.com/politica";
+    if(Category==="tecnología") url="https://www.eltiempo.com/tecnosfera";
+    if(Category==="economía") url="https://www.eltiempo.com/economia";
     if(Category==="venezuela") url="https://www.eltiempo.com/mundo/venezuela";
-    if(Category==="culture") url="https://www.eltiempo.com/cultura";
+    if(Category==="cultura") url="https://www.eltiempo.com/cultura";
     
     try{
         await page.goto(url);
@@ -89,7 +91,7 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
 var PageData = await page.evaluate((Category)=>{
                
-    var articles = document.querySelectorAll('.nota');
+    var articles = document.querySelectorAll('article');
     var images ="img"
     var links = "a"
     var titles ="h3"
@@ -97,15 +99,15 @@ var PageData = await page.evaluate((Category)=>{
          
         var data =[];
 
-         for(let j=0;j<5;j++){
-            if(typeof(articles[j].querySelector(titles))!="undefined" && articles[j].querySelector(links)!=null){
+         for(let j=2;j<4;j++){
+            if(typeof(articles[j])!="undefined"){
                 data.push({
                     time : Date.now(),
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"Eltiempo "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Eltiempo - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"www.eltiempo.com",
                     sourceLogo:"https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062011/elt.jpg"
                       });
@@ -113,10 +115,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-         //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+           PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('es',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -160,6 +165,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.modulos').innerHTML
+            }catch{
+               return null;
+            }
+        });
+
     var author = null;
     
     if(Content!=null && Content!=""){
@@ -173,11 +186,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
-   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
