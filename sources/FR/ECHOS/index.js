@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const  {FormatImage} = require('../../../function/formatimage')
+const  {SendToServer} = require('../../../function/sendtoserver')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy','politic','science','technology'];
+var Categories=['économie','politique','international','Technologie'];
 
 const ECHOS = () =>{
     (async()=>{
@@ -51,9 +53,9 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.lesechos.fr/economie-france";
 
-    if(Category==="politic") url="https://www.lesechos.fr/politique-societe";
+    if(Category==="politique") url="https://www.lesechos.fr/politique-societe";
     if(Category==="international") url="https://www.lesechos.fr/monde";
-    if(Category==="technology") url="https://www.lesechos.fr/tech-medias";
+    if(Category==="Technologie") url="https://www.lesechos.fr/tech-medias";
     
     try{
         await page.goto(url);
@@ -61,7 +63,7 @@ for(let i=0;i<Categories.length;i++){
        }catch{
         await page.goto(url);
         if(i==0) await page.click('#didomi-notice-agree-button');
-    }
+       }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
 
 
@@ -101,8 +103,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : article[j].querySelector(titles).textContent.trim(),
                     link : article[j].querySelector(links).href,
                     images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
-                    Category:Category,
-                    source :"LES ECHOS",
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"LES ECHOS - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.lesechos.fr",
                     sourceLogo:"https://cdn.freebiesupply.com/logos/thumbs/2x/les-echos-logo.png"
                       });
@@ -110,10 +112,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-         //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+           PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('fr',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -159,6 +164,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             return document.querySelector('main>section>div>div>div>div>div+div+div').innerHTML
+            }catch{
+               return null;
+            }
+        });
+
      var author = await page.evaluate(()=>{
          try{
         return document.querySelector('main>section>div>div>div>div>div a').textContent.trim();
@@ -179,12 +192,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml :contenthtml
           });
        }
     
     }
- // console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

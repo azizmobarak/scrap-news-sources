@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'politic', 'science', 'technology'];
+var Categories = ['économie', 'politique', 'international', 'Technologie'];
 
 var ECHOS = function ECHOS() {
   (function _callee2() {
@@ -55,7 +61,7 @@ var ECHOS = function ECHOS() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 41;
+              _context2.next = 42;
               break;
             }
 
@@ -63,9 +69,9 @@ var ECHOS = function ECHOS() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://www.lesechos.fr/economie-france";
-            if (Category === "politic") url = "https://www.lesechos.fr/politique-societe";
+            if (Category === "politique") url = "https://www.lesechos.fr/politique-societe";
             if (Category === "international") url = "https://www.lesechos.fr/monde";
-            if (Category === "technology") url = "https://www.lesechos.fr/tech-medias";
+            if (Category === "Technologie") url = "https://www.lesechos.fr/tech-medias";
             _context2.prev = 15;
             _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -147,8 +153,8 @@ var ECHOS = function ECHOS() {
                     title: article[j].querySelector(titles).textContent.trim(),
                     link: article[j].querySelector(links).href,
                     images: typeof article[j].querySelector(images) === "undefined" ? null : article[j].querySelector(images).src,
-                    Category: Category,
-                    source: "LES ECHOS",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "LES ECHOS - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.lesechos.fr",
                     sourceLogo: "https://cdn.freebiesupply.com/logos/thumbs/2x/les-echos-logo.png"
                   });
@@ -160,58 +166,62 @@ var ECHOS = function ECHOS() {
 
           case 36:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 38:
+          case 39:
             i++;
             _context2.next = 9;
             break;
 
-          case 41:
-            _context2.next = 48;
+          case 42:
+            _context2.next = 49;
             break;
 
-          case 43:
-            _context2.prev = 43;
+          case 44:
+            _context2.prev = 44;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 48;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
-            _context2.prev = 48;
-            _context2.next = 51;
+          case 49:
+            _context2.prev = 49;
+            _context2.next = 52;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 51:
-            _context2.next = 58;
+          case 52:
+            _context2.next = 59;
             break;
 
-          case 53:
-            _context2.prev = 53;
-            _context2.t2 = _context2["catch"](48);
+          case 54:
+            _context2.prev = 54;
+            _context2.t2 = _context2["catch"](49);
             console.log(_context2.t2);
-            _context2.next = 58;
+            _context2.next = 59;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
-            _context2.next = 60;
+          case 59:
+            _context2.next = 61;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 60:
+          case 61:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 43], [15, 23], [48, 53]]);
+    }, null, null, [[7, 44], [15, 23], [49, 54]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -221,7 +231,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -254,13 +264,24 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('main>section>div>div>div>div>div a').textContent.trim();
+              return document.querySelector('main>section>div>div>div>div>div+div+div').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
         case 12:
+          contenthtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('main>section>div>div>div>div>div a').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -274,20 +295,22 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          console.log(AllData_WithConetent);
+          _context3.next = 23;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 23:
         case "end":
           return _context3.stop();
       }
