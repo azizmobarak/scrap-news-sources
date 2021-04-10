@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage')
+const {SendToServer} = require('../../../function/sendtoserver')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['venezuela','international','economy','opinion','celebrity','health'];
+var Categories=['Venezuela','internacional','economía','opinión','celebridad','salud'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,11 +54,11 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.notitarde.com/categoria/pais/";
 
-    if(Category==="economy") url="https://www.notitarde.com/categoria/economia/";
-    if(Category==="opinion") url="https://www.notitarde.com/categoria/opinion/";
-    if(Category==="celebrity") url="https://www.notitarde.com/categoria/espectaculos/";
-    if(Category==="international") url="https://www.notitarde.com/categoria/internacional/";
-    if(Category==="health") url="https://www.notitarde.com/categoria/variedades/salud/";
+    if(Category==="economía") url="https://www.notitarde.com/categoria/economia/";
+    if(Category==="opinión") url="https://www.notitarde.com/categoria/opinion/";
+    if(Category==="celebridad") url="https://www.notitarde.com/categoria/espectaculos/";
+    if(Category==="internacional") url="https://www.notitarde.com/categoria/internacional/";
+    if(Category==="salud") url="https://www.notitarde.com/categoria/variedades/salud/";
     
     try{
         await page.goto(url);
@@ -105,19 +107,23 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"NotiTrade "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"NotiTrade - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.notitarde.com/",
-                    sourceLogo:"https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
+                    sourceLogo:"https://yt3.ggpht.com/ytc/AAUvwnjmi4cx_Rc14QBBTOAa5VXcBBEE-MKqYiYe2_uFHQ=s900-c-k-c0x00ffffff-no-rj"
                       });
                    }
                }
                       return data;
      },Category);
-          // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('en',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -161,6 +167,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.td-post-content').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -173,11 +187,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
- //console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
