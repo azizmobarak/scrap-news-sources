@@ -10,8 +10,14 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
-var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+var _require = require('../../../function/insertData'),
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var CNN = function CNN() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 39;
+              _context.next = 27;
               break;
             }
 
@@ -66,7 +72,7 @@ var CNN = function CNN() {
             return regeneratorRuntime.awrap(page["goto"](['https://edition.cnn.com/', '', Category].join('')));
 
           case 13:
-            _context.next = 32;
+            _context.next = 19;
             break;
 
           case 15:
@@ -77,27 +83,6 @@ var CNN = function CNN() {
 
           case 19:
             _context.next = 21;
-            return regeneratorRuntime.awrap(page.solveRecaptchas());
-
-          case 21:
-            _context.t1 = regeneratorRuntime;
-            _context.t2 = Promise;
-            _context.t3 = page.waitForNavigation();
-            _context.t4 = page.click(".g-recaptcha");
-            _context.next = 27;
-            return regeneratorRuntime.awrap(page.$eval('input[type=submit]', function (el) {
-              return el.click();
-            }));
-
-          case 27:
-            _context.t5 = _context.sent;
-            _context.t6 = [_context.t3, _context.t4, _context.t5];
-            _context.t7 = _context.t2.all.call(_context.t2, _context.t6);
-            _context.next = 32;
-            return _context.t1.awrap.call(_context.t1, _context.t7);
-
-          case 32:
-            _context.next = 34;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var loop = 1; // CNN classes
 
@@ -107,7 +92,7 @@ var CNN = function CNN() {
 
               if (Category.indexOf('/') != -1) {
                 if (Category.indexOf("food-and-drink") != -1) {
-                  Category = "Food&Drink";
+                  Category = "food";
                 } else {
                   Category = Category.substring(Category.indexOf("/") + 1, Category.length);
                 }
@@ -128,13 +113,10 @@ var CNN = function CNN() {
                     imageClassName = "#zone1 .LayoutGrid__component img"; // loop length
 
                     loop = 4;
+                    Category = "life&style";
                   } else {
-                    if (Category === "style") {
-                      Category = "life&style";
-                    } else {
-                      if (Category === "americas" || Category === "asia" || Category === "africa" || Category === "middle-east" || Category === "europe") {
-                        Category = "international";
-                      }
+                    if (Category === "americas" || Category === "asia" || Category === "africa" || Category === "middle-east" || Category === "europe") {
+                      Category = "international";
                     }
                   }
                 }
@@ -152,10 +134,10 @@ var CNN = function CNN() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     image: typeof images[j] != "undefined" ? images[j].src : null,
-                    Category: Category,
-                    source: "CNN",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "CNN - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://edition.cnn.com/",
-                    sourceLogo: "CNN logo"
+                    sourceLogo: "https://bankimooncentre.org/wp-content/uploads/2020/06/cnn-logo-square.png"
                   });
                 }
               }
@@ -163,26 +145,31 @@ var CNN = function CNN() {
               return data;
             }, Category));
 
-          case 34:
+          case 21:
             PageData = _context.sent;
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 36:
+          case 24:
             i++;
             _context.next = 8;
             break;
 
-          case 39:
-            _context.next = 41;
+          case 27:
+            _context.next = 29;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 41:
-            _context.next = 43;
+          case 29:
+            _context.next = 31;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
+          case 31:
           case "end":
             return _context.stop();
         }
@@ -193,7 +180,7 @@ var CNN = function CNN() {
 
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -203,7 +190,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 18;
+            _context2.next = 21;
             break;
           }
 
@@ -217,38 +204,37 @@ var GetContent = function GetContent(page, data) {
           Category = item.Category; // get the article content
 
           _context2.next = 10;
-          return regeneratorRuntime.awrap(page.evaluate(function (Category) {
-            switch (Category) {
-              case "travel":
-                return document.querySelector('.Article__primary').innerText;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              // first try to get all content
+              var second_text = document.querySelectorAll('.zn-body__paragraph');
+              var scond_content = "";
 
-              default:
-                var classname = '.zn-body-text div';
+              for (var _i = 0; _i < second_text.length - 1; _i++) {
+                scond_content = scond_content + "\n" + second_text[_i].textContent;
+              }
 
-                if (Category === "Life&Style") {
-                  classname = "BasicArticle__main";
-                }
-
-                var text = document.querySelectorAll(classname);
-                var textArray = [];
-
-                if (typeof text != "undefined" || text != null) {
-                  for (var _i = 1; _i < text.length; _i++) {
-                    textArray.push(text[_i].textContent);
-                    textArray.push(' ');
-                  }
-
-                  return textArray.join('\n');
-                } else {
-                  return null;
-                }
-
+              return scond_content.trim() + ".. .";
+            } catch (_unused) {
+              return null;
             }
-          }, Category));
+          }));
 
         case 10:
           Content = _context2.sent;
           _context2.next = 13;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              // first try to get all content
+              return document.querySelector('.pg-special-article__body').innerHTML;
+            } catch (_unused2) {
+              return null;
+            }
+          }));
+
+        case 13:
+          contenthtml = _context2.sent;
+          _context2.next = 16;
           return regeneratorRuntime.awrap(page.evaluate(function (Category) {
             var classname = '.metadata__byline__author>a';
 
@@ -260,7 +246,7 @@ var GetContent = function GetContent(page, data) {
             return auth != null ? auth.textContent : null;
           }, Category));
 
-        case 13:
+        case 16:
           author = _context2.sent;
 
           // collect the result into a table
@@ -275,20 +261,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content.substring(0, 3000).replaceAll('\n', '   ')
+              content: Content.substring(0, 3000),
+              contenthtml: contenthtml
             });
           }
 
-        case 15:
+        case 18:
           i++;
           _context2.next = 2;
           break;
 
-        case 18:
-          _context2.next = 20;
+        case 21:
+          _context2.next = 23;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 23:
         case "end":
           return _context2.stop();
       }

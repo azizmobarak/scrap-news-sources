@@ -3,7 +3,9 @@ const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
-const {InsertData} = require('../../function/insertData')
+const {InsertData} = require('../../../function/insertData')
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -55,12 +57,12 @@ for(let i=0;i<Categories.length;i++){
          //navigate to category sub route
          await page.goto(['https://edition.cnn.com/','',Category].join(''));
          //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
-         await page.solveRecaptchas();
-         await Promise.all([
-             page.waitForNavigation(),
-             page.click(".g-recaptcha"),
-             await page.$eval('input[type=submit]', el => el.click())
-         ]);
+        //  await page.solveRecaptchas();
+        //  await Promise.all([
+        //      page.waitForNavigation(),
+        //      page.click(".g-recaptcha"),
+        //      await page.$eval('input[type=submit]', el => el.click())
+        //  ]);
     }
 
       // get the data from the page
@@ -128,17 +130,21 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        image:typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:Category,
-                       source :"CNN",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"CNN - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://edition.cnn.com/",
-                       sourceLogo:"CNN logo"
+                       sourceLogo:"https://bankimooncentre.org/wp-content/uploads/2020/06/cnn-logo-square.png"
                     });
                    }
                }
                       return data;
                },Category);
-
-               PageData.map(item=>{
+              console.log(PageData)
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }
@@ -180,6 +186,15 @@ const GetContent = async(page,data)=>{
              }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               // first try to get all content
+               return document.querySelector('.pg-special-article__body').innerHTML;
+            }catch{
+               return null;
+            }
+       });
+
         
 // check the author
     var author = await page.evaluate((Category)=>{
@@ -207,7 +222,8 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content.substring(0,3000).replaceAll('\n','   ')
+                content:Content.substring(0,3000),
+                contenthtml : contenthtml
           });
        }
     }
