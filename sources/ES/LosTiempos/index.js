@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['international','football','economy','culture','tennis','fashion','celebrity'];
+var Categories=['internacional','futbol','economia','cultura','tenis','moda','celebridad'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,12 +54,12 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.lostiempos.com/actualidad/mundo";
 
-    if(Category==="football") url="https://www.lostiempos.com/deportes/futbol";
-    if(Category==="economy") url="https://www.lostiempos.com/actualidad/economia";
-    if(Category==="tennis") url="https://www.lostiempos.com/deportes/tenis";
-    if(Category==="culture") url="https://www.lostiempos.com/doble-click/cultura";
-    if(Category==="celebrity") url="https://www.lostiempos.com/doble-click/espectaculos";
-    if(Category==="fashion") url="https://www.lostiempos.com/doble-click/moda";
+    if(Category==="futbol") url="https://www.lostiempos.com/deportes/futbol";
+    if(Category==="economia") url="https://www.lostiempos.com/actualidad/economia";
+    if(Category==="tenis") url="https://www.lostiempos.com/deportes/tenis";
+    if(Category==="cultura") url="https://www.lostiempos.com/doble-click/cultura";
+    if(Category==="celebridad") url="https://www.lostiempos.com/doble-click/espectaculos";
+    if(Category==="moda") url="https://www.lostiempos.com/doble-click/moda";
     
     try{
         await page.goto(url);
@@ -106,8 +108,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"Lostiempos "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Lostiempos - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.lostiempos.com",
                     sourceLogo:"https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
                       });
@@ -115,10 +117,14 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+        //    console.log(PageData);
+          PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('es',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -162,6 +168,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.node-content').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -174,11 +188,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     }
- //console.log(AllData_WithConetent)
+//  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

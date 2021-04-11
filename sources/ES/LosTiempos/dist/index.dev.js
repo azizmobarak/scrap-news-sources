@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['international', 'football', 'economy', 'culture', 'tennis', 'fashion', 'celebrity'];
+var Categories = ['internacional', 'futbol', 'economia', 'cultura', 'tenis', 'moda', 'celebridad'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -64,12 +70,12 @@ var LARAZON = function LARAZON() {
             console.log(Category); //navigate to category sub route
 
             url = "https://www.lostiempos.com/actualidad/mundo";
-            if (Category === "football") url = "https://www.lostiempos.com/deportes/futbol";
-            if (Category === "economy") url = "https://www.lostiempos.com/actualidad/economia";
-            if (Category === "tennis") url = "https://www.lostiempos.com/deportes/tenis";
-            if (Category === "culture") url = "https://www.lostiempos.com/doble-click/cultura";
-            if (Category === "celebrity") url = "https://www.lostiempos.com/doble-click/espectaculos";
-            if (Category === "fashion") url = "https://www.lostiempos.com/doble-click/moda";
+            if (Category === "futbol") url = "https://www.lostiempos.com/deportes/futbol";
+            if (Category === "economia") url = "https://www.lostiempos.com/actualidad/economia";
+            if (Category === "tenis") url = "https://www.lostiempos.com/deportes/tenis";
+            if (Category === "cultura") url = "https://www.lostiempos.com/doble-click/cultura";
+            if (Category === "celebridad") url = "https://www.lostiempos.com/doble-click/espectaculos";
+            if (Category === "moda") url = "https://www.lostiempos.com/doble-click/moda";
             _context2.prev = 19;
             _context2.next = 22;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -137,8 +143,8 @@ var LARAZON = function LARAZON() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
-                    Category: Category,
-                    source: "Lostiempos " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Lostiempos - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.lostiempos.com",
                     sourceLogo: "https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
                   });
@@ -150,8 +156,12 @@ var LARAZON = function LARAZON() {
 
           case 36:
             PageData = _context2.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            //    console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -201,7 +211,7 @@ var LARAZON = function LARAZON() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, contenthtml;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -211,7 +221,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 17;
             break;
           }
 
@@ -241,6 +251,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.node-content').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          contenthtml = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -253,20 +274,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: null,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 11:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
+        case 17:
+          _context3.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 19:
         case "end":
           return _context3.stop();
       }
