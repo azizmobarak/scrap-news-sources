@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy','international','politic'];
+var Categories=['économie','international','politique'];
 
 const NOTERVOIE = () =>{
     (async()=>{
@@ -52,7 +54,7 @@ for(let i=0;i<Categories.length;i++){
     var url ="https://www.notrevoienews.com/category/economie/";
 
     if(Category==="international") url="https://www.notrevoienews.com/category/international/"
-    if(Category==="politic") url="https://www.notrevoienews.com/category/politique/"
+    if(Category==="politique") url="https://www.notrevoienews.com/category/politique/"
     
     try{
         await page.goto(url);
@@ -100,8 +102,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].dataset.src,
-                    Category:Category,
-                    source :"NotreVoie",
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"NotreVoie - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.notrevoienews.com",
                     sourceLogo:"https://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
                       });
@@ -109,10 +111,14 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+           
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('fr',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -157,6 +163,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+    var contenthtml = await page.evaluate(()=>{
+        try{
+           return document.querySelector('.content-inner').innerHTML
+        }catch{
+           return null;
+        }
+    });
+
      var author = await page.evaluate(()=>{
          try{
            return document.querySelector('.jeg_meta_author>a').textContent.trim();
@@ -177,11 +191,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
-//  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

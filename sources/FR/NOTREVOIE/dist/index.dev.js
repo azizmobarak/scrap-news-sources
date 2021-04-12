@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'international', 'politic'];
+var Categories = ['économie', 'international', 'politique'];
 
 var NOTERVOIE = function NOTERVOIE() {
   (function _callee2() {
@@ -64,7 +70,7 @@ var NOTERVOIE = function NOTERVOIE() {
 
             url = "https://www.notrevoienews.com/category/economie/";
             if (Category === "international") url = "https://www.notrevoienews.com/category/international/";
-            if (Category === "politic") url = "https://www.notrevoienews.com/category/politique/";
+            if (Category === "politique") url = "https://www.notrevoienews.com/category/politique/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -131,8 +137,8 @@ var NOTERVOIE = function NOTERVOIE() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].dataset.src,
-                    Category: Category,
-                    source: "NotreVoie",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "NotreVoie - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.notrevoienews.com",
                     sourceLogo: "https://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
                   });
@@ -144,8 +150,11 @@ var NOTERVOIE = function NOTERVOIE() {
 
           case 31:
             PageData = _context2.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -195,7 +204,7 @@ var NOTERVOIE = function NOTERVOIE() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -205,7 +214,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -238,13 +247,24 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.jeg_meta_author>a').textContent.trim();
+              return document.querySelector('.content-inner').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
         case 12:
+          contenthtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.jeg_meta_author>a').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -258,20 +278,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          _context3.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context3.stop();
       }
