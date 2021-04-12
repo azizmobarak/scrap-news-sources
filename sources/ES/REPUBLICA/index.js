@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['uruguay','culture','international'];
+var Categories=['Uruguay','cultura','internacional'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -50,8 +52,8 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url="https://www.republica.com.uy/politica/";
-    if(Category==="culture") url ="https://www.republica.com.uy/cultura/";
-    if(Category==="international") url ="https://www.republica.com.uy/mundo/";
+    if(Category==="cultura") url ="https://www.republica.com.uy/cultura/";
+    if(Category==="internacional") url ="https://www.republica.com.uy/mundo/";
     
     try{
         await page.goto(url);
@@ -101,8 +103,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : img==null ? null : img.substring(img.indexOf('("')+2,img.indexOf('")')),
-                    Category:Category,
-                    source :"Republica "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Republica - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.republica.com.uy",
                     sourceLogo:"https://www.republica.com.uy/wp-content/uploads/2021/02/logo-grupo-r-94x95-1.jpg"
                       });
@@ -110,10 +112,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-         //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+           PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('es',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e);
         await browser.close();
@@ -160,6 +165,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.single-post-content').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
         var author = null;
     
     if(Content!=null && Content!="" && Content.length>255){
@@ -173,11 +186,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
-//  console.log(AllData_WithConetent)
  await InsertData(AllData_WithConetent);
 }
 
