@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['uruguay', 'economy'];
+var Categories = ['Uruguay', 'economía', 'internacional'];
 
 var SCRAP = function SCRAP() {
   (function _callee2() {
@@ -63,8 +69,8 @@ var SCRAP = function SCRAP() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://www.elobservador.com.uy/elobservador/nacional";
-            if (Category === "economy") url = "https://www.elobservador.com.uy/elobservador/economia-y-empresas";
-            if (Category === "international") url = "https://www.elobservador.com.uy/elobservador/mundo";
+            if (Category === "economía") url = "https://www.elobservador.com.uy/elobservador/economia-y-empresas";
+            if (Category === "internacional") url = "https://www.elobservador.com.uy/elobservador/mundo";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -132,8 +138,8 @@ var SCRAP = function SCRAP() {
                     title: articles[j].querySelector(titles) == null ? articles[j].querySelector("h1").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
-                    Category: Category,
-                    source: "El Observador " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "El Observador - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.elobservador.com.uy/",
                     sourceLogo: "https://www.elobservador.com.uy/images/og_image.jpg"
                   });
@@ -145,8 +151,11 @@ var SCRAP = function SCRAP() {
 
           case 31:
             PageData = _context2.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -196,7 +205,7 @@ var SCRAP = function SCRAP() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -206,7 +215,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 15;
+            _context3.next = 18;
             break;
           }
 
@@ -238,6 +247,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.cuerpo').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          contenthtml = _context3.sent;
           author = null;
 
           if (Content != null && Content != "" && Content.length > 255) {
@@ -251,20 +271,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 12:
+        case 15:
           i++;
           _context3.next = 2;
           break;
 
-        case 15:
-          _context3.next = 17;
+        case 18:
+          _context3.next = 20;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 17:
+        case 20:
         case "end":
           return _context3.stop();
       }
