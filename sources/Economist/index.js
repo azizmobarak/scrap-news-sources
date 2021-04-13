@@ -53,7 +53,7 @@ for(let i=0;i<Categories.length;i++){
         //navigate to category sub route
        try{
         await page.goto('https://www.economist.com/the-economist-explains/');
-        //await page.click('#_evidon-banner-acceptbutton');
+        await page.click('#_evidon-banner-acceptbutton');
        }catch(err){
            console.log(err)
         await page.goto('https://www.economist.com/the-economist-explains/');

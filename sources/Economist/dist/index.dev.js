@@ -61,7 +61,7 @@ var MARKETWATCH = function MARKETWATCH() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 29;
+              _context.next = 31;
               break;
             }
 
@@ -73,18 +73,22 @@ var MARKETWATCH = function MARKETWATCH() {
             return regeneratorRuntime.awrap(page["goto"]('https://www.economist.com/the-economist-explains/'));
 
           case 14:
-            _context.next = 21;
-            break;
+            _context.next = 16;
+            return regeneratorRuntime.awrap(page.click('#_evidon-banner-acceptbutton'));
 
           case 16:
-            _context.prev = 16;
+            _context.next = 23;
+            break;
+
+          case 18:
+            _context.prev = 18;
             _context.t0 = _context["catch"](11);
             console.log(_context.t0);
-            _context.next = 21;
+            _context.next = 23;
             return regeneratorRuntime.awrap(page["goto"]('https://www.economist.com/the-economist-explains/'));
 
-          case 21:
-            _context.next = 23;
+          case 23:
+            _context.next = 25;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               var titles = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a>span');
               var images = document.querySelectorAll('.ds-layout-grid>.teaser__image>img');
@@ -109,7 +113,7 @@ var MARKETWATCH = function MARKETWATCH() {
               return data;
             }, Category));
 
-          case 23:
+          case 25:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item, j) {
@@ -120,47 +124,47 @@ var MARKETWATCH = function MARKETWATCH() {
               AllData.push(item);
             });
 
-          case 26:
+          case 28:
             i++;
             _context.next = 9;
             break;
 
-          case 29:
-            _context.next = 35;
+          case 31:
+            _context.next = 37;
             break;
 
-          case 31:
-            _context.prev = 31;
+          case 33:
+            _context.prev = 33;
             _context.t1 = _context["catch"](7);
-            _context.next = 35;
+            _context.next = 37;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 35:
-            _context.prev = 35;
-            _context.next = 38;
+          case 37:
+            _context.prev = 37;
+            _context.next = 40;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 38:
-            _context.next = 45;
+          case 40:
+            _context.next = 47;
             break;
 
-          case 40:
-            _context.prev = 40;
-            _context.t2 = _context["catch"](35);
+          case 42:
+            _context.prev = 42;
+            _context.t2 = _context["catch"](37);
             console.log(_context.t2);
-            _context.next = 45;
-            return regeneratorRuntime.awrap(browser.close());
-
-          case 45:
             _context.next = 47;
             return regeneratorRuntime.awrap(browser.close());
 
           case 47:
+            _context.next = 49;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 49:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 31], [11, 16], [35, 40]]);
+    }, null, null, [[7, 33], [11, 18], [37, 42]]);
   })();
 };
 
