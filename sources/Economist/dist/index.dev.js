@@ -44,7 +44,7 @@ var MARKETWATCH = function MARKETWATCH() {
           case 0:
             _context.next = 2;
             return regeneratorRuntime.awrap(puppeteer.launch({
-              headless: false,
+              headless: true,
               args: ['--enable-features=NetworkService', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--shm-size=3gb']
             }));
 
