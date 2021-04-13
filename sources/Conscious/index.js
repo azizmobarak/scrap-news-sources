@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatimage');
+const {SendToServer} = require('../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['life&style'];
+var Categories=['Life & Style'];
 
 const Conscious = () =>{
     (async()=>{
@@ -75,8 +77,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"ConsciousLifeStyle",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"Conscious - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.consciouslifestylemag.com/",
                        sourceLogo:"https://breathingtree.co.uk/wp-content/uploads/2018/09/Conscious-Lifestyle.jpg"
                       });
@@ -85,9 +87,14 @@ for(let i=0;i<Categories.length;i++){
                       return data;
                },Category);
                console.log(PageData);
-               PageData.map(item=>{
-                   AllData.push(item)
-               })
+                
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('en',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
        }}catch{
         await browser.close();
        }
@@ -132,6 +139,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+            return document.querySelector(".entry-content").innerHTML;
+            }catch{
+                return null;
+            }
+        });
+
         var author = await page.evaluate(()=>{
             try{
              return document.querySelectorAll('.entry-content>.vm_column>p')[0].textContent.replace('BY','').trim();
@@ -152,12 +167,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     
     }
-     //console.log(AllData_WithConetent)
      await InsertData(AllData_WithConetent);
 }
 
