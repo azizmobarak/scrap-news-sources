@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatimage');
+const {sebdtoserver} = require('../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -26,7 +28,7 @@ var Categories=['economy'];
 const MARKETWATCH = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -51,12 +53,9 @@ for(let i=0;i<Categories.length;i++){
         //navigate to category sub route
        try{
         await page.goto('https://www.economist.com/the-economist-explains/');
-       try{
-        await page.click('#_evidon-banner-acceptbutton');
-       }catch(e){
-       console.log(e)
-       }
-       }catch{
+        //await page.click('#_evidon-banner-acceptbutton');
+       }catch(err){
+           console.log(err)
         await page.goto('https://www.economist.com/the-economist-explains/');
        }
       //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
@@ -80,19 +79,23 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"MARKETWATCH",
-                       sourceLink:"https://www.marketwatch.com/",
-                       sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
+                       Category:Category+charAt(0).toUpperCase() + Category.slice(1),
+                       source :"The Economist - "+Category+charAt(0).toUpperCase() + Category.slice(1),
+                       sourceLink:"https://www.economist.com",
+                       sourceLogo:"https://e7.pngegg.com/pngimages/355/504/png-clipart-the-economist-logo-economist-group-magazine-organization-others-miscellaneous-company.png"
                       });
                    }
                }
                       return data;
                },Category);
                console.log(PageData);
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
-               })
+               });
        }}catch{
         await browser.close();
        }
@@ -138,6 +141,21 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+        
+            try{
+
+             var first_text = document.querySelectorAll(".article__body-text");
+            var first_cont="";
+            for(let i=0;i<first_text.length;i++){
+                first_cont=first_cont+"<br/>"+first_text[i].innerHTML;
+            }
+
+              return first_cont;
+            }catch{
+                return null;
+            }
+        });
         // var author = await page.evaluate(()=>{
         //     try{
         //      return document.querySelector('.author').textContent.trim();
@@ -158,7 +176,9 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
+                
           });
        }
     
