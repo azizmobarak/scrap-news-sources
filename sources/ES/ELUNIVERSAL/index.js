@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['mexico','international','culture','health','celebrity'];
+var Categories=['México','internacional','cultura','salud','celebridad'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,10 +54,10 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.eluniversal.com.mx/nacion";
 
-    if(Category==="international") url="https://www.eluniversal.com.mx/mundo";
-    if(Category==="culture") url="https://www.eluniversal.com.mx/cultura";
-    if(Category==="health") url="https://www.eluniversal.com.mx/ciencia-y-salud";
-    if(Category==="celebrity") url="https://www.eluniversal.com.mx/espectaculos";
+    if(Category==="internacional") url="https://www.eluniversal.com.mx/mundo";
+    if(Category==="cultura") url="https://www.eluniversal.com.mx/cultura";
+    if(Category==="salud") url="https://www.eluniversal.com.mx/ciencia-y-salud";
+    if(Category==="celebridad") url="https://www.eluniversal.com.mx/espectaculos";
     
     try{
         await page.goto(url);
@@ -103,8 +105,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"El Universal "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"El Universal - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"www.eluniversal.com.mx/",
                     sourceLogo:"https://logos-download.com/wp-content/uploads/2016/05/El_Universal_logo_logotype_Mexico_City_M%C3%A9xico.png"
                       });
@@ -112,10 +114,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-        //    console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('es',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -159,6 +164,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+              return document.querySelector('.gl-Grid_7nota').innerHTML
+            }catch{
+               return null;
+            }
+        });
+
     var author =null;
     
     if(Content!=null && Content!=""){
@@ -172,11 +185,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
-   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
