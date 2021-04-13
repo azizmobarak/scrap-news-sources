@@ -17,10 +17,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-//cron.schedule('00 */1 * * *', () => {
+cron.schedule('00 */1 * * *', () => {
   const economist = require('./sources/Economist');
   economist();
-//});
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

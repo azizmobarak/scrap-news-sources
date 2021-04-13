@@ -53,7 +53,7 @@ for(let i=0;i<Categories.length;i++){
         //navigate to category sub route
        try{
         await page.goto('https://www.economist.com/the-economist-explains/');
-        await page.click('#_evidon-banner-acceptbutton');
+       // await page.click('#_evidon-banner-acceptbutton');
        }catch(err){
            console.log(err)
         await page.goto('https://www.economist.com/the-economist-explains/');
@@ -64,7 +64,7 @@ for(let i=0;i<Categories.length;i++){
          // get the data from the page
     var PageData = await page.evaluate((Category)=>{
                
-
+   
     var titles = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a>span');
     var images =document.querySelectorAll('.ds-layout-grid>.teaser__image>img')
     var links = document.querySelectorAll('.ds-layout-grid>.teaser__text>h2>a')
@@ -183,7 +183,7 @@ const GetContent = async(page,data)=>{
        }
     
     }
-   // console.log(AllData_WithConetent)
+    console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 

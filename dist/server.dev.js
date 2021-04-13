@@ -22,12 +22,12 @@ con.connect(process.env.DATABASE, {
   useUnifiedTopology: true
 }, function (err, db) {
   if (err) console.log(err);else {}
-}); //cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var economist = require('./sources/Economist');
 
-var economist = require('./sources/Economist');
-
-economist(); //});
-
+  economist();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
