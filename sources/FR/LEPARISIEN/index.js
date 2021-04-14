@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['environment','politic'];
+var Categories=['environnement','politique'];
 
 const LEPARISIAN = () =>{
     (async()=>{
@@ -51,9 +53,9 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url="";
-    if(Category==="politic")  url = "https://www.leparisien.fr/politique/";
+    if(Category==="politique")  url = "https://www.leparisien.fr/politique/";
     else{
-        if(Category==="environment") url = "https://www.leparisien.fr/environnement/";
+        if(Category==="environnement") url = "https://www.leparisien.fr/environnement/";
     }
        
     
@@ -104,8 +106,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"Leparisien",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"Leparisien - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.leparisien.fr/",
                        sourceLogo:"https://www.leparisien.fr/pf/resources/images/E-LOGO-LP-192x60@2x.png?d=306"
                       });
@@ -113,10 +115,15 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-          //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+          // console.log(PageData);
+           
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('fr',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });    
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -162,6 +169,15 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+        
+            try{
+             return document.querySelector('.article-section').innerHTML
+            }catch{
+               return null;
+            }
+        });
+
         var author = await page.evaluate(()=>{
             try{
              return document.querySelector('.author>span').textContent.trim();
@@ -182,12 +198,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     
     }
-  // console.log(AllData_WithConetent)
+ //  console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 

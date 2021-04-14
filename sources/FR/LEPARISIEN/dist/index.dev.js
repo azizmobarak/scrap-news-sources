@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['environment', 'politic'];
+var Categories = ['environnement', 'politique'];
 
 var LEPARISIAN = function LEPARISIAN() {
   (function _callee2() {
@@ -63,8 +69,8 @@ var LEPARISIAN = function LEPARISIAN() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "";
-            if (Category === "politic") url = "https://www.leparisien.fr/politique/";else {
-              if (Category === "environment") url = "https://www.leparisien.fr/environnement/";
+            if (Category === "politique") url = "https://www.leparisien.fr/politique/";else {
+              if (Category === "environnement") url = "https://www.leparisien.fr/environnement/";
             }
             _context2.prev = 13;
             _context2.next = 16;
@@ -128,8 +134,8 @@ var LEPARISIAN = function LEPARISIAN() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "Leparisien",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Leparisien - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.leparisien.fr/",
                     sourceLogo: "https://www.leparisien.fr/pf/resources/images/E-LOGO-LP-192x60@2x.png?d=306"
                   });
@@ -141,8 +147,12 @@ var LEPARISIAN = function LEPARISIAN() {
 
           case 28:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            // console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -192,7 +202,7 @@ var LEPARISIAN = function LEPARISIAN() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -202,7 +212,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -234,13 +244,24 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.author>span').textContent.trim();
+              return document.querySelector('.article-section').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
         case 12:
+          contenthtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.author>span').textContent.trim();
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -254,20 +275,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          _context3.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context3.stop();
       }
