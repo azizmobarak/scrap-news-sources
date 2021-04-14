@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['venezuela', 'politic', 'economy', 'opinion', 'entertainment', 'health'];
+var Categories = ['venezuela', 'Política', 'economía', 'opinión', 'entretenimiento', 'salud'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -64,11 +70,11 @@ var LARAZON = function LARAZON() {
             //navigate to category sub route
 
             url = "https://www.lapatilla.com/secciones/nacionales/";
-            if (Category === "politic") url = "https://www.lapatilla.com/secciones/politica";
-            if (Category === "economy") url = "https://www.lapatilla.com/secciones/economia/";
-            if (Category === "opinion") url = "https://www.lapatilla.com/secciones/opinion/";
-            if (Category === "entertainment") url = "https://www.lapatilla.com/secciones/entretenimiento";
-            if (Category === "health") url = "https://www.lapatilla.com/secciones/salud/";
+            if (Category === "Política") url = "https://www.lapatilla.com/secciones/politica";
+            if (Category === "economía") url = "https://www.lapatilla.com/secciones/economia/";
+            if (Category === "opinión") url = "https://www.lapatilla.com/secciones/opinion/";
+            if (Category === "entretenimiento") url = "https://www.lapatilla.com/secciones/entretenimiento";
+            if (Category === "salud") url = "https://www.lapatilla.com/secciones/salud/";
             _context2.prev = 17;
             _context2.next = 20;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -136,10 +142,10 @@ var LARAZON = function LARAZON() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
-                    Category: Category,
-                    source: "Lostiempos " + Category,
-                    sourceLink: "https://www.lostiempos.com",
-                    sourceLogo: "https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Lapatilla - " + Category.charAt(0).toUpperCase() + Category.slice(1),
+                    sourceLink: "www.lapatilla.com",
+                    sourceLogo: "https://media.sipiapa.org/adjuntos/185/imagenes/001/813/0001813768.png"
                   });
                 }
               }
@@ -149,8 +155,12 @@ var LARAZON = function LARAZON() {
 
           case 34:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            //    console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -200,7 +210,7 @@ var LARAZON = function LARAZON() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, contenthtml;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -210,7 +220,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 17;
             break;
           }
 
@@ -240,6 +250,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('article').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          contenthtml = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -252,20 +273,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: null,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 11:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
+        case 17:
+          _context3.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 19:
         case "end":
           return _context3.stop();
       }

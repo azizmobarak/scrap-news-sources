@@ -39,11 +39,8 @@ var CategorySchema = mongoose.Schema({
     },
     articleSourceLink:String,
     articleDescription:String,
-    status: {
-        type: String,
-        default:"published",
-        enum: [ "archive","draft","published"]
-        }
+    articleCleanDescription:String,
+   status: {type: String,default:"published",enum: [ "archive","draft","published"]}
 });
 
 const category = (name) =>mongoose.model(name,CategorySchema);

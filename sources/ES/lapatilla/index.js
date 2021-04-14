@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['venezuela','politic','economy','opinion','entertainment','health'];
+var Categories=['venezuela','Política','economía','opinión','entretenimiento','salud'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,11 +54,11 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.lapatilla.com/secciones/nacionales/";
 
-    if(Category==="politic") url="https://www.lapatilla.com/secciones/politica";
-    if(Category==="economy") url="https://www.lapatilla.com/secciones/economia/";
-    if(Category==="opinion") url="https://www.lapatilla.com/secciones/opinion/";
-    if(Category==="entertainment") url="https://www.lapatilla.com/secciones/entretenimiento";
-    if(Category==="health") url="https://www.lapatilla.com/secciones/salud/";
+    if(Category==="Política") url="https://www.lapatilla.com/secciones/politica";
+    if(Category==="economía") url="https://www.lapatilla.com/secciones/economia/";
+    if(Category==="opinión") url="https://www.lapatilla.com/secciones/opinion/";
+    if(Category==="entretenimiento") url="https://www.lapatilla.com/secciones/entretenimiento";
+    if(Category==="salud") url="https://www.lapatilla.com/secciones/salud/";
     
     try{
         await page.goto(url);
@@ -105,19 +107,24 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"Lostiempos "+Category,
-                    sourceLink:"https://www.lostiempos.com",
-                    sourceLogo:"https://www.lostiempos.com/sites/default/files/styles/medium/public/periodistas/logo_ok.jpg?itok=RjfYQ__G"
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Lapatilla - "+Category.charAt(0).toUpperCase() + Category.slice(1),
+                    sourceLink:"www.lapatilla.com",
+                    sourceLogo:"https://media.sipiapa.org/adjuntos/185/imagenes/001/813/0001813768.png"
                       });
                    }
                }
                       return data;
      },Category);
-         //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+        //    console.log(PageData);
+             
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('es',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -161,6 +168,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('article').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -173,11 +188,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
- //console.log(AllData_WithConetent)
+//  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
