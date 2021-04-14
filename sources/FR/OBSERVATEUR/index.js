@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage')
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','international','economy'];
+var Categories=['politique','international','économie'];
 
 const OBSERVATEUR = () =>{
     (async()=>{
@@ -52,7 +54,7 @@ for(let i=0;i<Categories.length;i++){
     var url ="https://www.nouvelobs.com/politique/";
 
     if(Category==="international") url = "https://www.nouvelobs.com/monde/";
-    if(Category==="economy") url="https://www.nouvelobs.com/economie/";
+    if(Category==="économie") url="https://www.nouvelobs.com/economie/";
 
     try{
         await page.goto(url);
@@ -100,8 +102,8 @@ for(let i=0;i<Categories.length;i++){
                        title : article[j].querySelector(titles).textContent,
                        link : article[j].querySelector(links).href,
                        images : typeof(article[j].querySelector(images))==="undefined" ? null : (j!=0 ? article[j].querySelector(images).srcset : article[j].querySelector("img").src ),
-                       Category:Category,
-                       source :"Le Nouvel Observateur",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"L'OBS - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.nouvelobs.com/",
                        sourceLogo:"https://www.nouvelobs.com/icons/lobs/lobs-pwa-192.png"
                       });
@@ -109,10 +111,14 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-          // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+         //  console.log(PageData);
+           PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('fr',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -140,8 +146,8 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        //await page.goto(url);
-        console.log(url)
+        await page.goto(url);
+       // console.log(url)
     
         var Content = await page.evaluate(()=>{
         
@@ -153,6 +159,14 @@ const GetContent = async(page,data)=>{
                 scond_content = scond_content +"\n"+second_text[i].textContent;
              }
               return scond_content;
+            }catch{
+               return null;
+            }
+        });
+
+        var contenthtml =await page.evaluate(()=>{
+            try{
+             return document.querySelector('.ObsArticle-body').innerHTML;
             }catch{
                return null;
             }
@@ -179,12 +193,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     
     }
-  // console.log(AllData_WithConetent)
+  //console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
