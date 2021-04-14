@@ -22,21 +22,14 @@ con.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, function (err, db) {
-  if (err) console.log(err);else {// var model = category('articles');
-    // model.find({},(err,doc)=>{
-    // if(err)console.log(err)
-    // else{
-    //     console.log(doc)
-    // }
-    // });
-  }
-});
-cron.schedule('22 */1 * * *', function () {
-  //1h
-  var Gardian = require('./sources/EN/The Guardian');
+  if (err) console.log(err);else {}
+}); // cron.schedule('22 */1 * * *', () => {
+//1h
 
-  Gardian();
-});
+var Gardian = require('./sources/EN/The Guardian');
+
+Gardian(); // });
+
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

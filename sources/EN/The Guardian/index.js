@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -92,7 +94,7 @@ var PageData = await page.evaluate((Category)=>{
                 if(Category.indexOf('lifeandstyle')!=-1){
                     cateogryName="life&style"
                 }else{
-                   cateogryName ="uk";
+                   cateogryName ="UK";
                         }
             }
         }else{
@@ -107,7 +109,7 @@ var PageData = await page.evaluate((Category)=>{
                             cateogryName="tennis";
                         }else{
                             if(Category.indexOf('formulaone')!=-1){
-                                cateogryName="formulaone";
+                                cateogryName="formul 1";
                             }else{
                                 if(Category.indexOf('cricket')!=-1){
                                     cateogryName="cricket";
@@ -119,25 +121,25 @@ var PageData = await page.evaluate((Category)=>{
                 }
         }else{
             if(Category.indexOf('uk-news')!=-1){
-                cateogryName="uk";
+                cateogryName="UK";
             }else{
                 if(Category.indexOf('global-development')!=-1){
                     cateogryName="international";
                 }else{
                     if(Category.indexOf('artanddesign')!=-1){
-                        cateogryName="art&design";
+                        cateogryName="art & Design";
                     }else{
                         if(Category.indexOf('/')!=-1 && Category.indexOf('lifeandstyle/')!=-1){
                             if(Category.indexOf('home-and-garden')!=-1){
-                                cateogryName="life&style";
+                                cateogryName="life & Style";
                             }else{
                                 if(Category.indexOf('health-and-wellbeing')!=-1){
                                     cateogryName="health";
                                 }else{
                                     if(cateogryName.indexOf('love-and-sex')!=-1){
-                                        cateogryName="life&style";
+                                        cateogryName="life & Style";
                                     }else{
-                                            cateogryName ="life&style";
+                                            cateogryName ="life & Style";
                                     }
                                 }
                             }
@@ -168,8 +170,8 @@ var PageData = await page.evaluate((Category)=>{
                        title : articles[j].querySelector(titleClassName).textContent.trim().replaceAll('\n',' '),
                        link : articles[j].querySelector(linkClassName).href,
                        images :articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src : null,
-                       Category: cateogryName,
-                       source :"The Gardian "+cateogryName,
+                       Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"The Gardian - "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.theguardian.com/",
                        sourceLogo:"https://www.youthalive.org/wp-content/uploads/2020/07/the-guardian-logo.jpg"
                          });
@@ -178,10 +180,15 @@ var PageData = await page.evaluate((Category)=>{
                       return data;
                },Category);
 
-           //    console.log(PageData);
-               PageData.map(item=>{
-                   AllData.push(item)
-               });
+              // console.log(PageData);
+               
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('en',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
        }} catch{
            await browser.close();
              }
@@ -228,6 +235,19 @@ const GetContent = async(page,data)=>{
             }
            }
         });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             var text = document.querySelector('.article-body-commercial-selector').innerHTML
+             return text;
+            }catch{
+             try{
+                 return document.querySelector('.content__standfirst').innerHTML
+             }catch{
+                 return null
+             }
+            }
+         });
     
         var author = await page.evaluate(()=>{
             try{
@@ -248,11 +268,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author:author!="" ? author : null,
-                content:Content!=null ? Content : null
+                content:Content!=null ? Content : null,
+                contenthtml : contenthtml
           });
        }
     }
-    //console.log(AllData_WithConetent)
+   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
