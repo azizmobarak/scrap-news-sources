@@ -21,7 +21,7 @@ var InsertData = function InsertData(data) {
               articleTitle: article.title,
               articleSourceLink: article.link,
               articleImageURL: article.images,
-              categoryName: articleCateory[cat],
+              categoryName: article.Category,
               mediaName: article.source,
               mediaLogo: article.sourceLogo
             }, _defineProperty(_articledetails, "mediaName", article.source), _defineProperty(_articledetails, "articleType", type), _defineProperty(_articledetails, "authorName", article.author), _defineProperty(_articledetails, "articleLanguage", lang), _defineProperty(_articledetails, "articleDescription", article.content), _defineProperty(_articledetails, "articleCleanDescription", article.contenthtml), _articledetails);

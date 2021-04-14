@@ -13,7 +13,7 @@ var type="Article";
               articleTitle : article.title,
               articleSourceLink : article.link,
               articleImageURL : article.images,
-              categoryName:articleCateory[cat],
+              categoryName:article.Category,
               mediaName :article.source,
               mediaLogo:article.sourceLogo,
               mediaName:article.source,
