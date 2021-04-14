@@ -16,11 +16,11 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('22 */1 * * *', () => {
+cron.schedule('22 */1 * * *', () => {
 //1h
 const Gardian = require('./sources/EN/The Guardian');
 Gardian();
-// });
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);

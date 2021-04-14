@@ -23,13 +23,13 @@ con.connect(process.env.DATABASE, {
   useUnifiedTopology: true
 }, function (err, db) {
   if (err) console.log(err);else {}
-}); // cron.schedule('22 */1 * * *', () => {
-//1h
+});
+cron.schedule('22 */1 * * *', function () {
+  //1h
+  var Gardian = require('./sources/EN/The Guardian');
 
-var Gardian = require('./sources/EN/The Guardian');
-
-Gardian(); // });
-
+  Gardian();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
