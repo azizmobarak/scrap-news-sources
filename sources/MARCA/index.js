@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatimage');
+const {SendToServer} = require('../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['football'];
+var Categories=['fútbol'];
 
 const MARCA = () =>{
     (async()=>{
@@ -67,7 +69,7 @@ for(let i=0;i<Categories.length;i++){
        
          
         var data =[];
-         for(let j=0;j<titles.length/2;j++){
+         for(let j=0;j<(titles.length/2)-3;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
@@ -75,8 +77,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent,
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"MARCA",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"MARCA - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.marca.com",
                        sourceLogo:"https://e00-marca.uecdn.es/assets/v16/img/destacadas/marca__logo-generica.jpg"
                       });
@@ -84,16 +86,24 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-               PageData.map(item=>{
+               console.log(PageData);
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('es',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
-               })
-       }}catch{
+               });
+    
+       }}catch(e){
+        console.log(e)
         await browser.close();
        }
 
        try{
         await GetContent(page,AllData);
-       }catch{
+       }catch(e){
+           console.log(e)
         await browser.close();
        }
 
@@ -104,7 +114,6 @@ for(let i=0;i<Categories.length;i++){
 
 
 const GetContent = async(page,data)=>{
-      
     var AllData_WithConetent=[];
     
     for(var i=0;i<data.length;i++){
@@ -113,6 +122,7 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
             try{
@@ -122,6 +132,14 @@ const GetContent = async(page,data)=>{
              cont=cont+"\n"+text[i].textContent;
             }
             return cont;
+            }catch{
+                return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector(".content").innerHTML;
             }catch{
                 return null;
             }
@@ -139,12 +157,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     
     }
-   // console.log(AllData_WithConetent)
+    console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
