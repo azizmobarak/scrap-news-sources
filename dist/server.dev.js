@@ -29,12 +29,12 @@ con.connect(process.env.DATABASE, {
       if (err) console.log(err);else {}
     });
   }
-}); // cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var marca = require('./sources/MARCA');
 
-var marca = require('./sources/MARCA');
-
-marca(); // });
-
+  marca();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
