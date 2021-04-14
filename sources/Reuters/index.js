@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatimage');
+const {SendToServer} = require('../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -75,8 +77,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j])==="undefined" ? null : images[j].src,
-                       Category:Category,
-                       source :"Reuters",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"Reuters - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.reuters.com",
                        sourceLogo:"https://www.aiduce.org/wp-content/uploads/2013/03/Reuters-Logo.jpg"
                       });
@@ -84,10 +86,13 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-               console.log(PageData);
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
-               })
+               });
        }}catch{
         await browser.close();
        }
@@ -115,10 +120,8 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         await page.goto(url);
-       // console.log(url)
     
         var Content = await page.evaluate(()=>{
-        
             try{
             var first_text = document.querySelectorAll(".ArticleBodyWrapper>p");
             var first_cont="";
@@ -127,6 +130,14 @@ const GetContent = async(page,data)=>{
                 first_cont=first_cont+"\n"+first_text[i].textContent;
                 }
               return first_cont;
+            }catch{
+                return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+            return document.querySelector(".ArticleBodyWrapper").innerHTML
             }catch{
                 return null;
             }
@@ -152,12 +163,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     
     }
-   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 

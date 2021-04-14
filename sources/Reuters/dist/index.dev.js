@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var Reuters = function Reuters() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 28;
+              _context.next = 27;
               break;
             }
 
@@ -91,8 +97,8 @@ var Reuters = function Reuters() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "Reuters",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Reuters - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.reuters.com",
                     sourceLogo: "https://www.aiduce.org/wp-content/uploads/2013/03/Reuters-Logo.jpg"
                   });
@@ -104,57 +110,60 @@ var Reuters = function Reuters() {
 
           case 22:
             PageData = _context.sent;
-            console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 25:
+          case 24:
             i++;
             _context.next = 9;
             break;
 
-          case 28:
-            _context.next = 34;
+          case 27:
+            _context.next = 33;
             break;
 
-          case 30:
-            _context.prev = 30;
+          case 29:
+            _context.prev = 29;
             _context.t1 = _context["catch"](7);
-            _context.next = 34;
+            _context.next = 33;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 34:
-            _context.prev = 34;
-            _context.next = 37;
+          case 33:
+            _context.prev = 33;
+            _context.next = 36;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 37:
-            _context.next = 44;
+          case 36:
+            _context.next = 43;
             break;
 
-          case 39:
-            _context.prev = 39;
-            _context.t2 = _context["catch"](34);
+          case 38:
+            _context.prev = 38;
+            _context.t2 = _context["catch"](33);
             console.log(_context.t2);
-            _context.next = 44;
+            _context.next = 43;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 44:
-            _context.next = 46;
+          case 43:
+            _context.next = 45;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
+          case 45:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 30], [11, 16], [34, 39]]);
+    }, null, null, [[7, 29], [11, 16], [33, 38]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -164,7 +173,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 20;
             break;
           }
 
@@ -195,13 +204,24 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.Byline-author-2BSir').textContent.trim();
+              return document.querySelector(".ArticleBodyWrapper").innerHTML;
             } catch (_unused4) {
               return null;
             }
           }));
 
         case 12:
+          contenthtml = _context2.sent;
+          _context2.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.Byline-author-2BSir').textContent.trim();
+            } catch (_unused5) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context2.sent;
 
           if (Content != null && Content != "") {
@@ -215,20 +235,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
-          _context2.next = 19;
+        case 20:
+          _context2.next = 22;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 22:
         case "end":
           return _context2.stop();
       }

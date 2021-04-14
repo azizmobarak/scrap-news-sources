@@ -7,20 +7,21 @@ var type="Article";
 
     data.map(article=>{
 
-        var articleCateory = article.Category.split(',');
+        var articleCateory = article.Category;
              
           var articledetails ={
               articleTitle : article.title,
               articleSourceLink : article.link,
               articleImageURL : article.images,
-              categoryName:articleCateory[cat],
+              categoryName:articleCateory,
               mediaName :article.source,
               mediaLogo:article.sourceLogo,
               mediaName:article.source,
               articleType:type,
               authorName : article.author,
               articleLanguage:lang,
-              articleDescription:article.content
+              articleDescription:article.content,
+              articleCleanDescription : article.contenthtml
       }
 
       console.log(articledetails)
