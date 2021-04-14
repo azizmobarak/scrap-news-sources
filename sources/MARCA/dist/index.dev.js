@@ -189,15 +189,26 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var text = document.querySelectorAll(".content>p");
-              var cont = "";
+              try {
+                var text = document.querySelectorAll(".ue-c-article__body p");
+                var cont = "";
 
-              for (var _i = 0; _i < text.length; _i++) {
-                cont = cont + "\n" + text[_i].textContent;
+                for (var _i = 0; _i < text.length; _i++) {
+                  cont = cont + "\n" + text[_i].textContent;
+                }
+
+                return cont;
+              } catch (_unused2) {
+                var text = document.querySelectorAll(".content>p");
+                var cont = "";
+
+                for (var _i2 = 0; _i2 < text.length; _i2++) {
+                  cont = cont + "\n" + text[_i2].textContent;
+                }
+
+                return cont;
               }
-
-              return cont;
-            } catch (_unused2) {
+            } catch (_unused3) {
               return null;
             }
           }));
@@ -207,8 +218,12 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector(".content").innerHTML;
-            } catch (_unused3) {
+              try {
+                return document.querySelector('.ue-c-article__body').innerHTML;
+              } catch (_unused4) {
+                return document.querySelector(".content").innerHTML;
+              }
+            } catch (_unused5) {
               return null;
             }
           }));

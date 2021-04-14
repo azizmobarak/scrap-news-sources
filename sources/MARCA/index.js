@@ -126,12 +126,21 @@ const GetContent = async(page,data)=>{
     
         var Content = await page.evaluate(()=>{
             try{
+            try  {
+               var text = document.querySelectorAll(".ue-c-article__body p");
+                var cont="";
+                for(let i=0;i<text.length;i++){
+                 cont=cont+"\n"+text[i].textContent;
+                }
+                return cont;
+            }catch{
                 var text = document.querySelectorAll(".content>p");
-            var cont="";
-            for(let i=0;i<text.length;i++){
-             cont=cont+"\n"+text[i].textContent;
+                var cont="";
+                for(let i=0;i<text.length;i++){
+                 cont=cont+"\n"+text[i].textContent;
+                }
+                return cont;
             }
-            return cont;
             }catch{
                 return null;
             }
@@ -139,7 +148,11 @@ const GetContent = async(page,data)=>{
 
         var contenthtml = await page.evaluate(()=>{
             try{
-               return document.querySelector(".content").innerHTML;
+                try {
+                    return document.querySelector('.ue-c-article__body').innerHTML;
+                }catch {
+                    return document.querySelector(".content").innerHTML;
+                }
             }catch{
                 return null;
             }
