@@ -25,8 +25,7 @@ var InsertData = function InsertData(data) {
               categoryName: articleCateory,
               mediaName: article.source,
               mediaLogo: article.sourceLogo
-            }, _defineProperty(_articledetails, "mediaName", article.source), _defineProperty(_articledetails, "articleType", type), _defineProperty(_articledetails, "authorName", article.author), _defineProperty(_articledetails, "articleLanguage", lang), _defineProperty(_articledetails, "articleDescription", article.content), _articledetails);
-            console.log(articledetails);
+            }, _defineProperty(_articledetails, "mediaName", article.source), _defineProperty(_articledetails, "articleType", type), _defineProperty(_articledetails, "authorName", article.author), _defineProperty(_articledetails, "articleLanguage", lang), _defineProperty(_articledetails, "articleDescription", article.content), _defineProperty(_articledetails, "articleCleanDescription", article.contenthtml), _articledetails);
             var Model = category("articles");
             Model.find({
               $and: [{
