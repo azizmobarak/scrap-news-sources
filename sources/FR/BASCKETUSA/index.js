@@ -110,7 +110,6 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-            console.log(PageData);
              
        }}catch(e){
         console.log(e)
@@ -199,7 +198,6 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

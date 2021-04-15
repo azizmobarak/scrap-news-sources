@@ -24,7 +24,6 @@ var type="Article";
               articleCleanDescription : article.contenthtml
       }
 
-      console.log(articledetails)
       
        var Model =  category("articles");
       Model.find({$and : [
