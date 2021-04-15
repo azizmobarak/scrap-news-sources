@@ -28,12 +28,12 @@ con.connect(process.env.DATABASE, {
       if (err) console.log(err);else {}
     });
   }
-}); // cron.schedule('00 */1 * * *', () => {
+});
+cron.schedule('00 */1 * * *', function () {
+  var VRT = require('./sources/FR/VRT');
 
-var VRT = require('./sources/FR/VRT');
-
-VRT(); // });
-
+  VRT();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
