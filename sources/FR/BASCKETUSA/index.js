@@ -1,11 +1,13 @@
 'use strict';
-
 const puppeteer  = require('puppeteer-extra');
 const puppeteer_stealth = require('puppeteer-extra-plugin-stealth');
 const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
+
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -99,8 +101,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : titles[j].textContent.trim(),
                     link : links[j].href,
                     images : typeof(images[j])==="undefined" ? null : images[j].src,
-                    Category:Category,
-                    source :"Basketusa",
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Basketusa - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.basketusa.com/",
                     sourceLogo:"https://www.basketusa.com/wp-content/themes/theme_busa_2019/_img/logo_basketusa_2019.png"
                       });
@@ -108,14 +110,20 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-           // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            console.log(PageData);
+             
        }}catch(e){
         console.log(e)
         await browser.close();
        }
+
+       PageData.map((item,j)=>{
+        item.images = FormatImage(item.images);
+        setTimeout(() => {
+             SendToServer('en',item.Category,item.source,item.sourceLogo)
+        },2000*j);
+           AllData.push(item)
+       });
 
        try{
        await GetContent(page,AllData);
@@ -157,6 +165,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.content').innerHTML
+            }catch{
+               return null;
+            }
+        });
+
      var author = await page.evaluate(()=>{
          try{
         return document.querySelector('.meta_autor').textContent.trim().replace("Par",'');
@@ -177,12 +193,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     
     }
- // console.log(AllData_WithConetent)
+  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
