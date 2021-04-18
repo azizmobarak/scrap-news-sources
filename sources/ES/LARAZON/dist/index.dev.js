@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['economy', 'spain', 'international', 'life&style'];
+var Categories = ['economía', 'España', 'internacional', 'estilo de Vida'];
 
 var LARAZON = function LARAZON() {
   (function _callee2() {
@@ -63,9 +69,9 @@ var LARAZON = function LARAZON() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://www.larazon.es/economia/";
-            if (Category === "international") url = "https://www.larazon.es/internacional/";
-            if (Category === "spain") url = "https://www.larazon.es/espana/";
-            if (Category === "life&style") url = "https://www.larazon.es/lifestyle/";
+            if (Category === "internacional") url = "https://www.larazon.es/internacional/";
+            if (Category === "España") url = "https://www.larazon.es/espana/";
+            if (Category === "estilo de Vida") url = "https://www.larazon.es/lifestyle/";
             _context2.prev = 15;
             _context2.next = 18;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -149,9 +155,9 @@ var LARAZON = function LARAZON() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).src,
-                    Category: Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
                     author: articles[j].querySelector(authors).textContent.trim(),
-                    source: "LARAZON " + Category,
+                    source: "LARAZON - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.larazon.es",
                     sourceLogo: "https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
                   });
@@ -163,8 +169,11 @@ var LARAZON = function LARAZON() {
 
           case 35:
             PageData = _context2.sent;
-            // console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -214,7 +223,7 @@ var LARAZON = function LARAZON() {
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, contenthtml;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -224,13 +233,12 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 14;
+            _context3.next = 17;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
+          url = item.link;
           _context3.next = 7;
           return regeneratorRuntime.awrap(page["goto"](url));
 
@@ -254,6 +262,17 @@ var GetContent = function GetContent(page, data) {
 
         case 9:
           Content = _context3.sent;
+          _context3.next = 12;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.article__body-container').innerHTML;
+            } catch (_unused3) {
+              return null;
+            }
+          }));
+
+        case 12:
+          contenthtml = _context3.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -266,20 +285,21 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: item.author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 11:
+        case 14:
           i++;
           _context3.next = 2;
           break;
 
-        case 14:
-          _context3.next = 16;
+        case 17:
+          _context3.next = 19;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 19:
         case "end":
           return _context3.stop();
       }

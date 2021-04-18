@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimage');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['economy','spain','international','life&style'];
+var Categories=['economía','España','internacional','estilo de Vida'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -51,9 +53,9 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.larazon.es/economia/";
 
-    if(Category==="international") url="https://www.larazon.es/internacional/"
-    if(Category==="spain") url="https://www.larazon.es/espana/"
-    if(Category==="life&style") url="https://www.larazon.es/lifestyle/"
+    if(Category==="internacional") url="https://www.larazon.es/internacional/"
+    if(Category==="España") url="https://www.larazon.es/espana/"
+    if(Category==="estilo de Vida") url="https://www.larazon.es/lifestyle/"
     
     try{
         await page.goto(url);
@@ -110,9 +112,9 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
                     author:articles[j].querySelector(authors).textContent.trim(),
-                    source :"LARAZON "+Category,
+                    source :"LARAZON - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.larazon.es",
                     sourceLogo:"https://www.tibagroup.com/wp-content/uploads/2016/11/LOGO-LA-RAZON-alta2-2.jpg"
                       });
@@ -120,10 +122,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+           PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('es',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           }); 
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -151,7 +156,6 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-      // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -163,6 +167,14 @@ const GetContent = async(page,data)=>{
                   scond_content = scond_content +"\n"+second_text[i].textContent;
                }
                 return scond_content;
+            }catch{
+               return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+        return document.querySelector('.article__body-container').innerHTML
             }catch{
                return null;
             }
@@ -180,11 +192,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : item.author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     }
- //console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
