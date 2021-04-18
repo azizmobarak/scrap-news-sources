@@ -39,6 +39,7 @@ var CategorySchema = mongoose.Schema({
     },
     articleSourceLink:String,
     articleDescription:String,
+    articleCleanDescription:String,
     status: {
         type: String,
         default:"published",

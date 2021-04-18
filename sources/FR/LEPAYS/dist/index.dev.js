@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatimage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendtoserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var LEPAY = function LEPAY() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 43;
+              _context2.next = 42;
               break;
             }
 
@@ -157,8 +163,8 @@ var LEPAY = function LEPAY() {
                     title: titles[index].textContent.trim().replaceAll('\t', ' ').substring(20, titles[index].textContent.trim().length).trim(),
                     link: links[index].href,
                     images: typeof images[j] === "undefined" ? null : images[j].src,
-                    Category: Category,
-                    source: "LE PAYS",
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "LE PAYS - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://www.le-pays.fr/",
                     sourceLogo: "https://www.ffp.asso.fr/wp-content/uploads/2016/08/le-pays-roannais.jpgtps://www.notrevoienews.com/wp-content/uploads/2018/12/logo-retina-400x200-1.jpg"
                   });
@@ -170,58 +176,61 @@ var LEPAY = function LEPAY() {
 
           case 37:
             PageData = _context2.sent;
-            console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('fr', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 40:
+          case 39:
             i++;
             _context2.next = 9;
             break;
 
-          case 43:
-            _context2.next = 50;
+          case 42:
+            _context2.next = 49;
             break;
 
-          case 45:
-            _context2.prev = 45;
+          case 44:
+            _context2.prev = 44;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 50;
+            _context2.next = 49;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
-            _context2.prev = 50;
-            _context2.next = 53;
+          case 49:
+            _context2.prev = 49;
+            _context2.next = 52;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 53:
-            _context2.next = 60;
+          case 52:
+            _context2.next = 59;
             break;
 
-          case 55:
-            _context2.prev = 55;
-            _context2.t2 = _context2["catch"](50);
+          case 54:
+            _context2.prev = 54;
+            _context2.t2 = _context2["catch"](49);
             console.log(_context2.t2);
-            _context2.next = 60;
+            _context2.next = 59;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 60:
-            _context2.next = 62;
+          case 59:
+            _context2.next = 61;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 62:
+          case 61:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 45], [14, 24], [50, 55]]);
+    }, null, null, [[7, 44], [14, 24], [49, 54]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -231,18 +240,33 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 16;
+            _context3.next = 30;
             break;
           }
 
           item = data[i];
           url = item.link;
           console.log(url);
-          _context3.next = 8;
+          _context3.prev = 6;
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 8:
-          _context3.next = 10;
+        case 9:
+          _context3.next = 19;
+          break;
+
+        case 11:
+          _context3.prev = 11;
+          _context3.t0 = _context3["catch"](6);
+          i++;
+          item = data[i];
+          url = item.link;
+          console.log(url);
+          _context3.next = 19;
+          return regeneratorRuntime.awrap(page["goto"](url));
+
+        case 19:
+          _context3.next = 21;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -254,13 +278,24 @@ var GetContent = function GetContent(page, data) {
               }
 
               return scond_content;
-            } catch (_unused2) {
+            } catch (_unused3) {
               return null;
             }
           }));
 
-        case 10:
+        case 21:
           Content = _context3.sent;
+          _context3.next = 24;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.contenu').innerHTML;
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 24:
+          contenthml = _context3.sent;
           author = null;
 
           if (Content != null && Content != "") {
@@ -274,24 +309,26 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthml: contenthml
             });
           }
 
-        case 13:
+        case 27:
           i++;
           _context3.next = 2;
           break;
 
-        case 16:
-          console.log(AllData_WithConetent); //  await InsertData(AllData_WithConetent);
+        case 30:
+          _context3.next = 32;
+          return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 17:
+        case 32:
         case "end":
           return _context3.stop();
       }
     }
-  });
+  }, null, null, [[6, 11]]);
 };
 
 module.exports = LEPAY;
