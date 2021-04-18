@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/sendtoserver'),
+    SendToServer = _require2.SendToServer;
+
+var _require3 = require('../../../function/formatimage'),
+    FormatImage = _require3.FormatImage; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -27,7 +33,7 @@ puppeteer.use(Recaptcha({
 
 }));
 puppeteer.use(puppeteer_agent());
-var Categories = ['politic', 'health', 'economy'];
+var Categories = ['política', 'salud', 'economía'];
 
 var SCRAP = function SCRAP() {
   (function _callee2() {
@@ -55,7 +61,7 @@ var SCRAP = function SCRAP() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context2.next = 36;
+              _context2.next = 37;
               break;
             }
 
@@ -63,8 +69,8 @@ var SCRAP = function SCRAP() {
             Category = Categories[i]; //navigate to category sub route
 
             url = "https://elcomercio.pe/politica/";
-            if (Category === "health") url = "https://elcomercio.pe/noticias/coronavirus/";
-            if (Category === "economy") url = "https://elcomercio.pe/economia/";
+            if (Category === "salud") url = "https://elcomercio.pe/noticias/coronavirus/";
+            if (Category === "economía") url = "https://elcomercio.pe/economia/";
             _context2.prev = 14;
             _context2.next = 17;
             return regeneratorRuntime.awrap(page["goto"](url));
@@ -141,8 +147,8 @@ var SCRAP = function SCRAP() {
                     title: articles[j].querySelector(titles).textContent.trim(),
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : img,
-                    Category: Category,
-                    source: "Elcomercio " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "Elcomercio - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://elcomercio.pe",
                     sourceLogo: "https://cdna.elcomercio.pe/resources/dist/elcomercio/images/logo_fb.jpg"
                   });
@@ -154,58 +160,62 @@ var SCRAP = function SCRAP() {
 
           case 31:
             PageData = _context2.sent;
-            //  console.log(PageData);
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('es', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 33:
+          case 34:
             i++;
             _context2.next = 9;
             break;
 
-          case 36:
-            _context2.next = 43;
+          case 37:
+            _context2.next = 44;
             break;
 
-          case 38:
-            _context2.prev = 38;
+          case 39:
+            _context2.prev = 39;
             _context2.t1 = _context2["catch"](7);
             console.log(_context2.t1);
-            _context2.next = 43;
+            _context2.next = 44;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 43:
-            _context2.prev = 43;
-            _context2.next = 46;
+          case 44:
+            _context2.prev = 44;
+            _context2.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context2.next = 53;
+          case 47:
+            _context2.next = 54;
             break;
 
-          case 48:
-            _context2.prev = 48;
-            _context2.t2 = _context2["catch"](43);
+          case 49:
+            _context2.prev = 49;
+            _context2.t2 = _context2["catch"](44);
             console.log(_context2.t2);
-            _context2.next = 53;
+            _context2.next = 54;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
-            _context2.next = 55;
+          case 54:
+            _context2.next = 56;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
+          case 56:
           case "end":
             return _context2.stop();
         }
       }
-    }, null, null, [[7, 38], [14, 21], [43, 48]]);
+    }, null, null, [[7, 39], [14, 21], [44, 49]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -215,7 +225,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 20;
             break;
           }
 
@@ -248,13 +258,24 @@ var GetContent = function GetContent(page, data) {
           _context3.next = 12;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.story-contents__author-link').textContent;
+              return document.querySelector('.story-contents__content').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
         case 12:
+          contenthtml = _context3.sent;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.story-contents__author-link').textContent;
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 15:
           author = _context3.sent;
 
           if (Content != null && Content != "" && Content.length > 255) {
@@ -268,20 +289,22 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 17:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
-          _context3.next = 19;
+        case 20:
+          console.log(AllData_WithConetent);
+          _context3.next = 23;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 23:
         case "end":
           return _context3.stop();
       }

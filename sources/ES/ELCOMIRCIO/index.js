@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {SendToServer} = require('../../../function/sendtoserver');
+const {FormatImage} = require('../../../function/formatimage');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','health','economy'];
+var Categories=['política','salud','economía'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -50,8 +52,8 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url="https://elcomercio.pe/politica/";
-    if(Category==="health") url="https://elcomercio.pe/noticias/coronavirus/"
-    if(Category==="economy") url="https://elcomercio.pe/economia/"
+    if(Category==="salud") url="https://elcomercio.pe/noticias/coronavirus/"
+    if(Category==="economía") url="https://elcomercio.pe/economia/"
     
     try{
         await page.goto(url);
@@ -107,8 +109,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : img,
-                    Category:Category,
-                    source :"Elcomercio "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Elcomercio - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://elcomercio.pe",
                     sourceLogo:"https://cdna.elcomercio.pe/resources/dist/elcomercio/images/logo_fb.jpg"
                       });
@@ -116,10 +118,15 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            console.log(PageData);
+            
+PageData.map((item,j)=>{
+    item.images = FormatImage(item.images);
+    setTimeout(() => {
+         SendToServer('es',item.Category,item.source,item.sourceLogo)
+    },2000*j);
+       AllData.push(item)
+   });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -164,6 +171,14 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.story-contents__content').innerHTML
+            }catch{
+               return null;
+            }
+        });
+
 
         var author = await page.evaluate(()=>{
             try{
@@ -185,11 +200,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
- //console.log(AllData_WithConetent)
+ console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
