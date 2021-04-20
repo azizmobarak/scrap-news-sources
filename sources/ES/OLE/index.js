@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatimages');
+const {SendToServer} = require('../../../function/sendtoserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['football','spain'];
+var Categories=['fútbol','España'];
 
 const SCRAP = () =>{
     (async()=>{
@@ -50,7 +52,7 @@ for(let i=0;i<Categories.length;i++){
     var Category = Categories[i]
     //navigate to category sub route
     var url="https://www.ole.com.ar/";
-    if(Category==="spain") url ="https://www.ole.com.ar/futbol-internacional/espana/";
+    if(Category==="España") url ="https://www.ole.com.ar/futbol-internacional/espana/";
     
     try{
         await page.goto(url);
@@ -97,8 +99,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles)==null ?  articles[j].querySelector("h2").textContent.trim() : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null :  articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"OLE "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"OLE - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.ole.com.ar/",
                     sourceLogo:"https://www.ole.com.ar/bbtfile/5050_20170523ldAO2E.png"
                       });
@@ -106,10 +108,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-          //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('es',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -157,6 +162,15 @@ const GetContent = async(page,data)=>{
         });
 
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.body-nota').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
+
         var author = null;
 
     
@@ -171,11 +185,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     }
- // console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

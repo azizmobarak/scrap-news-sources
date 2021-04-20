@@ -20,7 +20,8 @@ var second_categorie ="argentina"
               articleType:type,
               authorName : article.author,
               articleLanguage:lang,
-              articleDescription:article.content
+              articleDescription:article.content,
+              articleCleanDescription : article.contenthtml
       }
       
        var Model =  category("articles");
