@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatImage');
+const {SendToServer} = require('../../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -99,8 +101,8 @@ var PageData = await page.evaluate((Category)=>{
                        title : titles[j].textContent.trim(),
                        images : typeof(images[j])!="undefined" ? images[j].src : null,
                        link : typeof(links[j])==="undefined" ? null : links[j].href ,
-                       Category:Category,
-                       source :"RFI NEWS",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"RFI NEWS - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.rfi.fr",
                        sourceLogo:"https://static.rfi.fr/meta_og_twcards/jsonld_publisher.png"
                       });
@@ -108,10 +110,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-        //   console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+          PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('fr',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -157,6 +162,15 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+        
+            try{
+             return document.querySelector('.t-content__body').innerHTML;
+            }catch{
+               return null;
+            }
+        });
+
      var author = await page.evaluate(()=>{
          try{
         return document.querySelector('.m-from-author__name').textContent.trim();
@@ -177,12 +191,12 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     
     }
- // console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
