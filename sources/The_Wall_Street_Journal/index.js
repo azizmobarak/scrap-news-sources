@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatImage');
+const {SendToServer} = require('../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -79,7 +81,7 @@ var PageData = await page.evaluate((Category)=>{
            break;
 
         case 'life-arts' :
-            categoryName="art&design";
+            categoryName="art & Design";
             break;
 
         case 'realestate' :
@@ -128,15 +130,15 @@ var PageData = await page.evaluate((Category)=>{
            
               if(j>0) titleClassName="h3";
 
-              if(articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
+              if(typeof(articles[j])!="undefined" && articles[j].querySelector(titleClassName)!=null && articles[j].querySelector(linkClassName)!=null)
                     {
                    data.push({
                       time : Date.now(),
                        title :articles[j].querySelector(titleClassName).textContent.trim(),
                        link : articles[j].querySelector(linkClassName).href,
                        images : articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src : null,
-                       Category: categoryName,
-                       source :"The WallStreetJournal "+categoryName,
+                       Category: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+                       source :"The WallStreetJournal - "+categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
                        sourceLink:"https://www.wsj.com",
                        sourceLogo:"https://assets.website-files.com/5a33ed4f5aec59000163e8fa/5bbf5920e9654bdac813dc27_WSJ%20thumbnial.png"
                          });
@@ -144,8 +146,11 @@ var PageData = await page.evaluate((Category)=>{
               }
                       return data;
                },Category);
-             //  console.log(PageData);
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }}catch(e){
@@ -194,6 +199,15 @@ const GetContent = async(page,data)=>{
            }
         });
 
+
+        var contenthtml =await page.evaluate(()=>{
+            try{
+            return document.querySelector('.snippet').innerHTML;
+            }catch{
+             return null;
+            }
+         });
+
         var author = await page.evaluate(()=>{
             try{
                 return document.querySelector('.author-button').textContent.trim();
@@ -214,11 +228,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author:author,
-                content:Content!=null ? Content : null
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     }
- //  console.log(AllData_WithConetent) 
    await InsertData(AllData_WithConetent);
 }
 
