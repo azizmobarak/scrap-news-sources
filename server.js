@@ -38,8 +38,8 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-cron.schedule('45 * * * *', () => {
-   // 45 hour
+cron.schedule('45 */1 * * *', () => {
+   // 45 min
     const BBC = require('./sources/BBC');
     BBC();
   });

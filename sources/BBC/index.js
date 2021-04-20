@@ -41,6 +41,7 @@ const BBC = () =>{
  
 var AllData=[]; 
 // boucle on categories started 
+try{
 for(let i=0;i<Categories.length;i++){
 
         //get the right category by number
@@ -106,10 +107,10 @@ for(let i=0;i<Categories.length;i++){
             categoryName="international";
         }else{
             if(categoryName==="science_and_environment"){
-                categoryName="science,environment";
+                categoryName="science";
             }else{
                 if(categoryName==="entertainment_and_arts"){
-                    categoryName="entertainment,art&Design";
+                    categoryName="entertainment";
                 }
             }
         }
@@ -128,7 +129,7 @@ for(let i=0;i<Categories.length;i++){
                        Category:categoryName,
                        source :"BBC NEWS",
                        sourceLink:"https://bbc.com",
-                       sourceLogo:"logo",
+                       sourceLogo:"https://upload.wikimedia.org/wikipedia/en/thumb/f/ff/BBC_News.svg/1200px-BBC_News.svg.png",
                        type:"article",
                        author:null
                       });
@@ -142,13 +143,14 @@ for(let i=0;i<Categories.length;i++){
                    AllData.push(item)
                });
        }
-      console.log(AllData);
-  
-     await GetContent(page,AllData);
+      }catch{
+     await browser.close();
+}
+      try{await GetContent(page,AllData);}catch{await browser.close();}
+
      await browser.close();
     })();
 }
-
 
 
 const GetContent = async(page,data)=>{
