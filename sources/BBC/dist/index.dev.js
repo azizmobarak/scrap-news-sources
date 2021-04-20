@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/formatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/sendToserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -51,9 +57,10 @@ var BBC = function BBC() {
             page = _context.sent;
             AllData = []; // boucle on categories started 
 
+            _context.prev = 7;
             i = 0;
 
-          case 8:
+          case 9:
             if (!(i < Categories.length)) {
               _context.next = 21;
               break;
@@ -63,11 +70,11 @@ var BBC = function BBC() {
             Category = Categories[i];
             console.log(Category); //navigate to category sub route
 
-            _context.next = 13;
+            _context.next = 14;
             return regeneratorRuntime.awrap(page["goto"](['https://www.bbc.com/news/', '', Category].join('')));
 
-          case 13:
-            _context.next = 15;
+          case 14:
+            _context.next = 16;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // function to look for a word inside other words
               var WordExist = function WordExist(searchIn) {
@@ -120,10 +127,10 @@ var BBC = function BBC() {
                   categoryName = "international";
                 } else {
                   if (categoryName === "science_and_environment") {
-                    categoryName = "science,environment";
+                    categoryName = "science";
                   } else {
                     if (categoryName === "entertainment_and_arts") {
-                      categoryName = "entertainment,art&Design";
+                      categoryName = "entertainment";
                     }
                   }
                 }
@@ -138,10 +145,10 @@ var BBC = function BBC() {
                     title: titles[j].textContent,
                     link: link[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
-                    Category: categoryName,
-                    source: "BBC NEWS",
+                    Category: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+                    source: "BBC - " + categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
                     sourceLink: "https://bbc.com",
-                    sourceLogo: "logo",
+                    sourceLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/f/ff/BBC_News.svg/1200px-BBC_News.svg.png",
                     type: "article",
                     author: null
                   });
@@ -151,38 +158,62 @@ var BBC = function BBC() {
               return data;
             }, Category));
 
-          case 15:
+          case 16:
             PageData = _context.sent;
-            console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
           case 18:
             i++;
-            _context.next = 8;
+            _context.next = 9;
             break;
 
           case 21:
-            console.log(AllData);
-            _context.next = 24;
-            return regeneratorRuntime.awrap(GetContent(page, AllData));
+            _context.next = 27;
+            break;
 
-          case 24:
-            _context.next = 26;
+          case 23:
+            _context.prev = 23;
+            _context.t0 = _context["catch"](7);
+            _context.next = 27;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 26:
+          case 27:
+            _context.prev = 27;
+            _context.next = 30;
+            return regeneratorRuntime.awrap(GetContent(page, AllData));
+
+          case 30:
+            _context.next = 37;
+            break;
+
+          case 32:
+            _context.prev = 32;
+            _context.t1 = _context["catch"](27);
+            console.log(_context.t1);
+            _context.next = 37;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 37:
+            _context.next = 39;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 39:
           case "end":
             return _context.stop();
         }
       }
-    });
+    }, null, null, [[7, 23], [27, 32]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, contenthtml;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -192,18 +223,18 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 14;
+            _context2.next = 18;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url);
-
-          _context2.next = 7;
+          url = item.link;
+          console.log(url);
+          _context2.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context2.next = 9;
+        case 8:
+          _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var text = document.querySelectorAll('.ssrcss-5h7eao-ArticleWrapper p');
@@ -216,17 +247,32 @@ var GetContent = function GetContent(page, data) {
               }
 
               return allcontent;
-            } catch (_unused) {
+            } catch (_unused2) {
               try {
                 return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').textContent.substring(100, 1100);
-              } catch (_unused2) {
+              } catch (_unused3) {
                 return null;
               }
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context2.sent;
+          _context2.next = 13;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerHTML;
+            } catch (_unused4) {
+              try {
+                return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerHTML;
+              } catch (_unused5) {
+                return null;
+              }
+            }
+          }));
+
+        case 13:
+          contenthtml = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -238,20 +284,21 @@ var GetContent = function GetContent(page, data) {
               source: item.source,
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 11:
+        case 15:
           i++;
           _context2.next = 2;
           break;
 
-        case 14:
-          _context2.next = 16;
+        case 18:
+          _context2.next = 20;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 16:
+        case 20:
         case "end":
           return _context2.stop();
       }

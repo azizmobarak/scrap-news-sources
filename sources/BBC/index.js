@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData')
+const {FormatImage} = require('../../function/formatImage')
+const {SendToServer} = require('../../function/sendToserver')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -126,8 +128,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent,
                        link : link[j].href,
                        images :typeof(images[j])!="undefined" ? images[j].src : null,
-                       Category:categoryName,
-                       source :"BBC NEWS",
+                       Category:categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+                       source :"BBC - "+categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
                        sourceLink:"https://bbc.com",
                        sourceLogo:"https://upload.wikimedia.org/wikipedia/en/thumb/f/ff/BBC_News.svg/1200px-BBC_News.svg.png",
                        type:"article",
@@ -137,16 +139,18 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-
-               console.log(PageData);
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }
       }catch{
      await browser.close();
 }
-      try{await GetContent(page,AllData);}catch{await browser.close();}
+      try{await GetContent(page,AllData);}catch(e){console.log(e);await browser.close();}
 
      await browser.close();
     })();
@@ -161,7 +165,7 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-       // console.log(url);
+        console.log(url);
 
         await page.goto(url);
 
@@ -184,6 +188,18 @@ const GetContent = async(page,data)=>{
                }
             }
         });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+                return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerHTML;
+            }catch{
+               try{
+                return document.querySelector('.ssrcss-5h7eao-ArticleWrapper').innerHTML;
+               }catch{
+                return null;
+               }
+            }
+        });
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -195,12 +211,12 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     
     }
-    
     await InsertData(AllData_WithConetent);
 }
 
