@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatImage');
+const {SendToServer} = require('../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -76,7 +78,7 @@ for(let i=0;i<Categories.length;i++){
                      Category="international"
                  }else{
                      if(Category==="lifestyle"){
-                         Category="life&style"
+                         Category="life & Style"
                      }else{
                          if(Category==="politics"){
                              Category="politic"
@@ -97,8 +99,8 @@ for(let i=0;i<Categories.length;i++){
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images :  (typeof(images[j])=="undefined" || images[j]==null ) ? null : images[j].getAttribute('src'),
-                       Category:Category,
-                       source :"CTV",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"CTV - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.ctvnews.ca",
                        sourceLogo:"https://i.pinimg.com/originals/b3/69/c7/b369c7454adc03bfea8c6b2f4268be5a.png"
                       });
@@ -107,16 +109,22 @@ for(let i=0;i<Categories.length;i++){
                       return data;
                },Category);
                console.log(PageData)
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
-               })
-       }}catch{
+               });
+       }}catch(e){
+           console.log(e)
         await browser.close();
        }
 
        try{
         await GetContent(page,AllData);
        }catch(e){
+        console.log(e)
         await browser.close();
        }
 
@@ -135,7 +143,16 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        await page.goto(url);
+        try{
+            await page.goto(url);
+           }catch{
+            i++;
+            var item = data[i];
+            var url = item.link;
+            console.log(url)
+            await page.goto(url);
+           }
+        console.log(url)
     
         var Content = await page.evaluate(()=>{
             try{
@@ -145,6 +162,14 @@ const GetContent = async(page,data)=>{
              cont=cont+"\n"+text[i].textContent.replaceAll('\t','');
             }
             return cont;
+            }catch{
+                return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+            return document.querySelector('.articleBody').innerHTML;
             }catch{
                 return null;
             }
@@ -170,11 +195,13 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     
     }
+    console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
