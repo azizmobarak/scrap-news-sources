@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatImage');
+const {SendToServer} = require('../../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['football','basketball','athletic'];
+var Categories=['fútbol','baloncesto','atlético'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -52,8 +54,8 @@ for(let i=0;i<Categories.length;i++){
     //navigate to category sub route
     var url ="https://www.marca.com/futbol/primera-division.html?intcmp=MENUPROD&s_kw=primera-division";
 
-    if(Category==="basketball") url="https://www.marca.com/baloncesto/acb.html?intcmp=MENUPROD&s_kw=baloncesto-acb";
-    if(Category==="athletic") url="https://www.marca.com/atletismo.html?intcmp=MENUPROD&s_kw=atletismo";
+    if(Category==="baloncesto") url="https://www.marca.com/baloncesto/acb.html?intcmp=MENUPROD&s_kw=baloncesto-acb";
+    if(Category==="atlético") url="https://www.marca.com/atletismo.html?intcmp=MENUPROD&s_kw=atletismo";
     
     try{
         await page.goto(url);
@@ -101,8 +103,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"Marca "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"Marca - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.marca.com",
                     sourceLogo:"https://greatsaveluongo.files.wordpress.com/2013/03/marca.jpg"
                       });
@@ -110,10 +112,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-         //   console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+            PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('es',item.Category,item.source,item.sourceLogo)
+                },2000*j);
+                   AllData.push(item)
+               });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -140,7 +145,6 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       // console.log(url)
         await page.goto(url);
     
         var Content = await page.evaluate(()=>{
@@ -152,6 +156,14 @@ const GetContent = async(page,data)=>{
                   scond_content = scond_content +"\n"+second_text[i].textContent.trim().replaceAll('\n','');
                }
                 return scond_content;
+            }catch{
+               return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+              return document.querySelector('.ue-c-article__body').innerHTML;
             }catch{
                return null;
             }
@@ -170,11 +182,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     }
-   // console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
