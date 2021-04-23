@@ -31,12 +31,12 @@ con.connect(process.env.DATABASE, {
       }
     });
   }
-});
-cron.schedule('*/25 * * * *', function () {
-  var ESPN = require('./sources/EN/ESPN_NEWS');
+}); // cron.schedule('*/25 * * * *', () => {
 
-  ESPN();
-});
+var ESPN = require('./sources/EN/ESPN_NEWS');
+
+ESPN(); // });
+
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });

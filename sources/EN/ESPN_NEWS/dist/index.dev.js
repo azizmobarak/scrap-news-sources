@@ -13,7 +13,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../../function/formatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../../function/sendToserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -57,7 +63,7 @@ var ESPN = function ESPN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 32;
+              _context.next = 33;
               break;
             }
 
@@ -107,7 +113,7 @@ var ESPN = function ESPN() {
                     Category = "rugby";
                   } else {
                     if (Category === "f1") {
-                      Category = "formulaone";
+                      Category = "formula 1";
                     } else {
                       if (Category === "mma") {
                         Category = "boxing";
@@ -126,8 +132,8 @@ var ESPN = function ESPN() {
                     title: articles[j].querySelector(titles).textContent,
                     link: articles[j].querySelector(links).href,
                     images: articles[j].querySelector(images) == null ? null : articles[j].querySelector(images).srcset.split(",")[0] === "" ? null : articles[j].querySelector(images).srcset.split(",")[0],
-                    Category: Category,
-                    source: "ESPN " + Category,
+                    Category: Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source: "ESPN - " + Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink: "https://espn.com",
                     sourceLogo: "https://i.pinimg.com/originals/b3/69/c7/b369c7454adc03bfea8c6b2f4268be5a.png"
                   });
@@ -139,56 +145,60 @@ var ESPN = function ESPN() {
 
           case 27:
             PageData = _context.sent;
-            //console.log(PageData)
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 29:
+          case 30:
             i++;
             _context.next = 9;
             break;
 
-          case 32:
-            _context.next = 38;
+          case 33:
+            _context.next = 39;
             break;
 
-          case 34:
-            _context.prev = 34;
+          case 35:
+            _context.prev = 35;
             _context.t1 = _context["catch"](7);
-            _context.next = 38;
+            _context.next = 39;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 38:
-            _context.prev = 38;
-            _context.next = 41;
+          case 39:
+            _context.prev = 39;
+            _context.next = 42;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 41:
-            _context.next = 47;
+          case 42:
+            _context.next = 48;
             break;
 
-          case 43:
-            _context.prev = 43;
-            _context.t2 = _context["catch"](38);
-            _context.next = 47;
+          case 44:
+            _context.prev = 44;
+            _context.t2 = _context["catch"](39);
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 47:
-            _context.next = 49;
+          case 48:
+            _context.next = 50;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 49:
+          case 50:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 34], [11, 21], [38, 43]]);
+    }, null, null, [[7, 35], [11, 21], [39, 44]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -198,18 +208,18 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 21;
             break;
           }
 
           item = data[i];
-          url = item.link; //  console.log(url)
-
-          _context2.next = 7;
+          url = item.link;
+          console.log(url);
+          _context2.next = 8;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context2.next = 9;
+        case 8:
+          _context2.next = 10;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var text = document.querySelectorAll(".article-body p");
@@ -225,20 +235,31 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 9:
+        case 10:
           Content = _context2.sent;
-          _context2.next = 12;
+          _context2.next = 13;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              var auth = document.querySelector(".author").textContent;
-              if (auth === "ESPN") auth = (_readOnlyError("auth"), null);
-              return auth;
+              return document.querySelector(".article-body").innerHTML;
             } catch (_unused5) {
               return null;
             }
           }));
 
-        case 12:
+        case 13:
+          contenthtml = _context2.sent;
+          _context2.next = 16;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              var auth = document.querySelector(".author").textContent;
+              if (auth === "ESPN") auth = (_readOnlyError("auth"), null);
+              return auth;
+            } catch (_unused6) {
+              return null;
+            }
+          }));
+
+        case 16:
           author = _context2.sent;
 
           if (item.images != null && Content != null && Content != "") {
@@ -252,20 +273,22 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 18:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
-          _context2.next = 19;
+        case 21:
+          console.log(AllData_WithConetent);
+          _context2.next = 24;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 24:
         case "end":
           return _context2.stop();
       }
