@@ -46,7 +46,7 @@ var ESPN = function ESPN() {
           case 0:
             _context.next = 2;
             return regeneratorRuntime.awrap(puppeteer.launch({
-              headless: true,
+              headless: false,
               args: ['--enable-features=NetworkService', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--shm-size=3gb']
             }));
 
@@ -63,7 +63,7 @@ var ESPN = function ESPN() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 33;
+              _context.next = 32;
               break;
             }
 
@@ -145,7 +145,6 @@ var ESPN = function ESPN() {
 
           case 27:
             PageData = _context.sent;
-            console.log(PageData);
             PageData.map(function (item, j) {
               item.images = FormatImage(item.images);
               setTimeout(function () {
@@ -154,46 +153,46 @@ var ESPN = function ESPN() {
               AllData.push(item);
             });
 
-          case 30:
+          case 29:
             i++;
             _context.next = 9;
             break;
 
-          case 33:
-            _context.next = 39;
+          case 32:
+            _context.next = 38;
             break;
 
-          case 35:
-            _context.prev = 35;
+          case 34:
+            _context.prev = 34;
             _context.t1 = _context["catch"](7);
-            _context.next = 39;
+            _context.next = 38;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 39:
-            _context.prev = 39;
-            _context.next = 42;
+          case 38:
+            _context.prev = 38;
+            _context.next = 41;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 42:
-            _context.next = 48;
+          case 41:
+            _context.next = 47;
             break;
 
-          case 44:
-            _context.prev = 44;
-            _context.t2 = _context["catch"](39);
-            _context.next = 48;
+          case 43:
+            _context.prev = 43;
+            _context.t2 = _context["catch"](38);
+            _context.next = 47;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
-            _context.next = 50;
+          case 47:
+            _context.next = 49;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 50:
+          case 49:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 35], [11, 21], [39, 44]]);
+    }, null, null, [[7, 34], [11, 21], [38, 43]]);
   })();
 };
 
@@ -284,11 +283,10 @@ var GetContent = function GetContent(page, data) {
           break;
 
         case 21:
-          console.log(AllData_WithConetent);
-          _context2.next = 24;
+          _context2.next = 23;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 24:
+        case 23:
         case "end":
           return _context2.stop();
       }

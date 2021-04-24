@@ -22,10 +22,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('*/25 * * * *', () => {
+cron.schedule('*/25 * * * *', () => {
  const ESPN = require('./sources/EN/ESPN_NEWS');
  ESPN();
-// });
+});
 
 
 app.listen(PORT, ()=>{

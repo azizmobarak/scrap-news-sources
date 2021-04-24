@@ -28,7 +28,7 @@ var Categories=['nba','soccer','mma','nfl','boxing','golf','racing','tennis','f1
 const ESPN = () =>{
     (async()=>{
        var browser =await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: [
             '--enable-features=NetworkService',
             '--no-sandbox',
@@ -108,7 +108,6 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
                },Category);
-               console.log(PageData)
                PageData.map((item,j)=>{
                 item.images = FormatImage(item.images);
                 setTimeout(() => {
@@ -192,7 +191,6 @@ const GetContent = async(page,data)=>{
        }
     
     }
-    console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
