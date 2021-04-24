@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatImage');
+const {SendToServer} = require('../../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['politic','international','science','technology'];
+var Categories=['politique','international','science','technologie'];
 
 const LEPOINT = () =>{
     (async()=>{
@@ -53,7 +55,7 @@ for(let i=0;i<Categories.length;i++){
 
     if(Category==="international") url ="https://www.lepoint.fr/monde/";
     if(Category==="science") url="https://www.lepoint.fr/sciences-nature/";
-    if(Category==="technology") url="https://www.lepoint.fr/high-tech-internet/";
+    if(Category==="technologie") url="https://www.lepoint.fr/high-tech-internet/";
 
     try{
         await page.goto(url);
@@ -101,8 +103,8 @@ for(let i=0;i<Categories.length;i++){
                        title : article[j].querySelector(titles).textContent.trim(),
                        link : j==0 ? article[j].querySelector("a").href : article[j].querySelector(links).href,
                        images : typeof(article[j].querySelector(images))==="undefined" ? null : article[j].querySelector(images).src ,
-                       Category:Category,
-                       source :"Le Point",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"Le Point - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.lepoint.fr/",
                        sourceLogo:"https://www.lebal.paris/wp-content/uploads/2018/07/18117-1.jpg"
                       });
@@ -110,10 +112,14 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-          // console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+           console.log(PageData);
+           PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('fr',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -141,8 +147,16 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        await page.goto(url);
-         console.log(url)
+        try{
+             console.log(url)
+            await page.goto(url);
+           }catch{
+            i++;
+            var item = data[i];
+            var url = item.link;
+            console.log(url)
+            await page.goto(url);
+           }
     
         var Content = await page.evaluate(()=>{
         
@@ -154,6 +168,14 @@ const GetContent = async(page,data)=>{
                 scond_content = scond_content +"\n"+second_text[i].textContent;
              }
               return scond_content;
+            }catch{
+               return null;
+            }
+        });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.ArticleBody').innerHTML
             }catch{
                return null;
             }
@@ -180,13 +202,14 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : author,
-                content:Content
+                content:Content,
+                contenthtml:contenthtml
           });
        }
     
     }
   console.log(AllData_WithConetent)
-  //await InsertData(AllData_WithConetent);
+  await InsertData(AllData_WithConetent);
 }
 
 
