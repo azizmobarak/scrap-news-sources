@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData');
+const {SendToServer} = require('../../function/sendToserver');
+const {FormatImage} = require('../../function/formatImage');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -100,8 +102,8 @@ var PageData = await page.evaluate((Category)=>{
                        title :articles[j].querySelector(titleClassName).textContent.trim(),
                        link : articles[j].querySelector(linkClassName).href,
                        images :articles[j].querySelector(imageClassName)!=null ? articles[j].querySelector(imageClassName).src : null,
-                       Category:categoryName,
-                       source :"MSNBC "+categoryName,
+                       Category:categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+                       source :"MSNBC - "+categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
                        sourceLink:"https://www.nbcnews.com/",
                        sourceLogo:"https://png.pngitem.com/pimgs/s/488-4884737_msnbc-news-cnbc-logo-png-transparent-png.png"
                          });
@@ -109,8 +111,11 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
                },Category);
-
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }
@@ -133,15 +138,34 @@ const GetContent = async(page,data)=>{
 
         try{
             await page.goto(url);
-        }catch{
+           }catch{
+            i++;
+            var item = data[i];
+            var url = item.link;
+            console.log(url)
             await page.goto(url);
-        }
+           }
+    
 
     
         var Content = await page.evaluate(()=>{
+           try{
             var text = document.querySelector('.article-body__content').innerText;
             return text;
+           }catch{
+               return null
+           }
         });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+                var text = document.querySelector('.article-body__content').innerHTML;
+                return text;
+            }catch{
+               return null
+            }
+        });
+
     
 
     if(Content!=null && Content!="" && item.title!=null){
@@ -154,7 +178,8 @@ const GetContent = async(page,data)=>{
                 source :item.source,
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
-                content:Content!=null ? Content : null
+                content:Content!=null ? Content : null,
+                contenthtml : contenthtml
           });
        }
     }
