@@ -50,7 +50,6 @@ const LARAZON = () => {
 
                 //get the right category by number
                 var Category = Categories[i]
-                console.log(Category)
                 //navigate to category sub route
                 var url = "https://www.la-razon.com/nacional/";
 
@@ -114,7 +113,6 @@ const LARAZON = () => {
                     }
                     return data;
                 }, Category);
-                  console.log(PageData);
                 PageData.map((item, j) => {
                     item.images = FormatImage(item.images);
                     setTimeout(() => {
@@ -201,7 +199,6 @@ const GetContent = async (page, data) => {
             });
         }
     }
-    console.log(AllData_WithConetent)
     await InsertData(AllData_WithConetent);
 }
 
