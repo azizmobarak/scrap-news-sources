@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../../function/insertData');
+const {FormatImage} = require('../../../function/formatImage');
+const {SendToServer} = require('../../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -21,7 +23,7 @@ puppeteer.use(
 
 puppeteer.use(puppeteer_agent());
 
-var Categories=['bolivia','football','economy','culture','opinion'];
+var Categories=['bolivia','fútbol','economía','cultura','opinión'];
 
 const LARAZON = () =>{
     (async()=>{
@@ -48,14 +50,13 @@ for(let i=0;i<Categories.length;i++){
 
     //get the right category by number
     var Category = Categories[i]
-    console.log(Category)
     //navigate to category sub route
     var url ="https://www.paginasiete.bo/nacional/";
 
-    if(Category==="football") url="https://www.paginasiete.bo/campeones/";
-    if(Category==="economy") url="https://www.paginasiete.bo/economia/";
-    if(Category==="culture") url="https://www.paginasiete.bo/cultura/";
-    if(Category==="opinion") url="https://www.paginasiete.bo/opinion/";
+    if(Category==="fútbol") url="https://www.paginasiete.bo/campeones/";
+    if(Category==="economía") url="https://www.paginasiete.bo/economia/";
+    if(Category==="cultura") url="https://www.paginasiete.bo/cultura/";
+    if(Category==="opinión") url="https://www.paginasiete.bo/opinion/";
     
     try{
         await page.goto(url);
@@ -104,8 +105,8 @@ var PageData = await page.evaluate((Category)=>{
                     title : articles[j].querySelector(titles).textContent.trim(),
                     link : articles[j].querySelector(links).href,
                     images : articles[j].querySelector(images)==null ? null : articles[j].querySelector(images).src,
-                    Category:Category,
-                    source :"PaginaSiete "+Category,
+                    Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                    source :"PaginaSiete - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                     sourceLink:"https://www.paginasiete.bo",
                     sourceLogo:"https://upload.wikimedia.org/wikipedia/commons/b/ba/P%C3%A1gina_Siete.png"
                       });
@@ -113,10 +114,13 @@ var PageData = await page.evaluate((Category)=>{
                }
                       return data;
      },Category);
-         //  console.log(PageData);
-            PageData.map(item=>{
-            AllData.push(item)
-                    });
+         PageData.map((item,j)=>{
+            item.images = FormatImage(item.images);
+            setTimeout(() => {
+                 SendToServer('es',item.Category,item.source,item.sourceLogo)
+            },2000*j);
+               AllData.push(item)
+           });
        }}catch(e){
         console.log(e)
         await browser.close();
@@ -143,8 +147,14 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-       //console.log(url)
+       try{
         await page.goto(url);
+       }catch{
+        i++;
+        var item = data[i];
+        var url = item.link;
+        await page.goto(url);
+       }
     
         var Content = await page.evaluate(()=>{
             try{
@@ -160,6 +170,13 @@ const GetContent = async(page,data)=>{
             }
         });
 
+        var contenthtml = await page.evaluate(()=>{
+            try{
+               return document.querySelector('.cuerpo-nota').innerHTML;
+            }catch{
+               return null;
+            }
+        });
     
     if(Content!=null && Content!=""){
           AllData_WithConetent.push({
@@ -172,11 +189,11 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author : null,
-                content:Content
+                content:Content,
+                contenthtml : contenthtml
           });
        }
     }
- //console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 
