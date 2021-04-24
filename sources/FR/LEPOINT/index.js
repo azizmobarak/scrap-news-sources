@@ -112,7 +112,6 @@ for(let i=0;i<Categories.length;i++){
                }
                       return data;
      },Category);
-           console.log(PageData);
            PageData.map((item,j)=>{
             item.images = FormatImage(item.images);
             setTimeout(() => {
@@ -148,13 +147,11 @@ const GetContent = async(page,data)=>{
         var url = item.link;
 
         try{
-             console.log(url)
             await page.goto(url);
            }catch{
             i++;
             var item = data[i];
             var url = item.link;
-            console.log(url)
             await page.goto(url);
            }
     
@@ -208,7 +205,6 @@ const GetContent = async(page,data)=>{
        }
     
     }
-  console.log(AllData_WithConetent)
   await InsertData(AllData_WithConetent);
 }
 

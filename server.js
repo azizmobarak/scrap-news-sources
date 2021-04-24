@@ -24,10 +24,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 
 
 
-// cron.schedule('00 */1 * * *', () => {
+cron.schedule('00 */1 * * *', () => {
    const lepoint = require('./sources/FR/LEPOINT');
    lepoint();
-// });
+});
 
 app.listen(PORT, ()=>{
     console.log('connected at '+ PORT);
