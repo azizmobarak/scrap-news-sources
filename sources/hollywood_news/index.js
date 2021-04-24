@@ -28,7 +28,7 @@ var Categories = ['entertainment'];
 const hollywoodnews = () => {
     (async () => {
         var browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             args: [
                 '--enable-features=NetworkService',
                 '--no-sandbox',
