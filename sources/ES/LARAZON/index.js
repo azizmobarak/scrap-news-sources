@@ -150,8 +150,16 @@ const GetContent = async (page, data) => {
         var item = data[i];
         var url = item.link;
 
-        // console.log(url)
-        await page.goto(url);
+         console.log(url)
+         try{
+            await page.goto(url);
+           }catch{
+            i++;
+            var item = data[i];
+            var url = item.link;
+            console.log(url)
+            await page.goto(url);
+           }
 
         var Content = await page.evaluate(() => {
             try {

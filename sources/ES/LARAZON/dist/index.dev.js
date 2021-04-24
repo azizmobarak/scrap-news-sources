@@ -218,18 +218,33 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context3.next = 17;
+            _context3.next = 29;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url)
-
-          _context3.next = 7;
+          url = item.link;
+          console.log(url);
+          _context3.prev = 6;
+          _context3.next = 9;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context3.next = 9;
+        case 9:
+          _context3.next = 19;
+          break;
+
+        case 11:
+          _context3.prev = 11;
+          _context3.t0 = _context3["catch"](6);
+          i++;
+          item = data[i];
+          url = item.link;
+          console.log(url);
+          _context3.next = 19;
+          return regeneratorRuntime.awrap(page["goto"](url));
+
+        case 19:
+          _context3.next = 21;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               // first try to get all content
@@ -241,23 +256,23 @@ var GetContent = function GetContent(page, data) {
               }
 
               return scond_content.replaceAll('\n', '');
-            } catch (_unused2) {
-              return null;
-            }
-          }));
-
-        case 9:
-          Content = _context3.sent;
-          _context3.next = 12;
-          return regeneratorRuntime.awrap(page.evaluate(function () {
-            try {
-              return document.querySelector('.article-body').innerHTML;
             } catch (_unused3) {
               return null;
             }
           }));
 
-        case 12:
+        case 21:
+          Content = _context3.sent;
+          _context3.next = 24;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.article-body').innerHTML;
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 24:
           contenthtml = _context3.sent;
 
           if (Content != null && Content != "") {
@@ -276,22 +291,22 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 14:
+        case 26:
           i++;
           _context3.next = 2;
           break;
 
-        case 17:
+        case 29:
           console.log(AllData_WithConetent);
-          _context3.next = 20;
+          _context3.next = 32;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 20:
+        case 32:
         case "end":
           return _context3.stop();
       }
     }
-  });
+  }, null, null, [[6, 11]]);
 };
 
 module.exports = LARAZON;
