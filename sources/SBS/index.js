@@ -6,6 +6,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const {InsertData} = require('../../function/insertData');
+const {FormatImage} = require('../../function/formatImage');
+const {SendToServer} = require('../../function/sendToserver');
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -73,7 +75,7 @@ var PageData = await page.evaluate((Category)=>{
        
          
         var data =[];
-         for(let j=0;j<6;j++){
+         for(let j=0;j<2;j++){
            
               if(typeof(titles[j])!="undefined" && typeof(links[j])!="undefined"){
                    data.push({
@@ -81,17 +83,20 @@ var PageData = await page.evaluate((Category)=>{
                        title : titles[j].textContent.trim(),
                        link : links[j].href,
                        images : typeof(images[j==0 ? j : j+2]) === "undefined" ? null : images[j].srcset,
-                       Category:Category,
-                       source :"SBS News",
+                       Category:Category.charAt(0).toUpperCase() + Category.slice(1),
+                       source :"SBS - "+Category.charAt(0).toUpperCase() + Category.slice(1),
                        sourceLink:"https://www.sbs.com.au",
-                       sourceLogo:"https://mw3.wsj.net/mw5/content/logos/mw_logo_social.png"
+                       sourceLogo:"https://i1.sndcdn.com/avatars-000069869393-zwvoyp-t500x500.jpg"
                       });
                    }
                }
                       return data;
                },Category);
-               console.log(PageData);
-               PageData.map(item=>{
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }}catch{
@@ -120,8 +125,15 @@ const GetContent = async(page,data)=>{
         var item = data[i];
         var url = item.link;
 
-        await page.goto(url);
-        console.log(url)
+        try{
+            await page.goto(url);
+           }catch{
+            i++;
+            var item = data[i];
+            var url = item.link;
+            console.log(url)
+            await page.goto(url);
+           }
     
         var Content = await page.evaluate(()=>{
         
@@ -131,6 +143,14 @@ const GetContent = async(page,data)=>{
                     return null;
                 }
         });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+             return document.querySelector('.article__body').innerHTML;
+             }catch{
+                 return null;
+             }
+         });
 
     
     if(Content!=null && Content!=""){
@@ -145,12 +165,12 @@ const GetContent = async(page,data)=>{
                 sourceLogo:item.sourceLogo,
                 author : null,
                 content:Content,
+                contenthtml:contenthtml
           });
        }
     
     }
-    console.log(AllData_WithConetent)
-   // await InsertData(AllData_WithConetent);
+    await InsertData(AllData_WithConetent);
 }
 
 
