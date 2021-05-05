@@ -13,6 +13,12 @@ var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 var _require = require('../../function/insertData'),
     InsertData = _require.InsertData;
 
+var _require2 = require('../../function/formatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/sendToserver'),
+    SendToServer = _require3.SendToServer;
+
 var fs = require('fs'); //block ads
 
 
@@ -181,7 +187,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
                                 cateogryName = "education";
                               } else {
                                 if (Category === "lifestyle") {
-                                  cateogryName = "life&style";
+                                  cateogryName = "life & Style";
                                 } else {
                                   if (cateogryName === "poinions") {
                                     cateogryName = "opinion";
@@ -209,10 +215,10 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
                     title: titles[j].textContent.trim(),
                     link: links[j].href,
                     images: typeof images[j] != "undefined" ? images[j].src : null,
-                    Category: cateogryName,
-                    source: "The Washington Post",
+                    Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                    source: "WashingtonPost - " + cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                     sourceLink: "https://www.washingtonpost.com/",
-                    sourceLogo: "The Washingtonpost logo",
+                    sourceLogo: "https://pbs.twimg.com/profile_images/1046851302859452416/NOW9bc02_400x400.jpg",
                     author: typeof authors[j] != "undefined" ? authors[j].textContent : null
                   });
                 }
@@ -224,7 +230,11 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
           case 38:
             PageData = _context.sent;
             console.log(PageData);
-            PageData.map(function (item) {
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
@@ -234,24 +244,35 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
             break;
 
           case 44:
-            _context.next = 46;
+            _context.prev = 44;
+            _context.next = 47;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 46:
-            _context.next = 48;
+          case 47:
+            _context.next = 53;
+            break;
+
+          case 49:
+            _context.prev = 49;
+            _context.t2 = _context["catch"](44);
+            _context.next = 53;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
+          case 53:
+            _context.next = 55;
+            return regeneratorRuntime.awrap(browser.close());
+
+          case 55:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 25], [13, 20]]);
+    }, null, null, [[10, 25], [13, 20], [44, 49]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content;
+  var AllData_WithConetent, i, item, url, Content, contenthtml;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -261,7 +282,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 23;
+            _context2.next = 30;
             break;
           }
 
@@ -276,28 +297,44 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page["goto"](url));
 
         case 10:
-          _context2.next = 16;
+          _context2.next = 20;
           break;
 
         case 12:
           _context2.prev = 12;
           _context2.t0 = _context2["catch"](7);
-          _context2.next = 16;
+          i++;
+          item = data[i];
+          url = item.link;
+          console.log(url);
+          _context2.next = 20;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 16:
-          _context2.next = 18;
+        case 20:
+          _context2.next = 22;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               var text = document.querySelector('.article-body').textContent;
               return text;
-            } catch (_unused2) {
+            } catch (_unused3) {
               return null;
             }
           }));
 
-        case 18:
+        case 22:
           Content = _context2.sent;
+          _context2.next = 25;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              var text = document.querySelector('.article-body').innerHtml;
+              return text;
+            } catch (_unused4) {
+              return null;
+            }
+          }));
+
+        case 25:
+          contenthtml = _context2.sent;
 
           if (Content != null && Content != "") {
             AllData_WithConetent.push({
@@ -310,20 +347,22 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: item.author,
-              content: Content != null ? Content : null
+              content: Content,
+              contenthtml: contenthtml
             });
           }
 
-        case 20:
+        case 27:
           i++;
           _context2.next = 2;
           break;
 
-        case 23:
-          _context2.next = 25;
+        case 30:
+          console.log(AllData_WithConetent);
+          _context2.next = 33;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 25:
+        case 33:
         case "end":
           return _context2.stop();
       }

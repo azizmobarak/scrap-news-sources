@@ -15,15 +15,7 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
         model.find({status:null},(err,doc)=>{
         if(err)console.log(err)
         else{
-            // doc.map(item=>{
-            //    // console.log(item.status)
-            //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-            //         if(err) console.log(err)
-            //         else{
-            //             console.log(count)
-            //         }
-            //     });
-            // })
+           
         }
         });
      }

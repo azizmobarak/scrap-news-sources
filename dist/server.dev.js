@@ -26,24 +26,14 @@ con.connect(process.env.DATABASE, {
     model.find({
       status: null
     }, function (err, doc) {
-      if (err) console.log(err);else {// doc.map(item=>{
-        //    // console.log(item.status)
-        //     model.updateOne({_id:item._id},{ $set : {status:"published"} },(err,count)=>{
-        //         if(err) console.log(err)
-        //         else{
-        //             console.log(count)
-        //         }
-        //     });
-        // })
-      }
+      if (err) console.log(err);else {}
     });
   }
-});
-cron.schedule('20 */1 * * *', function () {
-  var CVT = require('./sources/CTV');
-
-  CVT();
-}); // cron.schedule('20 */1 * * *', () => {
+}); //cron.schedule('20 */1 * * *', () => {
+// const CVT = require('./sources/CTV');
+// CVT();
+//});
+// cron.schedule('20 */1 * * *', () => {
 //  const ESPN = require('./sources/ESPN_NEWS');
 //  ESPN();
 // });
