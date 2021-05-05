@@ -39,7 +39,7 @@ var Categories = ['politics', 'opinions', 'national/investigations', 'business/t
 
 var WASHINGTONPOST = function WASHINGTONPOST() {
   (function _callee() {
-    var browser, page, AllData, i, Category, body, PageData;
+    var browser, page, AllData, i, Category, PageData;
     return regeneratorRuntime.async(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -64,7 +64,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 44;
+              _context.next = 37;
               break;
             }
 
@@ -104,29 +104,6 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 29:
             _context.next = 31;
-            return regeneratorRuntime.awrap(page.evaluate(function () {
-              return document.querySelector('body').innerHTML;
-            }));
-
-          case 31:
-            body = _context.sent;
-            _context.next = 34;
-            return regeneratorRuntime.awrap(fs.writeFile("test.html", body, function (err) {
-              if (err) {
-                return console.log(err);
-              }
-
-              console.log("The file was saved!");
-            }));
-
-          case 34:
-            _context.next = 36;
-            return regeneratorRuntime.awrap(page.screenshot({
-              path: 'screenshot.png'
-            }));
-
-          case 36:
-            _context.next = 38;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -227,7 +204,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 38:
+          case 31:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item, j) {
@@ -238,36 +215,36 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               AllData.push(item);
             });
 
-          case 41:
+          case 34:
             i++;
             _context.next = 8;
             break;
 
-          case 44:
-            _context.prev = 44;
-            _context.next = 47;
+          case 37:
+            _context.prev = 37;
+            _context.next = 40;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 47:
-            _context.next = 53;
+          case 40:
+            _context.next = 46;
             break;
 
-          case 49:
-            _context.prev = 49;
-            _context.t2 = _context["catch"](44);
-            _context.next = 53;
+          case 42:
+            _context.prev = 42;
+            _context.t2 = _context["catch"](37);
+            _context.next = 46;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 53:
-            _context.next = 55;
+          case 46:
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 55:
+          case 48:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 25], [13, 20], [44, 49]]);
+    }, null, null, [[10, 25], [13, 20], [37, 42]]);
   })();
 };
 

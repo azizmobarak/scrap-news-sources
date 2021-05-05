@@ -75,18 +75,18 @@ const WASHINGTONPOST = () => {
             }
 
 
-            var body = await page.evaluate(() => document.querySelector('body').innerHTML);
+            // var body = await page.evaluate(() => document.querySelector('body').innerHTML);
 
-            await fs.writeFile("test.html", body, function (err) {
-                if (err) {
-                    return console.log(err);
-                }
-                console.log("The file was saved!");
-            });
+            // await fs.writeFile("test.html", body, function (err) {
+            //     if (err) {
+            //         return console.log(err);
+            //     }
+            //     console.log("The file was saved!");
+            // });
 
 
 
-            await page.screenshot({ path: 'screenshot.png' });
+            // await page.screenshot({ path: 'screenshot.png' });
 
 
             // get the data from the page
