@@ -55,12 +55,12 @@ const WASHINGTONPOST = () => {
             try {
                 //navigate to category sub route
                 await page.goto(['https://www.washingtonpost.com/', '', Category].join(''));
-                try {
-                    await page.waitForSelector('button.continue-btn');
-                    await page.click('button.continue-btn');
-                    // await page.waitForSelector('button[type=submit]');
-                    // await page.waitForSelector('button[type=submit]');
-                } catch (e) { console.log(e) }
+                // try {
+                //     await page.waitForSelector('button.continue-btn');
+                //     await page.click('button.continue-btn');
+                //     // await page.waitForSelector('button[type=submit]');
+                //     // await page.waitForSelector('button[type=submit]');
+                // } catch (e) { console.log(e) }
                 //  await page.waitForNavigation({ waitUntil: 'networkidle0' }) //networkidle0
             } catch (e) {
                 //navigate to category sub route

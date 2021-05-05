@@ -64,7 +64,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
 
           case 8:
             if (!(i < Categories.length)) {
-              _context.next = 37;
+              _context.next = 27;
               break;
             }
 
@@ -75,35 +75,17 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
           case 13:
-            _context.prev = 13;
-            _context.next = 16;
-            return regeneratorRuntime.awrap(page.waitForSelector('button.continue-btn'));
-
-          case 16:
-            _context.next = 18;
-            return regeneratorRuntime.awrap(page.click('button.continue-btn'));
-
-          case 18:
-            _context.next = 23;
+            _context.next = 19;
             break;
 
-          case 20:
-            _context.prev = 20;
-            _context.t0 = _context["catch"](13);
-            console.log(_context.t0);
-
-          case 23:
-            _context.next = 29;
-            break;
-
-          case 25:
-            _context.prev = 25;
-            _context.t1 = _context["catch"](10);
-            _context.next = 29;
+          case 15:
+            _context.prev = 15;
+            _context.t0 = _context["catch"](10);
+            _context.next = 19;
             return regeneratorRuntime.awrap(page["goto"](['https://www.washingtonpost.com/', '', Category].join('')));
 
-          case 29:
-            _context.next = 31;
+          case 19:
+            _context.next = 21;
             return regeneratorRuntime.awrap(page.evaluate(function (Category) {
               // Los Angelece News classes
               var loop = 3;
@@ -204,7 +186,7 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               return data;
             }, Category));
 
-          case 31:
+          case 21:
             PageData = _context.sent;
             console.log(PageData);
             PageData.map(function (item, j) {
@@ -215,36 +197,36 @@ var WASHINGTONPOST = function WASHINGTONPOST() {
               AllData.push(item);
             });
 
-          case 34:
+          case 24:
             i++;
             _context.next = 8;
             break;
 
-          case 37:
-            _context.prev = 37;
-            _context.next = 40;
+          case 27:
+            _context.prev = 27;
+            _context.next = 30;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 40:
-            _context.next = 46;
+          case 30:
+            _context.next = 36;
             break;
 
-          case 42:
-            _context.prev = 42;
-            _context.t2 = _context["catch"](37);
-            _context.next = 46;
+          case 32:
+            _context.prev = 32;
+            _context.t1 = _context["catch"](27);
+            _context.next = 36;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 46:
-            _context.next = 48;
+          case 36:
+            _context.next = 38;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 48:
+          case 38:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[10, 25], [13, 20], [37, 42]]);
+    }, null, null, [[10, 15], [27, 32]]);
   })();
 };
 
