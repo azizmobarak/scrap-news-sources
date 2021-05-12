@@ -193,6 +193,7 @@ const GetContent = async(page,data)=>{
 
     
         var Content = await page.evaluate(()=>{
+           try{
             var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
             var textArray=[];
 
@@ -201,6 +202,9 @@ const GetContent = async(page,data)=>{
                 textArray.push('   ');
             }
             return textArray.join('\n');
+           }catch{
+               return null;
+           }
         });
 
 

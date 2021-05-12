@@ -275,15 +275,19 @@ var GetContent = function GetContent(page, data) {
         case 19:
           _context2.next = 21;
           return regeneratorRuntime.awrap(page.evaluate(function () {
-            var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
-            var textArray = [];
+            try {
+              var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
+              var textArray = [];
 
-            for (var _i = 0; _i < text.length; _i++) {
-              textArray.push(text[_i].textContent);
-              textArray.push('   ');
+              for (var _i = 0; _i < text.length; _i++) {
+                textArray.push(text[_i].textContent);
+                textArray.push('   ');
+              }
+
+              return textArray.join('\n');
+            } catch (_unused4) {
+              return null;
             }
-
-            return textArray.join('\n');
           }));
 
         case 21:
@@ -292,7 +296,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('.body-copy-v2').innerHTML;
-            } catch (_unused4) {
+            } catch (_unused5) {
               return null;
             }
           }));
@@ -303,7 +307,7 @@ var GetContent = function GetContent(page, data) {
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
-            } catch (_unused5) {
+            } catch (_unused6) {
               return null;
             }
           }));
