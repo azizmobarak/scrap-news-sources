@@ -247,7 +247,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 32;
+            _context2.next = 33;
             break;
           }
 
@@ -291,7 +291,7 @@ var GetContent = function GetContent(page, data) {
           _context2.next = 24;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('div.body-copy-v2.fence-body').innerHTML;
+              return document.querySelector('.body-copy-v2').innerHTML;
             } catch (_unused4) {
               return null;
             }
@@ -299,7 +299,8 @@ var GetContent = function GetContent(page, data) {
 
         case 24:
           contenthtml = _context2.sent;
-          _context2.next = 27;
+          console.log(contenthtml);
+          _context2.next = 28;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
@@ -308,7 +309,7 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 27:
+        case 28:
           author = _context2.sent;
 
           if (Content != null && Content != "" && contenthtml != null) {
@@ -327,17 +328,17 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 29:
+        case 30:
           i++;
           _context2.next = 2;
           break;
 
-        case 32:
+        case 33:
           console.log(AllData_WithConetent);
-          _context2.next = 35;
+          _context2.next = 36;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 35:
+        case 36:
         case "end":
           return _context2.stop();
       }

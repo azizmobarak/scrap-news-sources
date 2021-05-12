@@ -206,11 +206,13 @@ const GetContent = async(page,data)=>{
 
         var contenthtml = await page.evaluate(()=>{
             try{
-                return document.querySelector('div.body-copy-v2.fence-body').innerHTML;
+                return document.querySelector('.body-copy-v2').innerHTML;
             }catch{
                 return null;
             }
         });
+
+        console.log(contenthtml)
     
 
         var author = await page.evaluate(()=>{
@@ -220,7 +222,7 @@ const GetContent = async(page,data)=>{
                    return null;
                }
         });
-        
+
 
     if(Content!=null && Content!="" && contenthtml!=null){
           AllData_WithConetent.push({
