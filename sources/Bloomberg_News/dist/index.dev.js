@@ -11,7 +11,13 @@ var Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 var AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 var _require = require('../../function/insertData'),
-    InsertData = _require.InsertData; //block ads
+    InsertData = _require.InsertData;
+
+var _require2 = require('../../function/formatImage'),
+    FormatImage = _require2.FormatImage;
+
+var _require3 = require('../../function/sendToserver'),
+    SendToServer = _require3.SendToServer; //block ads
 
 
 puppeteer.use(AdblockerPlugin()); // stealth
@@ -55,7 +61,7 @@ var Bloomberg = function Bloomberg() {
 
           case 9:
             if (!(i < Categories.length)) {
-              _context.next = 41;
+              _context.next = 42;
               break;
             }
 
@@ -159,16 +165,16 @@ var Bloomberg = function Bloomberg() {
               var data = [];
 
               for (var j = 0; j < 1; j++) {
-                if (WordExist(time == null ? "nothing" : time.textContent) == true && titles != null) {
+                if (titles != null) {
                   data.push({
                     time: Date.now(),
                     title: titles.textContent.trim(),
                     link: link.href,
                     images: typeof images != "undefined" ? images.src : null,
-                    Category: cateogryName,
-                    source: "Bloomberg",
+                    Category: cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                    source: "Bloomberg " + cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                     sourceLink: "https://www.bloomberg.com/",
-                    sourceLogo: "bloomberg logo"
+                    sourceLogo: "https://fontlot.com/wp-content/uploads/2020/06/11-1.jpg"
                   });
                 }
               }
@@ -178,55 +184,60 @@ var Bloomberg = function Bloomberg() {
 
           case 36:
             PageData = _context.sent;
-            PageData.map(function (item) {
+            console.log(PageData);
+            PageData.map(function (item, j) {
+              item.images = FormatImage(item.images);
+              setTimeout(function () {
+                SendToServer('en', item.Category, item.source, item.sourceLogo);
+              }, 2000 * j);
               AllData.push(item);
             });
 
-          case 38:
+          case 39:
             i++;
             _context.next = 9;
             break;
 
-          case 41:
-            _context.next = 47;
+          case 42:
+            _context.next = 48;
             break;
 
-          case 43:
-            _context.prev = 43;
+          case 44:
+            _context.prev = 44;
             _context.t8 = _context["catch"](7);
-            _context.next = 47;
+            _context.next = 48;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 47:
-            _context.prev = 47;
-            _context.next = 50;
+          case 48:
+            _context.prev = 48;
+            _context.next = 51;
             return regeneratorRuntime.awrap(GetContent(page, AllData));
 
-          case 50:
-            _context.next = 56;
+          case 51:
+            _context.next = 57;
             break;
 
-          case 52:
-            _context.prev = 52;
-            _context.t9 = _context["catch"](47);
-            _context.next = 56;
+          case 53:
+            _context.prev = 53;
+            _context.t9 = _context["catch"](48);
+            _context.next = 57;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 56:
-            _context.next = 58;
+          case 57:
+            _context.next = 59;
             return regeneratorRuntime.awrap(browser.close());
 
-          case 58:
+          case 59:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[7, 43], [12, 17], [47, 52]]);
+    }, null, null, [[7, 44], [12, 17], [48, 53]]);
   })();
 };
 
 var GetContent = function GetContent(page, data) {
-  var AllData_WithConetent, i, item, url, Content, author;
+  var AllData_WithConetent, i, item, url, Content, contenthtml, author;
   return regeneratorRuntime.async(function GetContent$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -236,18 +247,33 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 17;
+            _context2.next = 32;
             break;
           }
 
           item = data[i];
-          url = item.link; // console.log(url);
-
-          _context2.next = 7;
+          url = item.link;
+          console.log(url);
+          _context2.prev = 6;
+          _context2.next = 9;
           return regeneratorRuntime.awrap(page["goto"](url));
 
-        case 7:
-          _context2.next = 9;
+        case 9:
+          _context2.next = 19;
+          break;
+
+        case 11:
+          _context2.prev = 11;
+          _context2.t0 = _context2["catch"](6);
+          i++;
+          item = data[i];
+          url = item.link;
+          console.log(url);
+          _context2.next = 19;
+          return regeneratorRuntime.awrap(page["goto"](url));
+
+        case 19:
+          _context2.next = 21;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
             var textArray = [];
@@ -260,21 +286,32 @@ var GetContent = function GetContent(page, data) {
             return textArray.join('\n');
           }));
 
-        case 9:
+        case 21:
           Content = _context2.sent;
-          _context2.next = 12;
+          _context2.next = 24;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
-              return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
-            } catch (_unused3) {
+              return document.querySelector('div.body-copy-v2.fence-body').innerHTML;
+            } catch (_unused4) {
               return null;
             }
           }));
 
-        case 12:
+        case 24:
+          contenthtml = _context2.sent;
+          _context2.next = 27;
+          return regeneratorRuntime.awrap(page.evaluate(function () {
+            try {
+              return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
+            } catch (_unused5) {
+              return null;
+            }
+          }));
+
+        case 27:
           author = _context2.sent;
 
-          if (Content != null && Content != "") {
+          if (Content != null && Content != "" && contenthtml != null) {
             AllData_WithConetent.push({
               time: Date.now(),
               title: item.title,
@@ -285,25 +322,26 @@ var GetContent = function GetContent(page, data) {
               sourceLink: item.sourceLink,
               sourceLogo: item.sourceLogo,
               author: author,
-              content: Content != null ? Content : null
+              content: Content != null ? Content : null,
+              contenthtml: contenthtml
             });
           }
 
-        case 14:
+        case 29:
           i++;
           _context2.next = 2;
           break;
 
-        case 17:
-          _context2.next = 19;
+        case 32:
+          _context2.next = 34;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 19:
+        case 34:
         case "end":
           return _context2.stop();
       }
     }
-  });
+  }, null, null, [[6, 11]]);
 };
 
 module.exports = Bloomberg;

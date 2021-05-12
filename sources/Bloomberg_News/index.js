@@ -4,6 +4,8 @@ const puppeteer_agent = require('puppeteer-extra-plugin-anonymize-ua');
 const Recaptcha = require('puppeteer-extra-plugin-recaptcha');
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 const {InsertData} = require('../../function/insertData')
+const {FormatImage} = require('../../function/formatImage')
+const {SendToServer} = require('../../function/sendToserver')
 
 //block ads
 puppeteer.use(AdblockerPlugin());
@@ -127,24 +129,28 @@ for(let i=0;i<Categories.length;i++){
 
          for(let j=0;j<1;j++){
            
-              if(WordExist(time==null ? "nothing" : time.textContent)==true && titles!=null)
+              if(titles!=null)
                     {
                    data.push({
                        time : Date.now(),
                        title : titles.textContent.trim(),
                        link : link.href,
                        images : typeof(images)!="undefined" ? images.src : null,
-                       Category:cateogryName,
-                       source :"Bloomberg",
+                       Category:cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
+                       source :"Bloomberg "+cateogryName.charAt(0).toUpperCase() + cateogryName.slice(1),
                        sourceLink:"https://www.bloomberg.com/",
-                       sourceLogo:"bloomberg logo"
+                       sourceLogo:"https://fontlot.com/wp-content/uploads/2020/06/11-1.jpg"
                     });
                    }
                }
                       return data;
                },Category);
-
-               PageData.map(item=>{
+             console.log(PageData)
+               PageData.map((item,j)=>{
+                item.images = FormatImage(item.images);
+                setTimeout(() => {
+                     SendToServer('en',item.Category,item.source,item.sourceLogo)
+                },2000*j);
                    AllData.push(item)
                });
        }
@@ -172,9 +178,18 @@ const GetContent = async(page,data)=>{
     
         var item = data[i];
         var url = item.link;
-       // console.log(url);
+        console.log(url);
 
-        await page.goto(url);
+       
+ try{
+    await page.goto(url);
+   }catch{
+    i++;
+    var item = data[i];
+    var url = item.link;
+    console.log(url)
+    await page.goto(url);
+   }
 
     
         var Content = await page.evaluate(()=>{
@@ -189,7 +204,16 @@ const GetContent = async(page,data)=>{
             }
             return textArray.join('\n');
         });
+
+        var contenthtml = await page.evaluate(()=>{
+            try{
+                return document.querySelector('div.body-copy-v2.fence-body').innerHTML;
+            }catch{
+                return null;
+            }
+        });
     
+
         var author = await page.evaluate(()=>{
                try{
                 return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
@@ -198,7 +222,7 @@ const GetContent = async(page,data)=>{
                }
         });
 
-    if(Content!=null && Content!=""){
+    if(Content!=null && Content!="" && contenthtml!=null){
           AllData_WithConetent.push({
                 time : Date.now(),
                 title : item.title,
@@ -209,7 +233,8 @@ const GetContent = async(page,data)=>{
                 sourceLink:item.sourceLink,
                 sourceLogo:item.sourceLogo,
                 author:author,
-                content:Content!=null ? Content : null
+                content:Content!=null ? Content : null,
+                contenthtml : contenthtml
           });
        }
     }
