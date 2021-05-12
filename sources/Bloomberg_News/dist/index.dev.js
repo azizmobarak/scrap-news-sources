@@ -164,7 +164,7 @@ var Bloomberg = function Bloomberg() {
 
               var data = [];
 
-              for (var j = 0; j < 10; j++) {
+              for (var j = 0; j < 1; j++) {
                 if (titles != null) {
                   data.push({
                     time: Date.now(),
@@ -247,7 +247,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 33;
+            _context2.next = 34;
             break;
           }
 
@@ -299,8 +299,7 @@ var GetContent = function GetContent(page, data) {
 
         case 24:
           contenthtml = _context2.sent;
-          console.log(contenthtml);
-          _context2.next = 28;
+          _context2.next = 27;
           return regeneratorRuntime.awrap(page.evaluate(function () {
             try {
               return document.querySelector('.lede-text-v2__byline').textContent.split('\n')[1].trim();
@@ -309,8 +308,10 @@ var GetContent = function GetContent(page, data) {
             }
           }));
 
-        case 28:
+        case 27:
           author = _context2.sent;
+          console.log(Content);
+          console.log(contenthtml);
 
           if (Content != null && Content != "" && contenthtml != null) {
             AllData_WithConetent.push({
@@ -328,17 +329,17 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 30:
+        case 31:
           i++;
           _context2.next = 2;
           break;
 
-        case 33:
+        case 34:
           console.log(AllData_WithConetent);
-          _context2.next = 36;
+          _context2.next = 37;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 36:
+        case 37:
         case "end":
           return _context2.stop();
       }

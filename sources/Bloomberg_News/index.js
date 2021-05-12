@@ -127,7 +127,7 @@ for(let i=0;i<Categories.length;i++){
 
          var data =[];
 
-         for(let j=0;j<10;j++){
+         for(let j=0;j<1;j++){
            
               if(titles!=null)
                     {
@@ -210,10 +210,7 @@ const GetContent = async(page,data)=>{
             }catch{
                 return null;
             }
-        });
-
-        console.log(contenthtml)
-    
+        });    
 
         var author = await page.evaluate(()=>{
                try{
@@ -222,6 +219,9 @@ const GetContent = async(page,data)=>{
                    return null;
                }
         });
+
+        console.log(Content)
+        console.log(contenthtml)
 
 
     if(Content!=null && Content!="" && contenthtml!=null){
