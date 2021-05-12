@@ -193,8 +193,6 @@ const GetContent = async(page,data)=>{
 
     
         var Content = await page.evaluate(()=>{
-
-
             var text = document.querySelectorAll('div.body-copy-v2.fence-body p');
             var textArray=[];
 
@@ -204,6 +202,7 @@ const GetContent = async(page,data)=>{
             }
             return textArray.join('\n');
         });
+
 
         var contenthtml = await page.evaluate(()=>{
             try{
@@ -221,6 +220,7 @@ const GetContent = async(page,data)=>{
                    return null;
                }
         });
+        
 
     if(Content!=null && Content!="" && contenthtml!=null){
           AllData_WithConetent.push({
@@ -238,7 +238,7 @@ const GetContent = async(page,data)=>{
           });
        }
     }
-    
+    console.log(AllData_WithConetent);
     await InsertData(AllData_WithConetent);
 }
 
