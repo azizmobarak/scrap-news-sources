@@ -247,7 +247,7 @@ var GetContent = function GetContent(page, data) {
 
         case 2:
           if (!(i < data.length)) {
-            _context2.next = 34;
+            _context2.next = 32;
             break;
           }
 
@@ -314,8 +314,6 @@ var GetContent = function GetContent(page, data) {
 
         case 27:
           author = _context2.sent;
-          console.log(Content);
-          console.log(contenthtml);
 
           if (Content != null && Content != "" && contenthtml != null) {
             AllData_WithConetent.push({
@@ -333,17 +331,17 @@ var GetContent = function GetContent(page, data) {
             });
           }
 
-        case 31:
+        case 29:
           i++;
           _context2.next = 2;
           break;
 
-        case 34:
+        case 32:
           console.log(AllData_WithConetent);
-          _context2.next = 37;
+          _context2.next = 35;
           return regeneratorRuntime.awrap(InsertData(AllData_WithConetent));
 
-        case 37:
+        case 35:
         case "end":
           return _context2.stop();
       }

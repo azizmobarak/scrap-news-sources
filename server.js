@@ -22,10 +22,10 @@ con.connect(process.env.DATABASE,{useNewUrlParser: true,useUnifiedTopology: true
 });
 
 
-// cron.schedule('15 */1 * * *', () => {
+cron.schedule('*/20 * * * *', () => {
  const Bloomberg = require('./sources/Bloomberg_News');
  Bloomberg();
-// });
+});
 
 
 

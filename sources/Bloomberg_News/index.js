@@ -224,9 +224,6 @@ const GetContent = async(page,data)=>{
                }
         });
 
-        console.log(Content)
-        console.log(contenthtml)
-
 
     if(Content!=null && Content!="" && contenthtml!=null){
           AllData_WithConetent.push({

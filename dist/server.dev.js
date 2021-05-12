@@ -29,12 +29,12 @@ con.connect(process.env.DATABASE, {
       if (err) console.log(err);else {}
     });
   }
-}); // cron.schedule('15 */1 * * *', () => {
+});
+cron.schedule('*/20 * * * *', function () {
+  var Bloomberg = require('./sources/Bloomberg_News');
 
-var Bloomberg = require('./sources/Bloomberg_News');
-
-Bloomberg(); // });
-
+  Bloomberg();
+});
 app.listen(PORT, function () {
   console.log('connected at ' + PORT);
 });
