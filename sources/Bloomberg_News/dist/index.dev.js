@@ -164,7 +164,7 @@ var Bloomberg = function Bloomberg() {
 
               var data = [];
 
-              for (var j = 0; j < 1; j++) {
+              for (var j = 0; j < 10; j++) {
                 if (titles != null) {
                   data.push({
                     time: Date.now(),

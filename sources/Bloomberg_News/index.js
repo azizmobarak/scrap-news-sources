@@ -127,7 +127,7 @@ for(let i=0;i<Categories.length;i++){
 
          var data =[];
 
-         for(let j=0;j<1;j++){
+         for(let j=0;j<10;j++){
            
               if(titles!=null)
                     {
